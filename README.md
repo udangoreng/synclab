@@ -27,24 +27,58 @@ Laravel has the most extensive and thorough [documentation](https://laravel.com/
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+## Getting Started
+Ensure you have the following installed on your system:
+* **PHP** >= 8.1
+* **Composer**
+* **Node.js & NPM**
+* **MySQL** (or any other database supported by Laravel)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1.  **Clone the repository:**
+    ```
+    git clone https://github.com/udangoreng/synclab.git
+    cd synclab
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2.  **Install PHP dependencies:**
+    ```
+    composer install
+    ```
 
-## Contributing
+3.  **Install Frontend dependencies:**
+    ```
+    npm install && npm run build
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4.  **Set up environment variables:**
+    Copy the example environment file and update it with your local settings (specifically database credentials).
+    ```
+    cp .env.example .env
+    ```
+
+5.  **Generate application key:**
+    ```bash
+    php artisan key:generate
+    ```
+
+6.  **Run Migrations and Seeders:**
+    ```
+    php artisan migrate --seed
+    ```
+
+7.  **Start the development server:**
+    ```
+    php artisan serve
+    ```
+
+The application will be accessible at `http://localhost:8000`.
+
+To execute the test suite, run:
+```
+php artisan test
+```
 
 ## Code of Conduct
 
