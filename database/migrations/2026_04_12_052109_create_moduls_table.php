@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengumpulan_laporan', function (Blueprint $table) {
+        Schema::create('moduls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_laporan')->references('id')->on('laporans')->onDelete('cascade')->onUpdate('cascade');
-            $table->enum('status', ['Disubmit', 'Dalam Review', 'Diterima', 'Ditolak', 'Terlambat']);
-            $table->integer('nilai');
-            $table->longText('komentar');
+            $table->string('judul_modul');
+            $table->string('filepath');
+            $table->longText('deskripsi');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengumpulan_laporan');
+        Schema::dropIfExists('moduls');
     }
 };
