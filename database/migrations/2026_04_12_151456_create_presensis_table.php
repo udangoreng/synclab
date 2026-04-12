@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporans', function (Blueprint $table) {
+        Schema::create('presensis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->date('open_date');
-            $table->date('close_date');
-            $table->time('open_time');
-            $table->time('close_time');
-            $table->longText('deskripsi');
+            $table->enum('kehadiran', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
+            $table->enum('status', ['Dikonfirmasi', 'Pending', 'Ditolak']);
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporans');
+        Schema::dropIfExists('presensis');
     }
 };
