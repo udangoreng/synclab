@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_dosen')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_laboratorium')->references('id')->on('laboratoriums')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('hari');
+            $table->time('jam');
+            $table->integer('jumlah_max_peserta');
+            $table->enum('status', ['Dibuka', 'Penuh', 'Selesai']);
             $table->timestamps();
         });
     }

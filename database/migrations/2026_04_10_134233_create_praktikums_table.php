@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('praktikums', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_praktikum');
+            $table->string('nama_praktikum');
+            $table->integer('angkatan');
+            $table->integer('semester');
             $table->timestamps();
         });
     }

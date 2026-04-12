@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->date('open_date');
+            $table->date('close_date');
+            $table->time('open_time');
+            $table->time('close_time');
+            $table->longText('deskripsi');
             $table->timestamps();
         });
     }

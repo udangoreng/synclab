@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('laboratoriums', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_laboratorium');
+            $table->string('lokasi');
+            $table->integer('kapasitas');
+            $table->foreignId('kepala_lab')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', ['Terpakai', 'Tersedia']);
             $table->timestamps();
         });
     }
