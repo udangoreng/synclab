@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nilais', function (Blueprint $table) {
+        Schema::create('presensis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->integer('nilai_pretest');
-            $table->integer('nilai_laporan');
-            $table->integer('nilai_total');
-            $table->integer('nilai_akhir');
-            $table->longText('komentar');
-            $table->enum('status', ['Pending', 'Terkonfirmasi']);
+            $table->enum('kehadiran', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
+            $table->enum('status', ['Dikonfirmasi', 'Pending', 'Ditolak']);
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nilais');
+        Schema::dropIfExists('presensis');
     }
 };

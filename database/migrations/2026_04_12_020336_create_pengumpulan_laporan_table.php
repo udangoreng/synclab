@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nilais', function (Blueprint $table) {
+        Schema::create('pengumpulan_laporan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->integer('nilai_pretest');
-            $table->integer('nilai_laporan');
-            $table->integer('nilai_total');
-            $table->integer('nilai_akhir');
+            $table->foreignId('id_laporan')->references('id')->on('laporans')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', ['Disubmit', 'Dalam Review', 'Diterima', 'Ditolak', 'Terlambat']);
+            $table->integer('nilai');
             $table->longText('komentar');
-            $table->enum('status', ['Pending', 'Terkonfirmasi']);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nilais');
+        Schema::dropIfExists('pengumpulan_laporan');
     }
 };
