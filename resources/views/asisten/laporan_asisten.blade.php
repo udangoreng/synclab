@@ -138,7 +138,7 @@
         <tr>
           <td>Andi Saputra</td>
           <td>22001</td>
-          <td>RPL</td>
+          <td>Rekayasa Perangkat Lunak</td>
           <td>1</td>
           <td>10-03-2026</td>
           <td>
@@ -152,7 +152,7 @@
         <tr>
           <td>Siti Rahma</td>
           <td>22002</td>
-          <td>AI</td>
+          <td>Pemrograman Dasar</td>
           <td>2</td>
           <td>11-03-2026</td>
           <td>
