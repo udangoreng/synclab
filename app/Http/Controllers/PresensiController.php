@@ -10,8 +10,6 @@ class PresensiController extends Controller
 {
     /**
      * Display a listing of presensi resource
-     * - Non-Praktikan (asisten, dosen, admin) dapat melihat semua presensi
-     * - Praktikan hanya dapat melihat presensi miliknya sendiri
      */
     public function index()
     {
@@ -20,19 +18,20 @@ class PresensiController extends Controller
         try {
             if ($user->role === 'Praktikan') {
                 $presensis = Presensi::where('id_user', $user->id)
-                    ->with('praktikum', 'user')
+                    ->with(['praktikum', 'user'])
                     ->get();
 
-                    return view('mahasiswa/presensi', compact('presensis'));
+                // Jika ingin menampilkan view untuk praktikan
+                return view('mahasiswa.presensi', compact('presensis'));
             } else {
                 // Non-Praktikan melihat semua presensi
-                $presensis = Presensi::with('praktikum', 'user')->get();
+                $presensis = Presensi::with(['praktikum', 'user'])->get();
+                
+                return response()->json([
+                    'success' => true,
+                    'data' => $presensis
+                ]);
             }
-
-            return response()->json([
-                'success' => true,
-                'data' => $presensis
-            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -43,27 +42,16 @@ class PresensiController extends Controller
     }
 
     /**
-     * Show the form for creating a new presensi resource
-     */
-    public function create()
-    {
-        return response()->json([
-            'message' => 'Show create form'
-        ]);
-    }
-
-    /**
      * Store a newly created presensi in storage
      */
     public function store(Request $request)
     {
         $user = Auth::user();
 
-        // Only non-Praktikan can create presensi
         if ($user->role === 'Praktikan') {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized. Only asisten, dosen, or admin can create presensi.'
+                'message' => 'Unauthorized.'
             ], 403);
         }
 
@@ -76,76 +64,13 @@ class PresensiController extends Controller
 
         try {
             $presensi = Presensi::create($validated);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi created successfully',
                 'data' => $presensi->load('praktikum', 'user')
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error creating presensi',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Display the specified presensi resource
-     */
-    public function show($id)
-    {
-        $user = Auth::user();
-
-        try {
-            $presensi = Presensi::with('praktikum', 'user')->findOrFail($id);
-
-            // Check authorization
-            if ($user->role === 'Praktikan' && $presensi->id_user !== $user->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized. You can only view your own presensi.'
-                ], 403);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $presensi
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Presensi not found'
-            ], 404);
-        }
-    }
-
-    /**
-     * Show the form for editing the specified presensi resource
-     */
-    public function edit($id)
-    {
-        $user = Auth::user();
-
-        // Only non-Praktikan can edit presensi
-        if ($user->role === 'Praktikan') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Only asisten, dosen, or admin can edit presensi.'
-            ], 403);
-        }
-
-        try {
-            $presensi = Presensi::findOrFail($id);
-            return response()->json([
-                'data' => $presensi
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Presensi not found'
-            ], 404);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -156,17 +81,12 @@ class PresensiController extends Controller
     {
         $user = Auth::user();
 
-        // Only non-Praktikan can update presensi
         if ($user->role === 'Praktikan') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Only asisten, dosen, or admin can update presensi.'
-            ], 403);
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
         try {
             $presensi = Presensi::findOrFail($id);
-
             $validated = $request->validate([
                 'id_praktikum' => 'sometimes|integer|exists:praktikums,id',
                 'id_user' => 'sometimes|integer|exists:users,id',
@@ -179,19 +99,10 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi updated successfully',
-                'data' => $presensi->load('pertemuan', 'user', 'praktikum')
-            ]);raktikum', 'user
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Presensi not found'
-            ], 404);
+                'data' => $presensi->load('praktikum', 'user')
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating presensi',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -200,131 +111,40 @@ class PresensiController extends Controller
      */
     public function destroy($id)
     {
-        $user = Auth::user();
-
-        // Only non-Praktikan can delete presensi
-        if ($user->role === 'Praktikan') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Only asisten, dosen, or admin can delete presensi.'
-            ], 403);
+        if (Auth::user()->role === 'Praktikan') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
         try {
-            $presensi = Presensi::findOrFail($id);
-            $presensi->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Presensi deleted successfully'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Presensi not found'
-            ], 404);
+            Presensi::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'message' => 'Deleted']);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error deleting presensi',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
     /**
-     * Get presensi by pertemuan
-     */raktikum
+     * Get presensi by Praktikum ID
      */
     public function getByPraktikum($idPraktikum)
     {
         $user = Auth::user();
 
         try {
+            $query = Presensi::where('id_praktikum', $idPraktikum)->with(['praktikum', 'user']);
+
             if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
-            } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user
+                $query->where('id_user', $user->id);
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => $presensis
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching presensi',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get presensi by user
-     */praktikum
-     */
-    public function getByPraktikum($idPraktikum)
-    {
-        $user = Auth::user();
-
-        try {
-            if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
-            } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user')
-                    ->get();
-            }
-            return response()->json([
-                'success' => true,
-                'data' => $presensis
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching presensi',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get presensi by pertemuan and praktikum
-     */
-    public function getBraktikum
-     */
-    public function getByPraktikum($idPraktikum)
-    {
-        $user = Auth::user();
-
-        try {
-            if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
-            } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user
+            $presensis = $query->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $presensis
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching presensi',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 }
