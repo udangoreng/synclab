@@ -27,6 +27,22 @@ class User extends Authenticatable
     ];
 
     /**
+     * User memiliki banyak Nilai
+     */
+    public function nilais()
+    {
+        return $this->hasMany(Nilai::class, 'id_user');
+    }
+
+    /**
+     * User memiliki banyak Presensi
+     */
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class, 'id_user');
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
