@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Dashboard Mahasiswa | Caca</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard Mahasiswa | {{ Auth::user()->nama }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* dashboardmhs.css - Fully Responsive */
@@ -46,7 +48,7 @@
 
         .mobile-menu-toggle {
             display: none;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
             font-size: 1.3rem;
@@ -57,7 +59,7 @@
         }
 
         .mobile-menu-toggle:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .profile-section {
@@ -130,7 +132,8 @@
             font-size: 1.2rem;
         }
 
-        .nav-item:hover, .nav-item.active {
+        .nav-item:hover,
+        .nav-item.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
@@ -335,13 +338,24 @@
             display: flex;
             gap: 14px;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             border-left: 6px solid;
         }
 
-        .notif-card.info { border-left-color: #3b82f6; background: #f0f9ff; }
-        .notif-card.warning { border-left-color: #f59e0b; background: #fffbeb; }
-        .notif-card.success { border-left-color: #10b981; background: #ecfdf5; }
+        .notif-card.info {
+            border-left-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .notif-card.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .notif-card.success {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
 
         .notif-icon {
             font-size: 1.5rem;
@@ -542,85 +556,289 @@
 
         /* ========= RESPONSIVE DESIGN ========= */
         @media (max-width: 1024px) {
-            .main-content { padding: 24px; }
-            .page-title { font-size: 1.6rem; }
-            .hero-text h2 { font-size: 1.5rem; }
-            .praktikum-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
-            .course-img { height: 90px; }
-            .course-img i { font-size: 2rem !important; }
-            .glass-card { padding: 18px 20px; }
+            .main-content {
+                padding: 24px;
+            }
+
+            .page-title {
+                font-size: 1.6rem;
+            }
+
+            .hero-text h2 {
+                font-size: 1.5rem;
+            }
+
+            .praktikum-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 14px;
+            }
+
+            .course-img {
+                height: 90px;
+            }
+
+            .course-img i {
+                font-size: 2rem !important;
+            }
+
+            .glass-card {
+                padding: 18px 20px;
+            }
         }
 
         @media (max-width: 768px) {
-            .dashboard-container { flex-direction: column; }
-            .sidebar { width: 100%; padding-bottom: 0; }
-            .sidebar-header { padding: 16px 20px; }
-            .mobile-menu-toggle { display: block; }
-            .sidebar-nav { display: none; padding: 0 20px 20px 20px; }
-            .sidebar-nav.active { display: flex; }
-            .profile-section { flex-direction: row; text-align: left; gap: 16px; margin-bottom: 0; }
-            .avatar-circle { width: 60px; height: 60px; margin: 0; }
-            .avatar-circle i { font-size: 30px; }
-            .profile-info h3 { font-size: 1.1rem; }
-            .profile-info p { font-size: 0.65rem; }
-            .nav-menu { margin-top: 20px; }
-            .nav-item { padding: 10px 14px; font-size: 0.9rem; }
-            .main-content { padding: 20px; }
-            .page-title { font-size: 1.4rem; margin-bottom: 16px; }
-            .hero-card { margin-bottom: 24px; }
-            .hero-overlay { padding: 24px; }
-            .hero-text h2 { font-size: 1.2rem; }
-            .hero-text p { font-size: 0.75rem; }
-            .two-columns { gap: 20px; }
-            .glass-card { padding: 16px; margin-bottom: 20px; }
-            .greeting-name { font-size: 1.2rem; }
-            .notif-card { padding: 12px 14px; }
-            .notif-icon { font-size: 1.2rem; }
-            .notif-text { font-size: 0.75rem; }
-            .section-title { font-size: 1.1rem; margin-bottom: 16px; }
-            .card-header h3 { font-size: 1rem; }
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding-bottom: 0;
+            }
+
+            .sidebar-header {
+                padding: 16px 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar-nav {
+                display: none;
+                padding: 0 20px 20px 20px;
+            }
+
+            .sidebar-nav.active {
+                display: flex;
+            }
+
+            .profile-section {
+                flex-direction: row;
+                text-align: left;
+                gap: 16px;
+                margin-bottom: 0;
+            }
+
+            .avatar-circle {
+                width: 60px;
+                height: 60px;
+                margin: 0;
+            }
+
+            .avatar-circle i {
+                font-size: 30px;
+            }
+
+            .profile-info h3 {
+                font-size: 1.1rem;
+            }
+
+            .profile-info p {
+                font-size: 0.65rem;
+            }
+
+            .nav-menu {
+                margin-top: 20px;
+            }
+
+            .nav-item {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 1.4rem;
+                margin-bottom: 16px;
+            }
+
+            .hero-card {
+                margin-bottom: 24px;
+            }
+
+            .hero-overlay {
+                padding: 24px;
+            }
+
+            .hero-text h2 {
+                font-size: 1.2rem;
+            }
+
+            .hero-text p {
+                font-size: 0.75rem;
+            }
+
+            .two-columns {
+                gap: 20px;
+            }
+
+            .glass-card {
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+
+            .greeting-name {
+                font-size: 1.2rem;
+            }
+
+            .notif-card {
+                padding: 12px 14px;
+            }
+
+            .notif-icon {
+                font-size: 1.2rem;
+            }
+
+            .notif-text {
+                font-size: 0.75rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                margin-bottom: 16px;
+            }
+
+            .card-header h3 {
+                font-size: 1rem;
+            }
         }
 
         @media (max-width: 600px) {
-            .main-content { padding: 16px; }
-            .page-title { font-size: 1.3rem; }
-            .hero-overlay { padding: 20px; }
-            .hero-text h2 { font-size: 1rem; }
-            .hero-badge { font-size: 0.6rem; padding: 4px 10px; }
-            .praktikum-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .course-img { height: 80px; }
-            .course-img i { font-size: 1.5rem !important; }
-            .course-card p { font-size: 0.7rem; padding: 8px 4px; }
-            .glass-card { padding: 14px; border-radius: 20px; }
-            .reminder-card { padding: 10px 12px; gap: 10px; }
-            .reminder-icon { width: 36px; height: 36px; font-size: 1rem; }
-            .reminder-title { font-size: 0.85rem; }
-            .task-item { padding: 10px 12px; gap: 10px; }
-            .task-text { font-size: 0.8rem; }
-            .task-badge { font-size: 0.6rem; padding: 3px 8px; }
+            .main-content {
+                padding: 16px;
+            }
+
+            .page-title {
+                font-size: 1.3rem;
+            }
+
+            .hero-overlay {
+                padding: 20px;
+            }
+
+            .hero-text h2 {
+                font-size: 1rem;
+            }
+
+            .hero-badge {
+                font-size: 0.6rem;
+                padding: 4px 10px;
+            }
+
+            .praktikum-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .course-img {
+                height: 80px;
+            }
+
+            .course-img i {
+                font-size: 1.5rem !important;
+            }
+
+            .course-card p {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+
+            .glass-card {
+                padding: 14px;
+                border-radius: 20px;
+            }
+
+            .reminder-card {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .reminder-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .reminder-title {
+                font-size: 0.85rem;
+            }
+
+            .task-item {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+
+            .task-text {
+                font-size: 0.8rem;
+            }
+
+            .task-badge {
+                font-size: 0.6rem;
+                padding: 3px 8px;
+            }
         }
 
         @media (max-width: 480px) {
-            .praktikum-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .course-img { height: 70px; }
-            .notif-header { flex-direction: column; align-items: flex-start; }
-            .card-header { flex-direction: column; align-items: flex-start; }
-            .reminder-card { flex-direction: column; text-align: center; }
-            .reminder-icon { margin: 0 auto; }
-            .task-item { flex-wrap: wrap; }
-            .task-badge { margin-left: 34px; }
+            .praktikum-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .course-img {
+                height: 70px;
+            }
+
+            .notif-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .reminder-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .reminder-icon {
+                margin: 0 auto;
+            }
+
+            .task-item {
+                flex-wrap: wrap;
+            }
+
+            .task-badge {
+                margin-left: 34px;
+            }
         }
 
         @media (min-width: 1200px) {
-            .praktikum-grid { grid-template-columns: repeat(4, 1fr); }
+            .praktikum-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         @media (hover: none) and (pointer: coarse) {
-            .nav-item, .course-card, .task-item, .reminder-card, .logout-btn {
+
+            .nav-item,
+            .course-card,
+            .task-item,
+            .reminder-card,
+            .logout-btn {
                 cursor: pointer;
                 -webkit-tap-highlight-color: transparent;
             }
-            .nav-item:active, .course-card:active {
+
+            .nav-item:active,
+            .course-card:active {
                 transform: scale(0.98);
                 transition: 0.05s;
             }
@@ -636,8 +854,8 @@
                         <i class="fas fa-user-graduate"></i>
                     </div>
                     <div class="profile-info">
-                        <h3>Caca Mahasiswa</h3>
-                        <p>NIM 24051204194 · Teknik Informatika</p>
+                        <h3>{{Auth::user()->nama}} Mahasiswa</h3>
+                        <p>NIM {{Auth::user()->nomor_induk}} · Teknik Informatika</p>
                     </div>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -649,7 +867,8 @@
                 <ul class="nav-menu">
                     <li class="nav-item active"><i class="fas fa-chalkboard-user"></i> Dashboard</li>
                     <li class="nav-item has-sub">
-                        <div class="sub-trigger"><i class="fas fa-flask"></i> Praktikum <i class="fas fa-chevron-down"></i></div>
+                        <div class="sub-trigger"><i class="fas fa-flask"></i> Praktikum <i
+                                class="fas fa-chevron-down"></i></div>
                         <ul class="submenu">
                             <li><i class="fas fa-list-ul"></i> Daftar Praktikum</li>
                             <li><i class="fas fa-pen-ruler"></i> Pendaftaran Saya</li>
@@ -657,7 +876,8 @@
                     </li>
                     <li class="nav-item"><i class="fas fa-file-alt"></i> Pretest</li>
                     <li class="nav-item has-sub">
-                        <div class="sub-trigger"><i class="fas fa-chart-line"></i> Nilai dan Presensi <i class="fas fa-chevron-down"></i></div>
+                        <div class="sub-trigger"><i class="fas fa-chart-line"></i> Nilai dan Presensi <i
+                                class="fas fa-chevron-down"></i></div>
                         <ul class="submenu">
                             <li><i class="fas fa-star"></i> Nilai</li>
                             <li><i class="fas fa-fingerprint"></i> Presensi</li>
@@ -667,7 +887,9 @@
                 </ul>
 
                 <div class="logout-btn">
+                    <a href="{{route('logout')}}" style="all: unset;">
                     <i class="fas fa-sign-out-alt"></i> LogOut
+                    </a>
                 </div>
             </div>
         </aside>
@@ -704,7 +926,8 @@
                         <div class="notif-list">
                             <div class="notif-card info">
                                 <div class="notif-icon">📅</div>
-                                <div class="notif-text"><b>Praktikum Jaringan Komputer</b> hari ini pukul 13:00 WIB (Lab Jaringan)</div>
+                                <div class="notif-text"><b>Praktikum Jaringan Komputer</b> hari ini pukul 13:00 WIB (Lab
+                                    Jaringan)</div>
                             </div>
                             <div class="notif-card warning">
                                 <div class="notif-icon">⚠️</div>
@@ -712,7 +935,8 @@
                             </div>
                             <div class="notif-card success">
                                 <div class="notif-icon">✅</div>
-                                <div class="notif-text">Jangan lupa isi presensi setelah praktikum & upload laporan.</div>
+                                <div class="notif-text">Jangan lupa isi presensi setelah praktikum & upload laporan.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -760,13 +984,15 @@
                                 <p>Pengolahan Citra Digital</p>
                             </div>
                             <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #ec489a, #be185d);">
+                                <div class="course-img"
+                                    style="background: linear-gradient(145deg, #ec489a, #be185d);">
                                     <i class="fas fa-microchip fa-3x"></i>
                                 </div>
                                 <p>Internet of Things (IoT)</p>
                             </div>
                             <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #f59e0b, #b45309);">
+                                <div class="course-img"
+                                    style="background: linear-gradient(145deg, #f59e0b, #b45309);">
                                     <i class="fas fa-code-branch fa-3x"></i>
                                 </div>
                                 <p>Rekayasa Perangkat Lunak (RPL)</p>
@@ -781,7 +1007,8 @@
                     <div class="glass-card">
                         <div class="card-header">
                             <h3><i class="fas fa-clock"></i> Reminder</h3>
-                            <a href="#" class="see-all-link" id="seeAllReminder">See All <i class="fas fa-arrow-right"></i></a>
+                            <a href="#" class="see-all-link" id="seeAllReminder">See All <i
+                                    class="fas fa-arrow-right"></i></a>
                         </div>
                         <div class="reminder-list" id="reminderContainer"></div>
                     </div>
@@ -798,28 +1025,28 @@
     </div>
 
     <script>
-        // dashboardmhs.js
         (function() {
-            // === AMBIL NAMA DARI PROFILE ===
-            const profileName = "Caca";
-            
-            // === DATE & GREETING LOGIC ===
+
+            const profileName = `{{Auth::user()->nama}}`;
+
             const now = new Date();
             const hour = now.getHours();
             let greetingTime = "Selamat pagi";
             if (hour >= 12 && hour < 18) greetingTime = "Selamat siang";
             else if (hour >= 18) greetingTime = "Selamat malam";
 
-            // Top Box Greeting
             const topGreetingSpan = document.getElementById("topGreetingText");
             if (topGreetingSpan) topGreetingSpan.innerText = `${greetingTime}, ${profileName}! 👋`;
 
-            // Notification panel greeting
             const greetingNameDiv = document.getElementById("greetingName");
             if (greetingNameDiv) greetingNameDiv.innerText = `${greetingTime}, ${profileName} 👋`;
 
-            // Date formatting
-            const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const optionsDate = {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            };
             const formattedDate = now.toLocaleDateString('id-ID', optionsDate);
             const fullDateSpan = document.getElementById("fullDateDisplay");
             if (fullDateSpan) fullDateSpan.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
@@ -827,15 +1054,34 @@
             const todayChip = document.getElementById("todayDateChip");
             if (todayChip) todayChip.innerText = formattedDate;
 
-            // === REMINDER DATA ===
-            const remindersData = [
-                { icon: "⏰", title: "Jarkom - Praktikum", time: "Hari ini, 13:00 WIB", badge: "Lab Jaringan" },
-                { icon: "📌", title: "RPL - Pretest", time: "Besok, 14:00 WIB", badge: "Prioritas" },
-                { icon: "📝", title: "Pretest PCD", time: "Mulai 7 April 2026", badge: "Segera" },
-                { icon: "📊", title: "Laporan Basis Data", time: "Deadline 10 April", badge: "Belum" }
+            const remindersData = [{
+                    icon: "⏰",
+                    title: "Jarkom - Praktikum",
+                    time: "Hari ini, 13:00 WIB",
+                    badge: "Lab Jaringan"
+                },
+                {
+                    icon: "📌",
+                    title: "RPL - Pretest",
+                    time: "Besok, 14:00 WIB",
+                    badge: "Prioritas"
+                },
+                {
+                    icon: "📝",
+                    title: "Pretest PCD",
+                    time: "Mulai 7 April 2026",
+                    badge: "Segera"
+                },
+                {
+                    icon: "📊",
+                    title: "Laporan Basis Data",
+                    time: "Deadline 10 April",
+                    badge: "Belum"
+                }
             ];
 
             const reminderContainer = document.getElementById("reminderContainer");
+
             function renderReminders() {
                 if (!reminderContainer) return;
                 reminderContainer.innerHTML = "";
@@ -854,12 +1100,22 @@
                 });
             }
 
-            // === ASSIGNMENTS DATA ===
-            let assignments = [
-                { name: "Laporan Jaringan Komputer", status: "Not Yet" },
-                { name: "Tugas RPL (Analisis Kebutuhan)", status: "Not Yet" },
-                { name: "Laporan Basis Data", status: "Done" },
-                { name: "Pretest PCD - Modul 1", status: "Not Yet" }
+            let assignments = [{
+                    name: "Laporan Jaringan Komputer",
+                    status: "Not Yet"
+                },
+                {
+                    name: "Tugas RPL (Analisis Kebutuhan)",
+                    status: "Not Yet"
+                },
+                {
+                    name: "Laporan Basis Data",
+                    status: "Done"
+                },
+                {
+                    name: "Pretest PCD - Modul 1",
+                    status: "Not Yet"
+                }
             ];
 
             const assignmentsContainer = document.getElementById("assignmentsList");
@@ -884,7 +1140,8 @@
 
                 if (progressHint) {
                     const total = assignments.length;
-                    progressHint.innerHTML = `📋 Progres: ${completedCount}/${total} selesai • ${completedCount === total ? "✨ Selamat semua tugas selesai!" : "Tetap semangat, kerjakan tugas tepat waktu!"}`;
+                    progressHint.innerHTML =
+                        `📋 Progres: ${completedCount}/${total} selesai • ${completedCount === total ? "✨ Selamat semua tugas selesai!" : "Tetap semangat, kerjakan tugas tepat waktu!"}`;
                 }
 
                 document.querySelectorAll("#assignmentsList input[type='checkbox']").forEach(cb => {
@@ -902,19 +1159,18 @@
                 }
             }
 
-            // === SEE ALL REMINDER ===
             const seeAllBtn = document.getElementById("seeAllReminder");
             if (seeAllBtn) {
                 seeAllBtn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    alert("📋 Semua pengingat:\n• Praktikum Jarkom (13:00 WIB)\n• RPL - Pretest (Besok 14:00 WIB)\n• Pretest PCD (Mulai 7 April)\n• Laporan Basis Data (Deadline 10 April)");
+                    alert(
+                        "📋 Semua pengingat:\n• Praktikum Jarkom (13:00 WIB)\n• RPL - Pretest (Besok 14:00 WIB)\n• Pretest PCD (Mulai 7 April)\n• Laporan Basis Data (Deadline 10 April)");
                 });
             }
 
-            // === MOBILE MENU TOGGLE ===
             const mobileToggle = document.getElementById("mobileMenuToggle");
             const sidebarNav = document.getElementById("sidebarNav");
-            
+
             if (mobileToggle && sidebarNav) {
                 mobileToggle.addEventListener("click", () => {
                     sidebarNav.classList.toggle("active");
@@ -929,15 +1185,14 @@
                 });
             }
 
-            // === SIDEBAR DROPDOWN INTERAKSI ===
             const hasSubItems = document.querySelectorAll(".has-sub");
             hasSubItems.forEach(item => {
                 const subUl = item.querySelector(".submenu");
                 const triggerDiv = item.querySelector(".sub-trigger");
-                
+
                 if (subUl && triggerDiv) {
                     subUl.style.display = "block";
-                    
+
                     triggerDiv.addEventListener("click", (e) => {
                         e.stopPropagation();
                         if (subUl.style.display === "none") {
@@ -953,7 +1208,6 @@
                 }
             });
 
-            // === INTERAKSI COURSE CARD ===
             const courseCards = document.querySelectorAll(".course-card");
             courseCards.forEach(card => {
                 card.addEventListener("click", () => {
@@ -961,7 +1215,6 @@
                 });
             });
 
-            // === CLOSE MOBILE MENU WHEN CLICKING NAV ITEM ===
             const navItems = document.querySelectorAll(".nav-item");
             navItems.forEach(item => {
                 item.addEventListener("click", () => {
@@ -976,7 +1229,6 @@
                 });
             });
 
-            // === SUBMENU ITEMS CLICK HANDLER ===
             const submenuItems = document.querySelectorAll(".submenu li");
             submenuItems.forEach(item => {
                 item.addEventListener("click", (e) => {
@@ -985,10 +1237,10 @@
                 });
             });
 
-            // === INITIAL RENDER ===
             renderReminders();
             renderAssignments();
         })();
     </script>
-</body>
+    </body>
+
 </html>

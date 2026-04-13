@@ -1,25 +1,20 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('mahasiswa/dashboard');
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [AuthController::class, 'index']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
 });
-Route::get('/c', function () {
-    return view('mahasiswa/praktikum');
-});
-Route::get('/d', function () {
-    return view('mahasiswa/pendaftaran');
-});
-Route::get('/a', function () {
-    return view('mahasiswa/presensi');
-});
-Route::get('/t', function () {
-    return view('mahasiswa/pretest');
-});
-Route::get('/r', function () {
-    return view('mahasiswa/riwayat');
-});
-Route::get('/n', function () {
-    return view('mahasiswa/nilai');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan');
+    Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:dosen');
+    Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:asisten');
+    Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
 });
