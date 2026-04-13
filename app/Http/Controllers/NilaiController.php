@@ -19,10 +19,12 @@ class NilaiController extends Controller
 
         try {
             if ($user->role === 'Praktikan') {
-                // Praktikan hanya melihat nilai mereka sendiri
                 $nilais = Nilai::where('id_user', $user->id)
                     ->with('praktikum', 'user')
                     ->get();
+
+                    //show 
+                return view('mahasiswa/nilai', compact('nilais', 'user'));
             } else {
                 // Non-Praktikan melihat semua nilai
                 $nilais = Nilai::with('praktikum', 'user')->get();
@@ -242,7 +244,7 @@ class NilaiController extends Controller
     /**
      * Get nilai by praktikum and pertemuan
      */
-     */
+    
     public function getByPraktikum($idPraktikum)
     {
         $user = Auth::user();
@@ -255,7 +257,7 @@ class NilaiController extends Controller
                     ->get();
             } else {
                 $nilais = Nilai::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user
+                    ->with('praktikum', 'user');
             }
 
             return response()->json([

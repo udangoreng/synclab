@@ -19,10 +19,11 @@ class PresensiController extends Controller
 
         try {
             if ($user->role === 'Praktikan') {
-                // Praktikan hanya melihat presensi mereka sendiri
                 $presensis = Presensi::where('id_user', $user->id)
                     ->with('praktikum', 'user')
                     ->get();
+
+                    return view('mahasiswa/presensi', compact('presensis'));
             } else {
                 // Non-Praktikan melihat semua presensi
                 $presensis = Presensi::with('praktikum', 'user')->get();

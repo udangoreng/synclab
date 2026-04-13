@@ -4,7 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PraktikumController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MahasiswaController;
 
 
 Route::middleware(['guest'])->group(function () {
@@ -16,10 +18,19 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan');
+    Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan')->name('mahasiswa');
     Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:dosen');
-    Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:asisten');
+    Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten');
     Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
+
+    Route::prefix('mahasiswa')->group(function () {
+        Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('pendaftaran');
+        Route::get('/praktikum', [PraktikumController::class, 'getMyPraktikum'])->name('praktikum');
+        Route::get('/pretest', [MahasiswaController::class, 'getMyPretest'])->name('pretest');
+        Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
+        Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
+        Route::get('/riwayat', [MahasiswaController::class, 'getMyHistory'])->name('riwayat');
+    });
 
     // Laboratorium routes 
     Route::get('/api/laboratorium', [LaboratoriumController::class, 'index']);
@@ -29,7 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/api/laboratorium/{id}', [LaboratoriumController::class, 'destroy'])->middleware('checkRole:admin');
 
     // Nilai routes 
-    Route::get('/api/nilai', [NilaiController::class, 'index']);
+    // Route::get('/api/nilai', [NilaiController::class, 'index']);
     Route::get('/api/nilai/{id}', [NilaiController::class, 'show']);
     Route::post('/api/nilai', [NilaiController::class, 'store']);
     Route::put('/api/nilai/{id}', [NilaiController::class, 'update']);
