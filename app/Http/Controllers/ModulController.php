@@ -62,4 +62,9 @@ class ModulController extends Controller
     {
         //
     }
+
+    public function addModul()
+    {
+        return view('asisten/manageModules_asisten');
+    }
 }

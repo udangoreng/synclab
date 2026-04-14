@@ -21,13 +21,15 @@ class PresensiController extends Controller
                     ->with(['praktikum', 'user'])
                     ->get();
 
-                    return view('mahasiswa/presensi', compact('presensis'));
-                    } else {
-                        $presensis = Presensi::with('praktikum', 'user')->get();
+                return view('mahasiswa/presensi', compact('presensis'));
+            } else {
+                $presensis = Presensi::with('praktikum', 'user')->get();
 
-                        if ($user->role === 'Dosen') {
-                            return view('dosen/presensi', compact('presensis'));
-                        }
+                if ($user->role === 'Dosen') {
+                    return view('dosen/presensi', compact('presensis'));
+                } elseif ($user->role === 'Asisten') {
+                    return view('asisten/presensiSatu_asisten', compact('presensis'));
+                }
             }
 
             return response()->json([
@@ -41,6 +43,11 @@ class PresensiController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    function getHistoryPresensi() {
+        $presensis = Presensi::with('praktikum', 'user')->get();
+        return view('asisten/presensiDua_asisten', compact('presensis'));
     }
 
     /**

@@ -23,13 +23,15 @@ class NilaiController extends Controller
                     ->with('praktikum', 'user')
                     ->get();
 
-                    //show 
+                //show 
                 return view('mahasiswa/nilai', compact('nilais', 'user'));
             } else {
                 $nilais = Nilai::with('praktikum', 'user')->get();
 
-                if($user->role === 'Dosen'){
+                if ($user->role === 'Dosen') {
                     return view('dosen/validasinilai', compact('nilais', 'user'));
+                } elseif ($user->role === 'Asisten') {
+                    return view('asisten/nilai_asisten', compact('nilais', 'user'));
                 }
             }
 
@@ -44,6 +46,11 @@ class NilaiController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function rekapNilai()
+    {
+        return view('asisten/rekapNilai_asisten');
     }
 
     /**
@@ -247,7 +254,7 @@ class NilaiController extends Controller
     /**
      * Get nilai by praktikum and pertemuan
      */
-    
+
     public function getByPraktikum($idPraktikum)
     {
         $user = Auth::user();

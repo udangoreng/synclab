@@ -1935,7 +1935,6 @@
                 });
             });
 
-            document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
         })();
     </script>
 </body>

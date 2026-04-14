@@ -7,7 +7,9 @@ use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PraktikumController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MahasiswaController;
-
+use App\Http\Controllers\ModulController;
+use App\Http\Controllers\PretestController;
+use App\Http\Controllers\LaporanController;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'index']);
@@ -20,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan')->name('mahasiswa');
     Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
-    Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten');
+    Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten')->name('asisten');
     Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
 
     Route::prefix('mahasiswa')->group(function () {
@@ -37,6 +39,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/validasi', [NilaiController::class, 'index'])->name('validasiNilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('cekPresensi');
         Route::get('/pendaftaran', [PraktikumController::class, 'cekStatusPendaftaran'])->name('cekPendaftaran');
+    });
+
+    Route::prefix('asisten')->group(function () {
+        Route::get('/praktikum', [PraktikumController::class, 'asistensiPraktikum'])->name('asistensi');
+        Route::get('/presensi', [PresensiController::class, 'index'])->name('konfirmasiPresensi');
+        Route::get('/presensi/history', [PresensiController::class, 'getHistoryPresensi'])->name('riwayatPresensi');
+        Route::get('/modul', [ModulController::class, 'addModul'])->name('addModul');
+        Route::get('/pretest', [PretestController::class, 'addPretest'])->name('addPretest');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');
+        Route::get('/nilai', [NilaiController::class, 'index'])->name('addNilai');
+        Route::get('/nilai/rekap', [NilaiController::class, 'rekapNilai'])->name('rekapNilai');
+        Route::get('/mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('seeMahasiswa');
     });
 
     // Laboratorium routes 

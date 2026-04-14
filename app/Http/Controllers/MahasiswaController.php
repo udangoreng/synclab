@@ -13,4 +13,8 @@ class MahasiswaController extends Controller
     function getMyHistory() {
         return view('mahasiswa/riwayat');
     }
+
+    function getMahasiswa() {
+        return view('asisten/mahasiswa_asisten');
+    }
 }

@@ -98,6 +98,11 @@ body {
   padding-left: 20px;
 }
 
+.dropdown ul.open {
+  display: block;
+  max-height: 200px;
+}
+
 .dropdown ul li {
   font-size: 14px;
   padding: 6px;
@@ -114,7 +119,6 @@ body {
 .main {
   flex: 1;
   padding: 30px;
-
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
@@ -143,7 +147,7 @@ body {
 .hero-image {
   height: 220px;
   border-radius: 12px;
-  background-image: url('hero-image.png');
+  background-image: url('../asisten_gambar/hero-image.png');
   background-size: cover;
   background-position: center;
   margin-top: 15px;

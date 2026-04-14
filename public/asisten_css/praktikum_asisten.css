@@ -6,7 +6,9 @@
 }
 
 body {
+  display: flex;
   background: #f4f6f9;
+  width: 100%;
 }
 
 .sidebar {
@@ -91,7 +93,7 @@ body {
 }
 
 .menu li:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .menu li i {
@@ -99,10 +101,10 @@ body {
 }
 
 .active {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.dropdown > div {
+.dropdown>div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -137,12 +139,12 @@ body {
   border-radius: 0 !important;
 }
 
-.dropdown > div {
+.dropdown>div {
   display: flex;
   align-items: center;
 }
 
-.dropdown > div i:first-child {
+.dropdown>div i:first-child {
   margin-right: 15px;
 }
 
@@ -156,8 +158,9 @@ body {
 }
 
 .main {
-  margin-left: 250px;
-  padding: 20px;
+  margin-left: 275px;
+  padding: 30px 40px;
+  width: calc(100% - 250px);
 }
 
 .content {
@@ -179,8 +182,8 @@ body {
 }
 
 .filter-box {
-    margin-top: 15px;
-    margin-bottom: 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .grid {
@@ -196,12 +199,23 @@ body {
   background: #e0f2fe;
 }
 
-.card:nth-child(2) { background: #fce7f3; }
-.card:nth-child(3) { background: #dcfce7; }
-.card:nth-child(4) { background: #ede9fe; }
-.card:nth-child(5) { background: #ffedd5; }
+.card:nth-child(2) {
+  background: #fce7f3;
+}
 
-.praktikum{
+.card:nth-child(3) {
+  background: #dcfce7;
+}
+
+.card:nth-child(4) {
+  background: #ede9fe;
+}
+
+.card:nth-child(5) {
+  background: #ffedd5;
+}
+
+.praktikum {
   font-weight: 500;
 }
 
@@ -238,7 +252,7 @@ body {
   border-radius: 10px;
   margin-left: 20px;
   flex: 1;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .schedule-card h4 {
@@ -272,7 +286,7 @@ body {
 }
 
 .schedule-card .fa-map-marker-alt {
-  color: #ef4444; 
+  color: #ef4444;
 }
 
 .thumb {
@@ -315,13 +329,16 @@ body {
   .grid {
     gap: 12px;
   }
+
   .thumb {
     width: 130px;
     height: 130px;
   }
+
   .card .info h4 {
     font-size: 15px;
   }
+
   .card .info p {
     font-size: 12px;
   }
@@ -331,19 +348,24 @@ body {
   .content {
     flex-direction: column;
   }
+
   .right {
     width: 100%;
   }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .timeline::before {
     left: 45px;
   }
+
   .time {
     width: 45px;
     font-size: 13px;
   }
+
   .schedule-card {
     margin-left: 15px;
   }
@@ -353,66 +375,83 @@ body {
   .menu-toggle {
     display: block;
   }
+
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1000;
   }
+
   .sidebar.show {
     transform: translateX(0);
   }
+
   .main {
     margin-left: 0;
     padding: 70px 15px 20px 15px;
   }
+
   .title {
     font-size: 20px;
     margin-bottom: 15px;
   }
+
   .grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+
   .card {
     flex-direction: column;
   }
+
   .thumb {
     width: 100%;
     height: 160px;
     margin-right: 0;
     margin-bottom: 12px;
   }
+
   .filter-box {
     flex-direction: column;
   }
+
   .filter-box input,
   .filter-box select {
     width: 100%;
   }
+
   .timeline::before {
     left: 35px;
   }
+
   .time {
     width: 35px;
     font-size: 12px;
   }
+
   .schedule-card {
     margin-left: 12px;
     padding: 10px;
   }
+
   .schedule-card h4 {
     font-size: 14px;
   }
+
   .schedule-card p {
     font-size: 12px;
   }
+
   .right {
     padding: 12px;
     margin-top: 20px;
   }
+
   .right h3 {
     font-size: 18px;
   }
+
   .left h3 {
     font-size: 18px;
   }
@@ -422,68 +461,87 @@ body {
   .main {
     padding: 65px 12px 15px 12px;
   }
+
   .title {
     font-size: 18px;
   }
+
   .thumb {
     height: 140px;
   }
+
   .card .info h4 {
     font-size: 14px;
   }
+
   .card .info p {
     font-size: 11px;
     margin: 4px 0;
   }
+
   .card .info .praktikum {
     font-size: 12px;
   }
+
   .filter-box {
     gap: 8px;
   }
+
   .filter-box input,
   .filter-box select {
     padding: 6px 10px;
     font-size: 13px;
   }
+
   .timeline-item {
     margin-bottom: 15px;
   }
+
   .timeline::before {
     left: 28px;
   }
+
   .time {
     width: 28px;
     font-size: 10px;
   }
+
   .schedule-card {
     margin-left: 10px;
     padding: 8px;
   }
+
   .schedule-card h4 {
     font-size: 13px;
   }
+
   .schedule-card p {
     font-size: 11px;
   }
+
   .schedule-card .praktikum {
     font-size: 11px;
   }
+
   .right {
     padding: 10px;
   }
+
   .right h3 {
     font-size: 16px;
   }
+
   .left h3 {
     font-size: 16px;
   }
+
   .menu-toggle {
     top: 12px;
     left: 12px;
     padding: 6px 10px;
     font-size: 1rem;
   }
+
   .sidebar {
     width: 260px;
   }
@@ -493,23 +551,29 @@ body {
   .main {
     padding: 60px 10px 12px 10px;
   }
+
   .thumb {
     height: 120px;
   }
+
   .time {
     width: 25px;
     font-size: 9px;
   }
+
   .timeline::before {
     left: 24px;
   }
+
   .schedule-card {
     margin-left: 8px;
     padding: 6px;
   }
+
   .schedule-card h4 {
     font-size: 12px;
   }
+
   .schedule-card p {
     font-size: 10px;
   }
@@ -519,6 +583,7 @@ body {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .thumb {
     width: 120px;
     height: 120px;
@@ -529,6 +594,7 @@ body {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .thumb {
     width: 140px;
     height: 140px;
@@ -539,8 +605,9 @@ body {
   .main {
     max-width: 1600px;
     margin: 0 auto;
-    margin-left: 250px;
+    margin-left: 275px;
   }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -551,13 +618,16 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
   }
+
   .timeline {
     margin-top: 10px;
   }
+
   .timeline-item {
     margin-bottom: 12px;
   }
+
   .schedule-card {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 }

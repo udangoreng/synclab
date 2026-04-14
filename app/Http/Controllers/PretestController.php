@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Praktikum;
 use Illuminate\Http\Request;
 
-class PraktikumController extends Controller
+class PretestController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +33,7 @@ class PraktikumController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Praktikum $praktikum)
+    public function show(string $id)
     {
         //
     }
@@ -42,7 +41,7 @@ class PraktikumController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Praktikum $praktikum)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +49,7 @@ class PraktikumController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Praktikum $praktikum)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,33 +57,13 @@ class PraktikumController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Praktikum $praktikum)
+    public function destroy(string $id)
     {
         //
     }
 
-    function pendaftaranShow()
+    public function addPretest()
     {
-        return view('mahasiswa/pendaftaran');
-    }
-
-    function getMyPraktikum()
-    {
-        return view('mahasiswa/praktikum');
-    }
-
-    function monitoringPraktikum()
-    {
-        return view('dosen/monitoring');
-    }
-
-    function cekStatusPendaftaran()
-    {
-        return view('dosen/statuspendaftaran');
-    }
-
-    function asistensiPraktikum()
-    {
-        return view('asisten/praktikum_asisten');
+        return view('asisten/managePretest_asisten');
     }
 }

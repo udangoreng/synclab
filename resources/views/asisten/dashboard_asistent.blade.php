@@ -4,82 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Asisten</title>
-    <link rel="stylesheet" href="{{asset('asisten_css/dashboard_asisten.css')}}">
+    <link rel="stylesheet" href="{{ asset('asisten_css/dashboard_asisten.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
-
-    <button onclick="toggleSidebar()" class="menu-toggle">☰</button>
-
-    <aside class="sidebar" id="sidebar">
-        <div class="profile">
-            <div class="avatar">
-                <i class="fas fa-user-graduate"></i>
-            </div>
-            <h4>Caca</h4>
-            <span>Asisten</span>
-            <small>NIP 24051204204</small>
-        </div>
-
-        <ul class="menu">
-            <li class="active" onclick="goPage('dashboard_asistent.html')">
-                <i class="fas fa-home"></i> Dashboard
-            </li>
-
-            <li onclick="goPage('praktikum_asisten.html')">
-                <i class="fas fa-laptop-code"></i> Practicum
-            </li>
-
-            <li class="dropdown">
-                <div onclick="toggleDropdown('presensi')">
-                    <i class="fas fa-calendar-check"></i> Attendance
-                    <i class="fas fa-chevron-down right"></i>
-                </div>
-
-                <ul id="presensi">
-                    <li onclick="goPage('presensiSatu_asisten.html')">Record Attendance</li>
-                    <li onclick="goPage('presensiDua_asisten.html')">Attendance History</li>
-                </ul>
-            </li>
-
-            <li class="dropdown">
-                <div onclick="toggleDropdown('modul')">
-                    <i class="fas fa-book"></i> Resource & Test
-                    <i class="fas fa-chevron-down right"></i>
-                </div>
-
-                <ul id="modul">
-                    <li onclick="goPage('manageModules_asisten.html')">Add Resource</li>
-                    <li onclick="goPage('managePretest_asisten.html')">Create Test</li>
-                </ul>
-            </li>
-
-            <li onclick="goPage('laporan_asisten.html')">
-                <i class="fas fa-file"></i> Reports
-            </li>
-
-            <li class="dropdown">
-                <div onclick="toggleDropdown('nilai')">
-                    <i class="fas fa-chart-line"></i> Grades
-                    <i class="fas fa-chevron-down right"></i>
-                </div>
-
-                <ul id="nilai">
-                    <li onclick="goPage('nilai_asisten.html')">Record Grades</li>
-                    <li onclick="goPage('rekapNilai_asisten.html')">Grade Summary</li>
-                </ul>
-            </li>
-
-            <li onclick="goPage('mahasiswa_asisten.html')">
-                <i class="fas fa-users"></i> Students
-            </li>
-        </ul>
-
-        <button class="logout" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-    </aside>
+    @include('Asisten/partials/sidebar')
 
     <main class="main">
         <section class="hero">
@@ -335,10 +265,10 @@
                 <div class="attendance-container">
 
                     <div class="attendance-list">
-                        <div class="pill active" onclick="showDetail(0)">Pemrograman Dasar</div>
-                        <div class="pill" onclick="showDetail(1)">Rekayasa Perangkat Lunak</div>
-                        <div class="pill" onclick="showDetail(2)">Pengolahan Citra Digital</div>
-                        <div class="pill" onclick="showDetail(3)">Jaringan Komputer</div>
+                        <div class="pill active">Pemrograman Dasar</div>
+                        <div class="pill">Rekayasa Perangkat Lunak</div>
+                        <div class="pill">Pengolahan Citra Digital</div>
+                        <div class="pill">Jaringan Komputer</div>
                     </div>
 
                     <div class="attendance-detail" id="detailBox"></div>
@@ -348,7 +278,121 @@
 
     </main>
 
-    <script src="{{asset('asisten_js/dashboard_asisten.js')}}"></script>
+    <script>
+        let currentDate = new Date();
+
+        function renderCalendar() {
+            const monthYear = document.getElementById("monthYear");
+            const calendarDates = document.getElementById("calendarDates");
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            const monthNames = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+
+            monthYear.innerText = `${monthNames[month]} ${year}`;
+            calendarDates.innerHTML = "";
+
+            let start = firstDay === 0 ? 6 : firstDay - 1;
+
+            for (let i = 0; i < start; i++) {
+                calendarDates.innerHTML += `<div></div>`;
+            }
+
+            const today = new Date();
+
+            for (let i = 1; i <= lastDate; i++) {
+                let isToday =
+                    i === today.getDate() &&
+                    month === today.getMonth() &&
+                    year === today.getFullYear();
+
+                calendarDates.innerHTML += `
+      <div class="${isToday ? "today" : ""}">
+        ${i}
+      </div>
+    `;
+            }
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        const data = [{
+                title: "Pemrograman Dasar",
+                practicum: "Struktur Kontrol (If, Switch)",
+                room: "Lab RPL",
+                date: "2 January 2026",
+                time: "09.00 - 11.00",
+                total: "33 mhs"
+            },
+            {
+                title: "Rekayasa Perangkat Lunak",
+                practicum: "Pengujian Perangkat Lunak",
+                room: "Lab RPL",
+                date: "9 January 2026",
+                time: "09.00 - 11.00",
+                total: "30 mhs"
+            },
+            {
+                title: "Pengolahan Citra Digital",
+                practicum: "Transformasi Citra (Negatif, Thresholding)",
+                room: "Lab Multimedia",
+                date: "16 January 2026",
+                time: "09.00 - 11.00",
+                total: "28 mhs"
+            },
+            {
+                title: "Jaringan Komputer",
+                practicum: "Simulasi Jaringan (Packet Tracer)",
+                room: "Lab Jaringan",
+                date: "23 January 2026",
+                time: "09.00 - 11.00",
+                total: "32 mhs"
+            }
+        ];
+
+        const colors = ["pink", "blue", "green", "yellow"];
+
+        function showDetail(index) {
+            const pills = document.querySelectorAll(".pill");
+            pills.forEach(p => p.classList.remove("active"));
+            pills[index].classList.add("active");
+
+            const box = document.getElementById("detailBox");
+            box.className = "attendance-detail " + colors[index];
+
+            const d = data[index];
+
+            box.innerHTML = `
+    <div class="detail-title">${d.title}</div>
+    <div class="detail-item"><b>Practicum:</b> ${d.practicum}</div>
+    <div class="detail-item"><b>Ruangan:</b> ${d.room}</div>
+    <div class="detail-item"><b>Hari/Tgl:</b> ${d.date}</div>
+    <div class="detail-item"><b>Jam:</b> ${d.time}</div>
+    <div class="detail-item"><b>Jumlah:</b> ${d.total}</div>
+    <div class="input-btn" onclick="goPage('presensi_asisten.html')">Input</div>
+  `;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderCalendar();
+            showDetail(0);
+        });
+    </script>
 </body>
 
 </html>
