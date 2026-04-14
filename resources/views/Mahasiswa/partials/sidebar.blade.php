@@ -20,8 +20,11 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-            position: relative;
             z-index: 100;
+            max-height: 100vh;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
         }
 
         .sidebar-header {

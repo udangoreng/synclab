@@ -21,8 +21,11 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-            position: relative;
             z-index: 100;
+            max-height: 100vh;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
         }
 
         .sidebar-header {
@@ -168,13 +171,18 @@
             <ul class="nav-menu">
                 <li class="nav-item {{ request()->routeIs('dosen') ? 'active' : '' }}"><a href={{ route('dosen') }}><i
                             class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}"><a href={{ route('monitoring') }}><i class="fas fa-eye"></i> Monitoring</a></li>
-                <li class="nav-item {{ request()->routeIs('validasiNilai') ? 'active' : '' }}"><a href={{ route('validasiNilai') }}><i class="fas fa-check-double"></i> Validasi Nilai</a></li>
-                <li class="nav-item {{ request()->routeIs('cekPresensi') ? 'active' : '' }}"><a href={{ route('cekPresensi') }}><i class="fas fa-fingerprint"></i> Presensi</a></li>
-                <li class="nav-item {{ request()->routeIs('cekPendaftaran') ? 'active' : '' }}"><a href={{ route('cekPendaftaran') }}><i class="fas fa-clipboard-list"></i> Status Pendaftaran</a></li>
+                <li class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}"><a
+                        href={{ route('monitoring') }}><i class="fas fa-eye"></i> Monitoring</a></li>
+                <li class="nav-item {{ request()->routeIs('validasiNilai') ? 'active' : '' }}"><a
+                        href={{ route('validasiNilai') }}><i class="fas fa-check-double"></i> Validasi Nilai</a></li>
+                <li class="nav-item {{ request()->routeIs('cekPresensi') ? 'active' : '' }}"><a
+                        href={{ route('cekPresensi') }}><i class="fas fa-fingerprint"></i> Presensi</a></li>
+                <li class="nav-item {{ request()->routeIs('cekPendaftaran') ? 'active' : '' }}"><a
+                        href={{ route('cekPendaftaran') }}><i class="fas fa-clipboard-list"></i> Status Pendaftaran</a>
+                </li>
             </ul>
             <div class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i> Log Out
+                <a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
             </div>
         </div>
     </aside>
