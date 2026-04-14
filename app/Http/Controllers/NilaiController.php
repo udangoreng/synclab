@@ -26,8 +26,11 @@ class NilaiController extends Controller
                     //show 
                 return view('mahasiswa/nilai', compact('nilais', 'user'));
             } else {
-                // Non-Praktikan melihat semua nilai
                 $nilais = Nilai::with('praktikum', 'user')->get();
+
+                if($user->role === 'Dosen'){
+                    return view('dosen/validasinilai', compact('nilais', 'user'));
+                }
             }
 
             return response()->json([

@@ -63,11 +63,23 @@ class PraktikumController extends Controller
         //
     }
 
-    function pendaftaranShow(){
+    function pendaftaranShow()
+    {
         return view('mahasiswa/pendaftaran');
     }
 
-    function getMyPraktikum() {
+    function getMyPraktikum()
+    {
         return view('mahasiswa/praktikum');
+    }
+
+    function monitoringPraktikum()
+    {
+        return view('dosen/monitoring');
+    }
+
+    function cekStatusPendaftaran()
+    {
+        return view('dosen/statuspendaftaran');
     }
 }

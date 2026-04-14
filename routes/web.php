@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan')->name('mahasiswa');
-    Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:dosen');
+    Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
     Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten');
     Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
 
@@ -30,6 +30,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
         Route::get('/riwayat', [MahasiswaController::class, 'getMyHistory'])->name('riwayat');
+    });
+
+    Route::prefix('dosen')->group(function () {
+        Route::get('/monitoring', [PraktikumController::class, 'monitoringPraktikum'])->name('monitoring');
+        Route::get('/validasi', [NilaiController::class, 'index'])->name('validasiNilai');
+        Route::get('/presensi', [PresensiController::class, 'index'])->name('cekPresensi');
+        Route::get('/pendaftaran', [PraktikumController::class, 'cekStatusPendaftaran'])->name('cekPendaftaran');
     });
 
     // Laboratorium routes 
