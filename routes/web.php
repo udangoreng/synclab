@@ -26,8 +26,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
 
     Route::prefix('mahasiswa')->group(function () {
-        Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('pendaftaran');
-        Route::get('/praktikum', [PraktikumController::class, 'getMyPraktikum'])->name('praktikum');
+        Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('praktikum');
+        Route::get('/praktikum', [PraktikumController::class, 'getMyPraktikum'])->name('pendaftaran');
         Route::get('/pretest', [MahasiswaController::class, 'getMyPretest'])->name('pretest');
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
