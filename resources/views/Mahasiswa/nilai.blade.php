@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-nilai.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -50,7 +48,6 @@
             color: #1e293b;
         }
 
-        /* TAB NAVIGATION */
         .tab-navigation {
             display: flex;
             gap: 12px;
@@ -90,7 +87,6 @@
             display: block;
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -145,7 +141,6 @@
             transform: translateY(-2px);
         }
 
-        /* SCORES GRID */
         .scores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -214,7 +209,6 @@
             color: #10b981;
         }
 
-        /* NILAI AKHIR STYLES */
         .final-scores-container {
             display: flex;
             flex-direction: column;
@@ -380,20 +374,17 @@
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-star"></i> My Score</h1>
             </div>
 
-            <!-- TAB NAVIGATION -->
             <div class="tab-navigation">
                 <button class="tab-btn active" data-tab="pretest">Nilai Pretest</button>
                 <button class="tab-btn" data-tab="laporan">Nilai Laporan</button>
                 <button class="tab-btn" data-tab="akhir">Nilai Akhir</button>
             </div>
 
-            <!-- TAB PRETEST (Gambar 1) -->
             <div id="tab-pretest" class="tab-content active">
                 <div class="filter-section">
                     <div class="filter-group">
@@ -408,7 +399,6 @@
                 <div class="scores-grid" id="pretestGrid"></div>
             </div>
 
-            <!-- TAB LAPORAN (Gambar 2) -->
             <div id="tab-laporan" class="tab-content">
                 <div class="filter-section">
                     <div class="filter-group">
@@ -423,7 +413,6 @@
                 <div class="scores-grid" id="laporanGrid"></div>
             </div>
 
-            <!-- TAB NILAI AKHIR (Gambar 3) -->
             <div id="tab-akhir" class="tab-content">
                 <div class="filter-section">
                     <div class="filter-group">
@@ -440,9 +429,7 @@
         </main>
     </div>
     <script>
-        // script-nilai.js
         (function() {
-            // Data Nilai Mahasiswa
             const nilaiData = {
                 "Jaringan Komputer": {
                     pretest: [{
@@ -622,7 +609,6 @@
                 }
             };
 
-            // Hitung nilai akhir (rata-rata pretest + laporan) / 2
             function hitungNilaiAkhir(matkul) {
                 const pretests = nilaiData[matkul]?.pretest || [];
                 const laporans = nilaiData[matkul]?.laporan || [];
@@ -635,7 +621,6 @@
                 return Math.round((avgPretest + avgLaporan) / 2);
             }
 
-            // Update dropdown filters
             function updateDropdowns() {
                 const matkuls = Object.keys(nilaiData);
                 const options = '<option value="all">Semua Mata Kuliah</option>' + matkuls.map(m =>
@@ -645,7 +630,6 @@
                 document.getElementById('filterAkhirMatkul').innerHTML = options;
             }
 
-            // Render Nilai Pretest (Gambar 1)
             function renderPretest() {
                 const selectedMatkul = document.getElementById('filterPretestMatkul').value;
                 const container = document.getElementById('pretestGrid');
@@ -685,7 +669,6 @@
                 });
             }
 
-            // Render Nilai Laporan (Gambar 2)
             function renderLaporan() {
                 const selectedMatkul = document.getElementById('filterLaporanMatkul').value;
                 const container = document.getElementById('laporanGrid');
@@ -725,7 +708,6 @@
                 });
             }
 
-            // Render Nilai Akhir (Gambar 3)
             function renderNilaiAkhir() {
                 const selectedMatkul = document.getElementById('filterAkhirMatkul').value;
                 const container = document.getElementById('akhirContainer');
@@ -743,7 +725,6 @@
                     const laporans = nilaiData[matkul]?.laporan || [];
                     const nilaiAkhir = hitungNilaiAkhir(matkul);
 
-                    // Gabungkan data pretest dan laporan untuk ditampilkan dalam satu tabel
                     const maxLength = Math.max(pretests.length, laporans.length);
                     const rows = [];
                     for (let i = 0; i < maxLength; i++) {
@@ -798,7 +779,6 @@
                 });
             }
 
-            // TAB NAVIGATION
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = {
                 pretest: document.getElementById('tab-pretest'),
@@ -814,7 +794,6 @@
                     else btn.classList.remove('active');
                 });
 
-                // Refresh konten saat tab diubah
                 if (tabId === 'pretest') renderPretest();
                 else if (tabId === 'laporan') renderLaporan();
                 else if (tabId === 'akhir') renderNilaiAkhir();
@@ -824,16 +803,13 @@
                 btn.addEventListener('click', () => switchTab(btn.dataset.tab));
             });
 
-            // Filter event listeners
             document.getElementById('applyPretestFilter').addEventListener('click', renderPretest);
             document.getElementById('applyLaporanFilter').addEventListener('click', renderLaporan);
             document.getElementById('applyAkhirFilter').addEventListener('click', renderNilaiAkhir);
 
-            // Initialize
             updateDropdowns();
             renderPretest();
 
-            // MOBILE MENU TOGGLE
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -845,7 +821,6 @@
                 });
             }
 
-            // SIDEBAR DROPDOWN
             document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -855,7 +830,6 @@
             });
 
 
-            // SUBMENU NAVIGATION
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Nilai')) return;

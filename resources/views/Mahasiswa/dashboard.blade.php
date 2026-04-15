@@ -26,7 +26,6 @@
             min-height: 100vh;
         }
         
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -47,7 +46,6 @@
             gap: 12px;
         }
 
-        /* HERO CARD */
         .hero-card {
             border-radius: 28px;
             margin-bottom: 32px;
@@ -92,7 +90,6 @@
             gap: 6px;
         }
 
-        /* TWO COLUMNS */
         .two-columns {
             display: flex;
             gap: 28px;
@@ -109,7 +106,6 @@
             min-width: 260px;
         }
 
-        /* GLASS CARD */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -195,7 +191,6 @@
             line-height: 1.4;
         }
 
-        /* PRAKTIKUM GRID */
         .section-title {
             font-weight: 700;
             font-size: 1.3rem;
@@ -241,7 +236,6 @@
             background: white;
         }
 
-        /* REMINDER */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -316,7 +310,6 @@
             color: #6b7280;
         }
 
-        /* ASSIGNMENTS */
         .task-list {
             margin-top: 14px;
         }
@@ -382,7 +375,6 @@
             text-align: center;
         }
 
-        /* ========= RESPONSIVE DESIGN ========= */
         @media (max-width: 1024px) {
             .main-content {
                 padding: 24px;
@@ -676,11 +668,9 @@
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <h1 class="page-title"><i class="fas fa-chart-simple"></i> Dashboard</h1>
 
-            <!-- HERO BOX -->
             <div class="hero-card">
                 <div class="hero-overlay">
                     <div class="hero-text">
@@ -694,9 +684,7 @@
             </div>
 
             <div class="two-columns">
-                <!-- LEFT COLUMN -->
                 <div class="left-col">
-                    <!-- NOTIFICATION CARD -->
                     <div class="glass-card">
                         <div class="notif-header">
                             <div>
@@ -723,7 +711,6 @@
                         </div>
                     </div>
 
-                    <!-- ALL PRAKTIKUM (8 Matkul dengan gambar & icon sesuai) -->
                     <div class="glass-card">
                         <div class="section-title">
                             <i class="fas fa-microscope"></i> All Praktikum
@@ -783,7 +770,6 @@
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN -->
                 <div class="right-col">
                     <!-- REMINDER -->
                     <div class="glass-card">
@@ -795,7 +781,6 @@
                         <div class="reminder-list" id="reminderContainer"></div>
                     </div>
 
-                    <!-- ASSIGNMENTS -->
                     <div class="glass-card">
                         <h3><i class="fas fa-tasks"></i> Assignments</h3>
                         <div id="assignmentsList" class="task-list"></div>

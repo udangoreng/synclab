@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-monitoring.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -74,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -130,7 +127,6 @@
             transform: translateY(-2px);
         }
 
-        /* STATS CARDS - 3 KOTAK */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -177,7 +173,6 @@
             opacity: 0.8;
         }
 
-        /* CHARTS ROW */
         .charts-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -217,7 +212,6 @@
             font-weight: 600;
         }
 
-        /* DATA TABLE */
         .data-table-card {
             background: white;
             border-radius: 24px;
@@ -335,7 +329,6 @@
             color: white;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -428,7 +421,6 @@
     <div class="dashboard-container">
         @include('dosen/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-eye"></i> Monitoring Praktikum</h1>
@@ -437,7 +429,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Praktikum</label>
@@ -470,7 +461,6 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- STATS CARDS (3 KOTAK) -->
             <div class="stats-cards">
                 <div class="stat-card-primary">
                     <div class="stat-icon"><i class="fas fa-user-check"></i></div>
@@ -519,7 +509,6 @@
                 </div>
             </div>
 
-            <!-- DETAIL PRAKTIKUM TABLE -->
             <div class="data-table-card">
                 <div class="table-header">
                     <h3><i class="fas fa-table-list"></i> Detail Praktikum</h3>
@@ -560,9 +549,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        // script-monitoring.js
         (function() {
-            // Data Mahasiswa lengkap
             const mahasiswaData = {
                 'Jaringan Komputer': {
                     '2024A': [{
@@ -786,7 +773,6 @@
                 }
             };
 
-            // Data grafik per kelas (untuk setiap pertemuan)
             const grafikData = {
                 '2024A': {
                     kehadiran: [85, 82, 88, 84, 86, 90],
@@ -807,7 +793,6 @@
             let rowsPerPage = 5;
             let filteredData = [];
 
-            // Inisialisasi Chart berdasarkan kelas
             function initCharts(kelas) {
                 // Jika kelas 'all', gunakan '2024A' sebagai default
                 const kelasKey = (kelas === 'all' || !kelas) ? '2024A' : kelas;
@@ -817,7 +802,6 @@
                 document.getElementById('kehadiranKelasLabel').innerText = `Kelas ${kelasKey}`;
                 document.getElementById('nilaiKelasLabel').innerText = `Kelas ${kelasKey}`;
 
-                // Kehadiran Chart
                 const ctxKehadiran = document.getElementById('kehadiranChart').getContext('2d');
                 if (kehadiranChart) kehadiranChart.destroy();
                 kehadiranChart = new Chart(ctxKehadiran, {
@@ -854,7 +838,6 @@
                     }
                 });
 
-                // Nilai Chart
                 const ctxNilai = document.getElementById('nilaiChart').getContext('2d');
                 if (nilaiChart) nilaiChart.destroy();
                 nilaiChart = new Chart(ctxNilai, {
@@ -892,7 +875,6 @@
                 });
             }
 
-            // Update statistik berdasarkan filter
             function updateStats(matkul, kelas) {
                 let totalHadir = 0;
                 let totalMahasiswa = 0;
@@ -960,21 +942,17 @@
                 document.getElementById('laporanSelesai').innerText = totalLaporan;
             }
 
-            // Filter dan render semua (tabel, statistik, grafik)
             function filterAndRender() {
                 const matkul = document.getElementById('filterPraktikum').value;
                 const kelas = document.getElementById('filterKelas').value;
                 const pertemuan = document.getElementById('filterPertemuan').value;
 
-                // UPDATE GRAFIK BERDASARKAN KELAS YANG DIPILIH
-                // Jika kelas 'all', gunakan '2024A' untuk grafik
                 let kelasUntukGrafik = kelas;
                 if (kelas === 'all') {
                     kelasUntukGrafik = '2024A';
                 }
                 initCharts(kelasUntukGrafik);
 
-                // Kumpulkan data untuk tabel
                 let data = [];
 
                 if (matkul === 'all') {
@@ -1065,7 +1043,6 @@
                 document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data mahasiswa`;
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', filterAndRender);
             document.getElementById('tableSearch').addEventListener('input', () => {
                 currentPage = 1;
@@ -1085,10 +1062,8 @@
                 }
             });
 
-            // Export
             document.querySelector('.export-btn').addEventListener('click', () => {});
 
-            // Mobile menu
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -1106,14 +1081,12 @@
             }
 
 
-            // Nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Monitoring')) return;
                 });
             });
 
-            // Inisialisasi awal
             initCharts('2024A');
             filterAndRender();
         })();

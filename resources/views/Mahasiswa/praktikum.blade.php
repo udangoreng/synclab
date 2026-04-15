@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-pendaftaran-praktikum.css (sama seperti sebelumnya, tambahan untuk badge) */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -50,7 +48,6 @@
             color: #1e293b;
         }
 
-        /* TAB NAVIGATION */
         .tab-navigation {
             display: flex;
             gap: 12px;
@@ -90,7 +87,6 @@
             display: block;
         }
 
-        /* COURSES GRID */
         .courses-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -156,7 +152,6 @@
             color: white;
         }
 
-        /* MODUL SECTION */
         .modul-list {
             display: flex;
             flex-direction: column;
@@ -239,7 +234,6 @@
             cursor: not-allowed;
         }
 
-        /* FORM GROUP */
         .form-group {
             margin-bottom: 20px;
         }
@@ -268,7 +262,6 @@
             border-color: #3b82f6;
         }
 
-        /* SCHEDULE CARDS */
         .schedule-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -341,7 +334,6 @@
             background: #2563eb;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -444,7 +436,6 @@
             font-weight: 500;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -519,20 +510,17 @@
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-flask"></i> My Praktikum</h1>
             </div>
 
-            <!-- TAB NAVIGATION (All, Upcoming, Completed) -->
             <div class="tab-navigation">
                 <button class="tab-btn active" data-tab="active">Active</button>
                 <button class="tab-btn" data-tab="upcoming">Upcoming</button>
                 <button class="tab-btn" data-tab="completed">Completed</button>
             </div>
 
-            <!-- TAB CONTENT: ALL (Modul 1-4 Tersedia) -->
             <div id="tab-all" class="tab-content active">
                 <div class="courses-grid">
                     <div class="course-card" data-course="pemrograman-dasar">
@@ -625,7 +613,6 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT: UPCOMING (Modul 5-8 Belum Tersedia) -->
             <div id="tab-upcoming" class="tab-content">
                 <div class="courses-grid">
                     <!-- Sama seperti all tapi dengan data-type="upcoming" -->
@@ -719,7 +706,6 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT: COMPLETED (Modul yang sudah selesai) -->
             <div id="tab-completed" class="tab-content">
                 <div class="courses-grid">
                     <div class="course-card" data-course="pemrograman-dasar-completed">
@@ -814,7 +800,6 @@
         </main>
     </div>
 
-    <!-- MODAL GAMBAR 2: Detail Modul Praktikum -->
     <div class="modal" id="modalModul">
         <div class="modal-content modal-large">
             <div class="modal-header">
@@ -825,7 +810,6 @@
         </div>
     </div>
 
-    <!-- MODAL GAMBAR 3: Form Data Diri -->
     <div class="modal" id="modalFormDiri">
         <div class="modal-content">
             <div class="modal-header">
@@ -852,7 +836,6 @@
         </div>
     </div>
 
-    <!-- MODAL GAMBAR 4: Pilih Jadwal -->
     <div class="modal" id="modalSchedule">
         <div class="modal-content modal-large">
             <div class="modal-header">
@@ -863,9 +846,7 @@
         </div>
     </div>
     <script>
-        // script-pendaftaran-praktikum.js
         (function() {
-            // Data Modul untuk ALL (Modul 1-4 Tersedia)
             const modulDataAll = {
                 'pemrograman-dasar': {
                     name: "Pemrograman Dasar",
@@ -1061,7 +1042,6 @@
                 }
             };
 
-            // Data Modul untuk UPCOMING (Modul 5-8 Belum Tersedia)
             const modulDataUpcoming = {
                 'pemrograman-dasar': {
                     name: "Pemrograman Dasar",
@@ -1257,7 +1237,6 @@
                 }
             };
 
-            // Data Modul untuk COMPLETED (Modul yang sudah selesai)
             const modulDataCompleted = {
                 'pemrograman-dasar': {
                     name: "Pemrograman Dasar",
@@ -1485,9 +1464,7 @@
                 }
             };
 
-            // script-pendaftaran-praktikum.js (bagian scheduleData dan openScheduleModal saja yang diubah, sisanya sama seperti kode sebelumnya)
 
-            // ==================== DATA JADWAL DENGAN BANYAK PILIHAN ====================
             const scheduleData = {
                 'pemrograman-dasar': [{
                         lab: "Lab Multimedia Lt.3",
@@ -1691,7 +1668,6 @@
                 ]
             };
 
-            // ==================== FUNCTION OPEN SCHEDULE MODAL (DENGAN BANYAK PILIHAN) ====================
             function openScheduleModal() {
                 const schedules = scheduleData[selectedCourse] || [];
 
@@ -1724,7 +1700,6 @@
                 modalScheduleBody.innerHTML = html;
                 modalSchedule.classList.add('active');
 
-                // Event listener untuk tombol pilih jadwal
                 document.querySelectorAll('#modalScheduleBody .btn-pilih:not(:disabled)').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1749,7 +1724,6 @@
             let selectedSchedule = null;
             let currentTabType = 'all';
 
-            // DOM Elements
             const modalModul = document.getElementById('modalModul');
             const modalFormDiri = document.getElementById('modalFormDiri');
             const modalSchedule = document.getElementById('modalSchedule');
@@ -1871,7 +1845,6 @@
                 });
             }
 
-            // Event listeners untuk tombol More
             document.querySelectorAll('.btn-more').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1915,7 +1888,6 @@
             }
             tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-            // MOBILE MENU
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {

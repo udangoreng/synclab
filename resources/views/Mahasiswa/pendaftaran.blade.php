@@ -30,7 +30,6 @@
             min-height: 100vh;
         }
         
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -73,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -128,7 +126,6 @@
             transform: translateY(-2px);
         }
 
-        /* SUMMARY CARDS */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -170,7 +167,6 @@
             color: #1e293b;
         }
 
-        /* DATA TABLE */
         .data-table-card {
             background: white;
             border-radius: 24px;
@@ -307,7 +303,6 @@
             color: white;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -412,7 +407,6 @@
             color: #1e293b;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -481,7 +475,6 @@
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-pen-ruler"></i> Pendaftaran Saya</h1>
@@ -490,7 +483,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-filter"></i> Filter Status</label>
@@ -518,7 +510,6 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- SUMMARY CARDS -->
             <div class="summary-cards">
                 <div class="summary-card">
                     <div class="summary-icon" style="background: linear-gradient(135deg, #10b981, #047857);">
@@ -549,7 +540,6 @@
                 </div>
             </div>
 
-            <!-- DATA TABLE -->
             <div class="data-table-card">
                 <div class="table-header">
                     <h3><i class="fas fa-table-list"></i> Daftar Pendaftaran Praktikum</h3>
@@ -574,7 +564,6 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -590,7 +579,6 @@
         </main>
     </div>
 
-    <!-- Modal Detail -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -604,9 +592,7 @@
         </div>
     </div>
     <script>
-        // script-pendaftaran-saya.js
         (function() {
-            // Data Pendaftaran Mahasiswa (Hasil dari daftar praktikum)
             let pendaftaranData = [{
                     id: 1,
                     matkul: "Jaringan Komputer",
@@ -824,7 +810,6 @@
                 alert('📥 Data berhasil diekspor!');
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', filterData);
             document.getElementById('tableSearch').addEventListener('input', () => {
                 currentPage = 1;
@@ -851,7 +836,6 @@
                 if (e.target.classList.contains('modal')) closeModal();
             });
 
-            // Mobile Menu
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -873,7 +857,6 @@
 
             document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
 
-            // Tab Navigation untuk sidebar
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Pendaftaran Saya')) return;

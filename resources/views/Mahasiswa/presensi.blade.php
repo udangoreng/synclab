@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-presensi-mhs.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -50,7 +48,6 @@
             color: #1e293b;
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -105,7 +102,6 @@
             transform: translateY(-2px);
         }
 
-        /* PRESENSI GRID */
         .presensi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -253,7 +249,6 @@
             color: white;
         }
 
-        /* MODAL DETAIL */
         .modal {
             display: none;
             position: fixed;
@@ -344,7 +339,6 @@
             font-weight: 500;
         }
 
-        /* Detail Presensi */
         .detail-header {
             text-align: center;
             margin-bottom: 24px;
@@ -465,7 +459,6 @@
             color: #64748b;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -549,13 +542,11 @@
     <div class="dashboard-container">
       @include('mahasiswa/partials/sidebar')
       
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-fingerprint"></i> My Presensi</h1>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -566,12 +557,10 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- PRESENSI GRID -->
             <div class="presensi-grid" id="presensiGrid"></div>
         </main>
     </div>
 
-    <!-- MODAL DETAIL PRESENSI -->
     <div class="modal" id="detailModal">
         <div class="modal-content modal-large">
             <div class="modal-header">
@@ -585,9 +574,7 @@
         </div>
     </div>
     <script>
-        // script-presensi-mhs.js
         (function() {
-            // Data Presensi Mahasiswa
             const presensiData = {
                 "Jaringan Komputer": {
                     totalPertemuan: 14,
@@ -809,7 +796,6 @@
 
             let filteredData = [];
 
-            // Update dropdown filter
             function updateDropdown() {
                 const matkuls = Object.keys(presensiData);
                 const select = document.getElementById('filterMatkul');
@@ -817,14 +803,12 @@
                     matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
             }
 
-            // Hitung persentase kehadiran
             function hitungPersentase(pertemuan) {
                 const hadir = pertemuan.filter(p => p.status === "Hadir").length;
                 const total = pertemuan.length;
                 return Math.round((hadir / total) * 100);
             }
 
-            // Hitung statistik
             function hitungStatistik(pertemuan) {
                 const hadir = pertemuan.filter(p => p.status === "Hadir").length;
                 const izin = pertemuan.filter(p => p.status === "Izin").length;
@@ -839,7 +823,6 @@
                 };
             }
 
-            // Render presensi cards
             function renderPresensi() {
                 const selectedMatkul = document.getElementById('filterMatkul').value;
 
@@ -905,13 +888,11 @@
                     container.appendChild(card);
                 });
 
-                // Attach event listeners to buttons
                 document.querySelectorAll('.btn-lihat').forEach(btn => {
                     btn.addEventListener('click', () => openDetailModal(btn.dataset.matkul));
                 });
             }
 
-            // Open detail modal
             function openDetailModal(matkul) {
                 const data = presensiData[matkul];
                 if (!data) return;
@@ -976,7 +957,6 @@
                 document.getElementById('detailModal').classList.remove('active');
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', renderPresensi);
             document.getElementById('closeDetailModal').addEventListener('click', closeModal);
             document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
@@ -984,11 +964,9 @@
                 if (e.target.classList.contains('modal')) closeModal();
             });
 
-            // Initialize
             updateDropdown();
             renderPresensi();
 
-            // MOBILE MENU TOGGLE
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -1000,7 +978,6 @@
                 });
             }
 
-            // SIDEBAR DROPDOWN
             document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1009,7 +986,6 @@
                 });
             });
 
-            // SUBMENU NAVIGATION
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Presensi')) return;

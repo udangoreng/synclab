@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-register.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* Decorative Circles */
         .decoration-circle {
             position: absolute;
             border-radius: 50%;
@@ -60,7 +58,6 @@
             left: 15%;
         }
 
-        /* Register Container */
         .register-container {
             width: 100%;
             min-height: 100vh;
@@ -72,7 +69,6 @@
             z-index: 1;
         }
 
-        /* Register Card */
         .register-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -97,7 +93,6 @@
             }
         }
 
-        /* Register Header */
         .register-header {
             text-align: center;
             margin-bottom: 32px;
@@ -135,14 +130,12 @@
             font-size: 0.9rem;
         }
 
-        /* Register Form */
         .register-form {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Input Group */
         .input-group {
             display: flex;
             align-items: center;
@@ -224,7 +217,6 @@
             color: #818cf8;
         }
 
-        /* Register Button */
         .register-btn {
             background: linear-gradient(135deg, #818cf8, #c084fc);
             border: none;
@@ -251,7 +243,6 @@
             transform: translateY(0);
         }
 
-        /* Login Link */
         .login-link {
             text-align: center;
             padding-top: 16px;
@@ -275,7 +266,6 @@
             text-decoration: underline;
         }
 
-        /* Error States */
         .input-group.error {
             border-color: #ef4444;
             animation: shake 0.3s ease;
@@ -307,7 +297,6 @@
             gap: 4px;
         }
 
-        /* Success Message */
         .success-message {
             background: #dcfce7;
             color: #16a34a;
@@ -333,7 +322,6 @@
             }
         }
 
-        /* Responsive */
         @media (max-width: 560px) {
             .register-card {
                 padding: 32px 24px;
@@ -373,7 +361,6 @@
             }
         }
 
-        /* Animation for inputs */
         .input-field input:focus {
             animation: pulse 0.3s ease;
         }
@@ -479,14 +466,12 @@
             </form>
         </div>
 
-        <!-- Decorative elements -->
         <div class="decoration-circle circle-1"></div>
         <div class="decoration-circle circle-2"></div>
         <div class="decoration-circle circle-3"></div>
     </div>
 
     <script>
-        // script-register.js
         (function() {
             // Toggle Password Visibility for Password field
             const togglePassword = document.getElementById('togglePassword');
@@ -502,7 +487,6 @@
                 });
             }
 
-            // Toggle Password Visibility for Confirm Password field
             const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
             const confirmPasswordInput = document.getElementById('confirmPassword');
 
@@ -516,29 +500,23 @@
                 });
             }
 
-            // Form elements
             const registerForm = document.getElementById('registerForm');
             const namaInput = document.getElementById('nama');
             const usernameInput = document.getElementById('username');
             const emailInput = document.getElementById('email');
             const nimNipInput = document.getElementById('nimNip');
 
-            // Helper function to show error
             function showError(inputGroup, message) {
-                // Remove existing error
                 const existingError = inputGroup.parentElement.querySelector('.error-message');
                 if (existingError) existingError.remove();
 
-                // Add error class
                 inputGroup.classList.add('error');
 
-                // Add error message
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'error-message';
                 errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
                 inputGroup.parentElement.insertBefore(errorDiv, inputGroup.nextSibling);
 
-                // Remove error after 3 seconds
                 setTimeout(() => {
                     inputGroup.classList.remove('error');
                     const err = inputGroup.parentElement.querySelector('.error-message');
@@ -546,14 +524,12 @@
                 }, 3000);
             }
 
-            // Helper function to remove error
             function removeError(inputGroup) {
                 inputGroup.classList.remove('error');
                 const err = inputGroup.parentElement.querySelector('.error-message');
                 if (err) err.remove();
             }
 
-            // Validation functions
             function validateNama(nama) {
                 return nama.trim().length >= 3;
             }
@@ -579,9 +555,7 @@
                 return password === confirmPassword;
             }
 
-            // Show success message
             function showSuccessMessage(message) {
-                // Remove existing success message
                 const existingSuccess = document.querySelector('.success-message');
                 if (existingSuccess) existingSuccess.remove();
 
@@ -597,7 +571,6 @@
                 }, 4000);
             }
 
-            // Handle form submission
             function handleRegister(e) {
                 e.preventDefault();
 
@@ -608,7 +581,6 @@
                 const password = passwordInput.value;
                 const confirmPassword = confirmPasswordInput.value;
 
-                // Reset error states
                 const allInputGroups = document.querySelectorAll('.input-group');
                 allInputGroups.forEach(group => {
                     group.classList.remove('error');
@@ -617,7 +589,6 @@
 
                 let hasError = false;
 
-                // Validate Nama
                 if (!nama) {
                     showError(namaInput.closest('.input-group'), 'Nama lengkap harus diisi');
                     hasError = true;
@@ -626,7 +597,6 @@
                     hasError = true;
                 }
 
-                // Validate Username
                 if (!username) {
                     showError(usernameInput.closest('.input-group'), 'Username harus diisi');
                     hasError = true;
@@ -636,7 +606,6 @@
                     hasError = true;
                 }
 
-                // Validate Email
                 if (!email) {
                     showError(emailInput.closest('.input-group'), 'Email harus diisi');
                     hasError = true;
@@ -645,7 +614,6 @@
                     hasError = true;
                 }
 
-                // Validate NIM/NIP
                 if (!nimNip) {
                     showError(nimNipInput.closest('.input-group'), 'NIM/NIP harus diisi');
                     hasError = true;
@@ -654,7 +622,6 @@
                     hasError = true;
                 }
 
-                // Validate Password
                 if (!password) {
                     showError(passwordInput.closest('.input-group'), 'Password harus diisi');
                     hasError = true;
@@ -663,7 +630,6 @@
                     hasError = true;
                 }
 
-                // Validate Confirm Password
                 if (!confirmPassword) {
                     showError(confirmPasswordInput.closest('.input-group'), 'Konfirmasi password harus diisi');
                     hasError = true;
@@ -674,13 +640,11 @@
 
                 if (hasError) return;
 
-                // Simulate registration
                 const registerBtn = document.querySelector('.register-btn');
                 const originalText = registerBtn.innerHTML;
                 registerBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mendaftar...';
                 registerBtn.disabled = true;
 
-                // Check if email already exists (demo)
                 const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
                 const emailExists = existingUsers.some(user => user.email === email);
                 const usernameExists = existingUsers.some(user => user.username === username);
@@ -700,7 +664,6 @@
                         return;
                     }
 
-                    // Save user data
                     const newUser = {
                         nama: nama,
                         username: username,
@@ -726,7 +689,6 @@
                 registerForm.addEventListener('submit', handleRegister);
             }
 
-            // Real-time validation for better UX
             function addRealTimeValidation(input, validationFn, errorMessage) {
                 input.addEventListener('blur', function() {
                     const value = this.value.trim();
@@ -745,7 +707,6 @@
                 });
             }
 
-            // Add real-time validation
             if (namaInput) {
                 addRealTimeValidation(namaInput, validateNama, 'Nama minimal 3 karakter');
             }
@@ -763,7 +724,6 @@
                 addRealTimeValidation(nimNipInput, validateNimNip, 'NIM/NIP harus berupa angka 8-15 digit');
             }
 
-            // Password match real-time validation
             if (passwordInput && confirmPasswordInput) {
                 function checkPasswordMatch() {
                     const password = passwordInput.value;

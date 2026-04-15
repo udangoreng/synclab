@@ -30,7 +30,6 @@
             overflow-x: hidden;
         }
 
-        /* Decorative Circles */
         .decoration-circle {
             position: absolute;
             border-radius: 50%;
@@ -60,7 +59,6 @@
             left: 20%;
         }
 
-        /* Login Container */
         .login-container {
             width: 100%;
             min-height: 100vh;
@@ -72,7 +70,6 @@
             z-index: 1;
         }
 
-        /* Login Card */
         .login-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -97,7 +94,6 @@
             }
         }
 
-        /* Login Header */
         .login-header {
             text-align: center;
             margin-bottom: 32px;
@@ -135,14 +131,12 @@
             font-size: 0.9rem;
         }
 
-        /* Login Form */
         .login-form {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        /* Input Group */
         .input-group {
             display: flex;
             align-items: center;
@@ -224,7 +218,6 @@
             color: #818cf8;
         }
 
-        /* Form Options */
         .form-options {
             display: flex;
             justify-content: space-between;
@@ -292,7 +285,6 @@
             text-decoration: underline;
         }
 
-        /* Login Button */
         .login-btn {
             background: linear-gradient(135deg, #818cf8, #c084fc);
             border: none;
@@ -319,7 +311,6 @@
             transform: translateY(0);
         }
 
-        /* Register Link */
         .register-link {
             text-align: center;
             padding-top: 16px;
@@ -343,7 +334,6 @@
             text-decoration: underline;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .login-card {
                 padding: 32px 24px;
@@ -383,7 +373,6 @@
             }
         }
 
-        /* Animation for inputs */
         @keyframes shake {
 
             0%,

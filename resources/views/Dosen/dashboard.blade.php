@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-dosen.css - Fully Responsive */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -48,7 +46,6 @@
             color: #1e293b;
         }
 
-        /* HERO CARD */
         .hero-card {
             border-radius: 28px;
             margin-bottom: 32px;
@@ -93,7 +90,6 @@
             gap: 6px;
         }
 
-        /* STATS ROW */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -276,7 +272,6 @@
             color: white;
         }
 
-        /* TWO COLUMNS */
         .two-columns-dosen {
             display: flex;
             gap: 28px;
@@ -329,7 +324,6 @@
             font-size: 0.7rem;
         }
 
-        /* Registration */
         .registration-list {
             display: flex;
             flex-direction: column;
@@ -413,7 +407,6 @@
             transform: scale(1.02);
         }
 
-        /* Validation Summary */
         .validation-summary {
             display: flex;
             flex-direction: column;
@@ -451,7 +444,6 @@
             color: #f59e0b;
         }
 
-        /* Filter Group */
         .filter-group {
             display: flex;
             gap: 12px;
@@ -470,7 +462,6 @@
             min-width: 120px;
         }
 
-        /* Attendance */
         .attendance-stats {
             display: flex;
             gap: 24px;
@@ -534,7 +525,6 @@
             text-align: right;
         }
 
-        /* Chart */
         #performanceClassFilter {
             padding: 6px 12px;
             border-radius: 40px;
@@ -544,7 +534,6 @@
             font-size: 0.8rem;
         }
 
-        /* ========= RESPONSIVE DESIGN ========= */
 
         /* Tablet (768px - 1024px) */
         @media (max-width: 1024px) {
@@ -573,7 +562,6 @@
             }
         }
 
-        /* Mobile Landscape & Tablet (600px - 768px) */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -711,7 +699,6 @@
             }
         }
 
-        /* Mobile Portrait (480px - 600px) */
         @media (max-width: 600px) {
             .main-content {
                 padding: 16px;
@@ -775,7 +762,6 @@
             }
         }
 
-        /* Small Mobile (320px - 480px) */
         @media (max-width: 480px) {
             .card-header-bg {
                 padding: 16px;
@@ -808,7 +794,6 @@
             }
         }
 
-        /* Touch-friendly adjustments */
         @media (hover: none) and (pointer: coarse) {
 
             .nav-item,
@@ -833,7 +818,6 @@
     <div class="dashboard-container">
         @include('dosen/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <h1 class="page-title"><i class="fas fa-chalkboard-user"></i> Dashboard Dosen</h1>
 
@@ -850,7 +834,6 @@
                 </div>
             </div>
 
-            <!-- STATS ROW -->
             <div class="stats-row">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -878,7 +861,6 @@
                 </div>
             </div>
 
-            <!-- MONITORING PRAKTIKUM SECTION -->
             <div class="section-header">
                 <h2><i class="fas fa-desktop"></i> Monitoring Praktikum</h2>
                 <div class="filter-buttons">
@@ -925,7 +907,6 @@
                 </div>
             </div>
 
-            <!-- TWO COLUMN LAYOUT -->
             <div class="two-columns-dosen">
                 <div class="left-col-dosen">
                     <!-- Status Pendaftaran -->
@@ -957,7 +938,6 @@
                         </div>
                     </div>
 
-                    <!-- Validasi Nilai per Mata Kuliah -->
                     <div class="glass-card">
                         <div class="card-title-icon"><i class="fas fa-check-double"></i>
                             <h3>Validasi Nilai</h3><span class="badge-pending">27 Pending</span>
@@ -1018,7 +998,6 @@
                                 Presensi <i class="fas fa-arrow-right"></i></button></div>
                     </div>
 
-                    <!-- Performa Kelas (dengan filter Kelas & Mata Kuliah) -->
                     <div class="glass-card">
                         <div class="card-title-icon">
                             <i class="fas fa-chart-line"></i>
@@ -1047,7 +1026,6 @@
     <script>
         // script-dosen.js
         (function() {
-            // === DATE & GREETING ===
             const now = new Date();
             const hour = now.getHours();
             let greetingTime = "Selamat pagi";
@@ -1067,7 +1045,6 @@
             const fullDateSpan = document.getElementById("fullDateDisplay");
             if (fullDateSpan) fullDateSpan.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
 
-            // === DATA PRESENSI ===
             const presenceData = {
                 '2024A': {
                     'Jaringan Komputer': {
@@ -1154,10 +1131,8 @@
             document.getElementById('presenceCourseFilter').addEventListener('change', updateAttendanceDisplay);
             updateAttendanceDisplay();
 
-            // === PERFORMANCE CHART (Dengan Filter Kelas & Mata Kuliah) ===
             let performanceChart;
 
-            // Data nilai pretest untuk setiap kelas dan mata kuliah
             const pretestData = {
                 '2024A': {
                     'Jaringan Komputer': [78, 82, 79, 85, 83, 88],
@@ -1249,7 +1224,6 @@
                 });
             }
 
-            // Event listeners untuk filter performa
             const perfClassFilter = document.getElementById('performanceClassFilter');
             const perfCourseFilter = document.getElementById('performanceCourseFilter');
 
@@ -1261,7 +1235,6 @@
             }
             initChart();
 
-            // === MOBILE MENU TOGGLE ===
             const mobileToggle = document.getElementById("mobileMenuToggle");
             const sidebarNav = document.getElementById("sidebarNav");
 
@@ -1279,7 +1252,6 @@
                 });
             }
 
-            // === FILTER MONITORING PRAKTIKUM ===
             const filterBtns = document.querySelectorAll('.filter-btn');
             const praktikumCards = document.querySelectorAll('.praktikum-card');
 
@@ -1300,7 +1272,6 @@
                 });
             });
 
-            // === DETAIL BUTTONS ===
             document.querySelectorAll('.detail-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const card = btn.closest('.praktikum-card');
@@ -1321,7 +1292,6 @@
                 });
             });
 
-            // === VALIDATION COURSE DETAILS ===
             document.querySelectorAll('.view-course-valid').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1329,10 +1299,9 @@
                 });
             });
 
-            // === LOGOUT ===
+  
             const logoutBtn = document.querySelector('.logout-btn');
 
-            // === NAVIGATION ===
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove(
@@ -1349,7 +1318,6 @@
                 });
             });
 
-            // === STAT CARDS ===
             document.querySelectorAll('.stat-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const title = card.querySelector('h3')?.innerText || '';

@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-pretest.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -50,7 +48,6 @@
             color: #1e293b;
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -105,7 +102,6 @@
             transform: translateY(-2px);
         }
 
-        /* PRETEST GRID */
         .pretest-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -233,7 +229,6 @@
             color: #16a34a;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -400,7 +395,6 @@
             background: #10b981;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -478,13 +472,11 @@
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
         
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-file-alt"></i> Pretest</h1>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -505,14 +497,12 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- PRETEST CARDS GRID -->
             <div class="pretest-grid" id="pretestGrid">
                 <!-- Cards akan diisi oleh JavaScript -->
             </div>
         </main>
     </div>
 
-    <!-- MODAL UPLOAD LAPORAN -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -542,7 +532,6 @@
         </div>
     </div>
 
-    <!-- MODAL KONFIRMASI -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -559,9 +548,7 @@
         </div>
     </div>
     <script>
-        // script-pretest.js
         (function() {
-            // Data Pretest (dari pendaftaran yang sudah active)
             let pretestData = [{
                     id: 1,
                     matkul: "Jaringan Komputer",
@@ -627,13 +614,11 @@
             let filteredData = [];
             let currentUploadItem = null;
 
-            // DOM Elements
             const pretestGrid = document.getElementById('pretestGrid');
             const filterMatkul = document.getElementById('filterMatkul');
             const filterModul = document.getElementById('filterModul');
             const applyFilterBtn = document.getElementById('applyFilter');
 
-            // Modal Elements
             const uploadModal = document.getElementById('uploadModal');
             const confirmModal = document.getElementById('confirmModal');
             const uploadMatkulSpan = document.getElementById('uploadMatkul');
@@ -644,7 +629,6 @@
             const uploadKeterangan = document.getElementById('uploadKeterangan');
             let selectedFile = null;
 
-            // Update filter modul berdasarkan matkul yang dipilih
             function updateModulFilter() {
                 const selectedMatkul = filterMatkul.value;
                 let moduls = [];
@@ -662,7 +646,6 @@
                 });
             }
 
-            // Render pretest cards
             function renderPretest() {
                 const matkul = filterMatkul.value;
                 const modul = filterModul.value;
@@ -708,7 +691,6 @@
                     pretestGrid.appendChild(card);
                 });
 
-                // Attach event listeners to buttons
                 document.querySelectorAll('.btn-absen').forEach(btn => {
                     if (!btn.classList.contains('disabled')) {
                         btn.addEventListener('click', () => handleAbsen(parseInt(btn.dataset.id)));
@@ -726,7 +708,6 @@
                 });
             }
 
-            // Handle Absen
             function handleAbsen(id) {
                 showConfirm('Konfirmasi Presensi', 'Apakah Anda sudah hadir dalam praktikum ini?', () => {
                     const item = pretestData.find(i => i.id === id);
@@ -738,7 +719,6 @@
                 });
             }
 
-            // Handle Pretest Start
             function handlePretestStart(id) {
                 showConfirm('Mulai Pretest', 'Apakah Anda siap untuk memulai pretest? Waktu akan berjalan 60 menit.',
                 () => {
@@ -752,7 +732,6 @@
                     });
             }
 
-            // Open Upload Modal
             function openUploadModal(id) {
                 currentUploadItem = pretestData.find(i => i.id === id);
                 if (!currentUploadItem) return;
@@ -767,7 +746,6 @@
                 uploadModal.classList.add('active');
             }
 
-            // Handle file selection
             function setupFileUpload() {
                 uploadArea.addEventListener('click', () => fileInput.click());
 
@@ -782,7 +760,6 @@
                     }
                 });
 
-                // Drag and drop
                 uploadArea.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     uploadArea.style.borderColor = '#3b82f6';
@@ -808,14 +785,12 @@
                 });
             }
 
-            // Submit upload
             function submitUpload() {
                 if (!selectedFile) {
                     showAlert('⚠️ Silakan pilih file laporan terlebih dahulu!', 'warning');
                     return;
                 }
 
-                // Simulate upload process
                 showConfirm('Konfirmasi Upload',
                     `Apakah Anda yakin ingin mengupload laporan "${selectedFile.name}" untuk ${currentUploadItem.modul}?`,
                     () => {
@@ -836,7 +811,6 @@
                     });
             }
 
-            // Close modals
             function closeUploadModal() {
                 uploadModal.classList.remove('active');
                 currentUploadItem = null;
@@ -862,12 +836,10 @@
                 alert(message);
             }
 
-            // Filter and render
             function applyFilter() {
                 renderPretest();
             }
 
-            // Event Listeners
             applyFilterBtn.addEventListener('click', applyFilter);
             filterMatkul.addEventListener('change', () => {
                 updateModulFilter();
@@ -894,12 +866,10 @@
                 }
             });
 
-            // Initialize
             updateModulFilter();
             renderPretest();
             setupFileUpload();
 
-            // MOBILE MENU TOGGLE
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -911,7 +881,6 @@
                 });
             }
 
-            // SIDEBAR DROPDOWN
             document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -920,10 +889,8 @@
                 });
             });
 
-            // LOGOUT
             document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
 
-            // SUBMENU NAVIGATION
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Pretest')) return;

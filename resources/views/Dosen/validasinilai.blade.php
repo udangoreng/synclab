@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-validasi.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -74,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -130,7 +127,6 @@
             transform: translateY(-2px);
         }
 
-        /* SUMMARY CARDS */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -172,7 +168,6 @@
             color: #1e293b;
         }
 
-        /* DATA TABLE */
         .data-table-card {
             background: white;
             border-radius: 24px;
@@ -332,7 +327,6 @@
             color: white;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -472,7 +466,6 @@
             background: #2563eb;
         }
 
-        /* Detail Info */
         .detail-info {
             display: flex;
             flex-direction: column;
@@ -496,7 +489,6 @@
             color: #1e293b;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -596,7 +588,6 @@
     <div class="dashboard-container">
        @include('dosen/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-check-double"></i> Validasi Nilai</h1>
@@ -605,7 +596,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -635,7 +625,6 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- SUMMARY CARDS -->
             <div class="summary-cards">
                 <div class="summary-card">
                     <div class="summary-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
@@ -666,7 +655,6 @@
                 </div>
             </div>
 
-            <!-- DATA TABLE -->
             <div class="data-table-card">
                 <div class="table-header">
                     <h3><i class="fas fa-table-list"></i> Daftar Nilai Mahasiswa</h3>
@@ -707,7 +695,6 @@
         </main>
     </div>
 
-    <!-- Modal Edit Nilai -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -740,7 +727,6 @@
         </div>
     </div>
 
-    <!-- Modal Detail -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -789,9 +775,7 @@
         </div>
     </div>
     <script>
-        // script-validasi.js
         (function() {
-            // Data Nilai Mahasiswa
             let nilaiData = [{
                     id: 1,
                     nama: 'Ahmad Fauzi',
@@ -944,7 +928,6 @@
                 }
             ];
 
-            // Helper function hitung nilai akhir
             function hitungNilaiAkhir(pretest, laporan) {
                 return ((pretest * 0.5) + (laporan * 0.5)).toFixed(1);
             }
@@ -955,7 +938,6 @@
 
             let currentEditId = null;
 
-            // Render tabel
             function renderTable() {
                 const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
                 let filtered = filteredData.filter(item =>
@@ -994,7 +976,6 @@
                     tbody.appendChild(row);
                 });
 
-                // Attach event listeners ke button
                 document.querySelectorAll('.btn-edit').forEach(btn => {
                     btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.id)));
                 });
@@ -1009,11 +990,9 @@
                 document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
                 document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data mahasiswa`;
 
-                // Update summary
                 updateSummary();
             }
 
-            // Filter data
             function filterData() {
                 const matkul = document.getElementById('filterMatkul').value;
                 const kelas = document.getElementById('filterKelas').value;
@@ -1031,7 +1010,6 @@
                 renderTable();
             }
 
-            // Update summary cards
             function updateSummary() {
                 const total = filteredData.length;
                 const validated = filteredData.filter(item => item.validated).length;
@@ -1042,7 +1020,6 @@
                 document.getElementById('totalPending').innerText = pending;
             }
 
-            // Edit Modal
             function openEditModal(id) {
                 const item = nilaiData.find(d => d.id === id);
                 if (!item) return;
@@ -1082,7 +1059,6 @@
                 closeModal();
             }
 
-            // Delete data
             function deleteData(id) {
                 if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                     nilaiData = nilaiData.filter(d => d.id !== id);
@@ -1090,7 +1066,6 @@
                 }
             }
 
-            // Detail Modal
             function openDetailModal(id) {
                 const item = nilaiData.find(d => d.id === id);
                 if (!item) return;
@@ -1115,7 +1090,6 @@
                 currentEditId = null;
             }
 
-            // Export
             function exportData() {
                 let csvContent = "Nama,NIM,Mata Kuliah,Kelas,Pretest,Laporan,Nilai Akhir,Status\n";
                 filteredData.forEach(item => {
@@ -1136,7 +1110,6 @@
                 URL.revokeObjectURL(url);
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', filterData);
             document.getElementById('tableSearch').addEventListener('input', () => {
                 currentPage = 1;
@@ -1158,7 +1131,6 @@
             });
             document.getElementById('exportBtn').addEventListener('click', exportData);
 
-            // Modal events
             document.getElementById('closeModal').addEventListener('click', closeModal);
             document.getElementById('cancelModal').addEventListener('click', closeModal);
             document.getElementById('saveModal').addEventListener('click', saveEdit);
@@ -1167,14 +1139,12 @@
             document.getElementById('editPretest').addEventListener('input', updateNilaiAkhirOtomatis);
             document.getElementById('editLaporan').addEventListener('input', updateNilaiAkhirOtomatis);
 
-            // Close modal klik di luar
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('modal')) {
                     closeModal();
                 }
             });
 
-            // Mobile menu
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -1191,14 +1161,12 @@
                 });
             }
 
-            // Nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Validasi Nilai')) return;
                 });
             });
 
-            // Inisialisasi
             filterData();
         })();
     </script>

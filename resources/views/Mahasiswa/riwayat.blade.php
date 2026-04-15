@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-riwayat.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -73,7 +71,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -128,7 +125,6 @@
             transform: translateY(-2px);
         }
 
-        /* RIWAYAT GRID */
         .riwayat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -260,7 +256,6 @@
             grid-column: 1/-1;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -364,7 +359,6 @@
             color: #1e293b;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -439,7 +433,6 @@
     <div class="dashboard-container">
        @include('mahasiswa/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-history"></i> Activity History</h1>
@@ -448,7 +441,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -459,12 +451,10 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- RIWAYAT GRID -->
             <div class="riwayat-grid" id="riwayatGrid"></div>
         </main>
     </div>
 
-    <!-- MODAL DETAIL RIWAYAT -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -478,9 +468,7 @@
         </div>
     </div>
     <script>
-        // script-riwayat.js
         (function() {
-            // Data Riwayat Nilai Mahasiswa (Modul yang sudah selesai)
             const riwayatData = [{
                     id: 1,
                     matkul: "Pemrograman Dasar",
@@ -595,7 +583,6 @@
 
             let filteredData = [];
 
-            // Update dropdown filter mata kuliah
             function updateDropdown() {
                 const matkuls = [...new Set(riwayatData.map(item => item.matkul))];
                 const select = document.getElementById('filterMatkul');
@@ -603,7 +590,6 @@
                     matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
             }
 
-            // Render riwayat cards
             function renderRiwayat() {
                 const selectedMatkul = document.getElementById('filterMatkul').value;
 
@@ -621,7 +607,6 @@
 
                 container.innerHTML = '';
 
-                // Kelompokkan berdasarkan mata kuliah dan modul
                 filteredData.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'riwayat-card';
@@ -656,13 +641,11 @@
                     container.appendChild(card);
                 });
 
-                // Attach event listeners to detail buttons
                 document.querySelectorAll('.btn-detail').forEach(btn => {
                     btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
                 });
             }
 
-            // Open detail modal
             function openDetailModal(id) {
                 const item = riwayatData.find(i => i.id === id);
                 if (!item) return;
@@ -706,7 +689,6 @@
                 document.getElementById('detailModal').classList.remove('active');
             }
 
-            // Export data to CSV
             function exportData() {
                 let csvContent = "Mata Kuliah,Modul,Pretest,Laporan,Nilai Akhir,Tanggal Selesai ,Semester,Status\n";
                 filteredData.forEach(item => {
@@ -728,7 +710,6 @@
                 alert('📥 Data berhasil diekspor!');
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', renderRiwayat);
             document.getElementById('exportBtn').addEventListener('click', exportData);
             document.getElementById('closeDetailModal').addEventListener('click', closeModal);
@@ -737,11 +718,9 @@
                 if (e.target.classList.contains('modal')) closeModal();
             });
 
-            // Initialize
             updateDropdown();
             renderRiwayat();
 
-            // MOBILE MENU TOGGLE
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -753,7 +732,6 @@
                 });
             }
 
-            // SIDEBAR DROPDOWN
             document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -762,10 +740,8 @@
                 });
             });
 
-            // LOGOUT
             document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
 
-            // SUBMENU NAVIGATION
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Riwayat')) return;

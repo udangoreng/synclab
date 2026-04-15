@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-presensi.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -74,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -130,7 +127,6 @@
             transform: translateY(-2px);
         }
 
-        /* SUMMARY CARDS */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -172,7 +168,6 @@
             color: #1e293b;
         }
 
-        /* DATA TABLE */
         .data-table-card {
             background: white;
             border-radius: 24px;
@@ -291,7 +286,6 @@
             color: white;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -468,7 +462,6 @@
             font-weight: 500;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -555,7 +548,6 @@
     <div class="dashboard-container">
         @include('dosen/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-fingerprint"></i> Presensi Praktikum</h1>
@@ -564,7 +556,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -586,7 +577,6 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- SUMMARY CARDS -->
             <div class="summary-cards">
                 <div class="summary-card">
                     <div class="summary-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
@@ -608,7 +598,6 @@
                 </div>
             </div>
 
-            <!-- DATA TABLE PRESENSI -->
             <div class="data-table-card">
                 <div class="table-header">
                     <h3><i class="fas fa-calendar-alt"></i> Rekap Presensi per Pertemuan</h3>
@@ -644,7 +633,6 @@
         </main>
     </div>
 
-    <!-- Modal Detail Presensi -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -684,7 +672,6 @@
                             </tr>
                         </thead>
                         <tbody id="detailTableBody">
-                            <!-- Data detail akan diisi -->
                         </tbody>
                     </table>
                 </div>
@@ -696,9 +683,7 @@
     </div>
 
     <script>
-        // script-presensi.js
         (function() {
-            // Data Presensi per pertemuan
             let presensiData = [{
                     id: 1,
                     tanggal: '2026-03-10',
@@ -809,9 +794,7 @@
                 }
             ];
 
-            // Data detail presensi per mahasiswa (LENGKAP untuk semua pertemuan)
             const detailPresensiData = {
-                // ========== JARINGAN KOMPUTER KELAS 2024A ==========
                 '2024A_Jaringan Komputer_Pertemuan 1': [{
                         nim: '22060001',
                         nama: 'Ahmad Fauzi',
@@ -1161,7 +1144,6 @@
                     }
                 ],
 
-                // ========== JARINGAN KOMPUTER KELAS 2024B ==========
                 '2024B_Jaringan Komputer_Pertemuan 1': [{
                         nim: '22061001',
                         nama: 'Andi Saputra',
@@ -1385,7 +1367,6 @@
                     }
                 ],
 
-                // ========== RPL KELAS 2024A ==========
                 '2024A_RPL_Pertemuan 1': [{
                         nim: '22063001',
                         nama: 'Fajar Nugroho',
@@ -1599,7 +1580,6 @@
                     }
                 ],
 
-                // ========== RPL KELAS 2024B ==========
                 '2024B_RPL_Pertemuan 1': [{
                         nim: '22064001',
                         nama: 'Lestari Dewi',
@@ -1977,7 +1957,6 @@
                 URL.revokeObjectURL(url);
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', filterData);
             document.getElementById('prevPage').addEventListener('click', () => {
                 const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -2004,7 +1983,6 @@
                 }
             });
 
-            // Mobile menu
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -2022,8 +2000,7 @@
             }
 
 
-            // Hapus event listener search yang tidak perlu
-            // Hapus juga HTML search box jika ingin
+        
 
             filterData();
         })();

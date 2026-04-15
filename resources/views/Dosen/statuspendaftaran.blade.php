@@ -12,7 +12,6 @@
 
 <body>
     <style>
-        /* style-pendaftaran.css */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             padding: 28px 32px;
@@ -74,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        /* FILTER SECTION */
         .filter-section {
             background: white;
             border-radius: 24px;
@@ -130,7 +127,6 @@
             transform: translateY(-2px);
         }
 
-        /* SUMMARY CARDS */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -172,7 +168,6 @@
             color: #1e293b;
         }
 
-        /* DATA TABLE */
         .data-table-card {
             background: white;
             border-radius: 24px;
@@ -340,7 +335,6 @@
             color: white;
         }
 
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -452,7 +446,6 @@
             font-weight: 500;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .dashboard-container {
                 flex-direction: column;
@@ -568,7 +561,6 @@
     <div class="dashboard-container">
         @include('dosen/partials/sidebar')
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-clipboard-list"></i> Status Pendaftaran</h1>
@@ -577,7 +569,6 @@
                 </div>
             </div>
 
-            <!-- FILTER SECTION -->
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
@@ -608,7 +599,6 @@
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <!-- SUMMARY CARDS -->
             <div class="summary-cards">
                 <div class="summary-card">
                     <div class="summary-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
@@ -648,7 +638,6 @@
                 </div>
             </div>
 
-            <!-- DATA TABLE -->
             <div class="data-table-card">
                 <div class="table-header">
                     <h3><i class="fas fa-table-list"></i> Daftar Pendaftaran Praktikum</h3>
@@ -672,7 +661,6 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -688,7 +676,6 @@
         </main>
     </div>
 
-    <!-- Modal Detail Pendaftaran -->
     <div class="modal" id="detailModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -738,9 +725,7 @@
     </div>
 
     <script>
-        // script-pendaftaran.js
         (function() {
-            // Data Pendaftaran Praktikum (tanpa kolom pertemuan)
             let pendaftaranData = [{
                     id: 1,
                     nama: 'Ahmad Fauzi',
@@ -890,7 +875,6 @@
             let rowsPerPage = 8;
             let filteredData = [];
 
-            // Format tanggal
             function formatTanggal(tanggal) {
                 const tgl = new Date(tanggal);
                 return tgl.toLocaleDateString('id-ID', {
@@ -900,7 +884,6 @@
                 });
             }
 
-            // Render tabel
             function renderTable() {
                 const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
                 let filtered = filteredData.filter(item =>
@@ -949,7 +932,6 @@
                     tbody.appendChild(row);
                 });
 
-                // Attach event listeners
                 document.querySelectorAll('.btn-terima').forEach(btn => {
                     btn.addEventListener('click', () => updateStatus(parseInt(btn.dataset.id), 'disetujui'));
                 });
@@ -967,7 +949,6 @@
                 updateSummary();
             }
 
-            // Update status pendaftaran
             function updateStatus(id, newStatus) {
                 const index = pendaftaranData.findIndex(d => d.id === id);
                 if (index !== -1) {
@@ -978,7 +959,6 @@
                 }
             }
 
-            // Filter data
             function filterData() {
                 const matkul = document.getElementById('filterMatkul').value;
                 const kelas = document.getElementById('filterKelas').value;
@@ -995,7 +975,6 @@
                 renderTable();
             }
 
-            // Update summary
             function updateSummary() {
                 const total = filteredData.length;
                 const disetujui = filteredData.filter(item => item.status === 'disetujui').length;
@@ -1008,7 +987,6 @@
                 document.getElementById('totalDitolak').innerText = ditolak;
             }
 
-            // Detail Modal
             function openDetailModal(id) {
                 const item = pendaftaranData.find(d => d.id === id);
                 if (!item) return;
@@ -1038,7 +1016,6 @@
                 document.getElementById('detailModal').classList.remove('active');
             }
 
-            // Export
             function exportData() {
                 let csvContent = "Nama,NIM,Mata Kuliah,Kelas,Praktikum,Tanggal Daftar,Status,Keterangan\n";
                 filteredData.forEach(item => {
@@ -1061,7 +1038,6 @@
                 URL.revokeObjectURL(url);
             }
 
-            // Event Listeners
             document.getElementById('applyFilter').addEventListener('click', filterData);
             document.getElementById('tableSearch').addEventListener('input', () => {
                 currentPage = 1;
@@ -1083,7 +1059,6 @@
             });
             document.getElementById('exportBtn').addEventListener('click', exportData);
 
-            // Modal events
             document.getElementById('closeDetailModal').addEventListener('click', closeModal);
             document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
 
@@ -1093,7 +1068,6 @@
                 }
             });
 
-            // Mobile menu
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -1111,14 +1085,12 @@
             }
 
 
-            // Nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     if (item.innerText.includes('Status Pendaftaran')) return;
                 });
             });
 
-            // Inisialisasi
             filterData();
         })();
     </script>
