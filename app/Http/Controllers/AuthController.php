@@ -41,6 +41,45 @@ class AuthController extends Controller
         }
     }
 
+    function register () {
+        return view ('register');
+    }
+
+    function store(Request $request) {
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'nomor_induk' => 'required|string|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+    ], [
+        'email.unique'        => 'Email ini sudah terdaftar, gunakan email lain.',
+        'nomor_induk.unique'  => 'NIM/NIP ini sudah terdaftar.',
+        'password.min'        => 'Password minimal 8 karakter.',
+        'password.confirmed'  => 'Konfirmasi password tidak cocok.',
+        'nama.required'       => 'Nama lengkap harus diisi.',
+        'email.required'      => 'Email harus diisi.',
+        'nomor_induk.required'=> 'NIM/NIP harus diisi.',
+        'password.required'   => 'Password harus diisi.',
+    ]);
+
+    // Tentukan role berdasarkan nomor_induk
+    // Jika nomor_induk dimulai dengan 0 atau 1, maka role adalah Dosen
+    // Selain itu, role adalah Praktikan
+    $firstChar = substr($request->nomor_induk, 0, 1);
+    $role = (in_array($firstChar, ['0', '1'])) ? 'Dosen' : 'Praktikan';
+
+    \App\Models\User::create([
+        'nomor_induk' => $request->nomor_induk,
+        'nama' => $request->nama,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'role' => $role,
+    ]);
+
+    // Redirect dengan flag untuk popup
+    return redirect('/login')->with('register_success', true);
+    }
+
     function logout(){
         Auth::logout();
         return redirect('/login');

@@ -310,6 +310,42 @@
             animation: slideDown 0.3s ease;
         }
 
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-error i.fa-exclamation-circle {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .alert-error div {
+            flex: 1;
+        }
+
+        .alert-error p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .alert-error button {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -389,24 +425,28 @@
                 <p>Buat akun baru untuk mengakses portal</p>
             </div>
 
-            <form id="registerForm" class="register-form">
+            <form id="registerForm" class="register-form" action="{{ route('register.store') }}" method="POST">
+            @csrf
+            @if ($errors->any())
+                <div class="alert-error" id="serverErrorAlert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                    <button type="button" onclick="document.getElementById('serverErrorAlert').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
                 <div class="input-group">
                     <div class="input-icon">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="input-field">
-                        <input type="text" id="nama" placeholder=" " required>
+                        <input type="text" id="nama" name="nama" placeholder=" " required>
                         <label for="nama">Nama Lengkap</label>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <div class="input-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="input-field">
-                        <input type="text" id="username" placeholder=" " required>
-                        <label for="username">Username</label>
                     </div>
                 </div>
 
@@ -415,7 +455,7 @@
                         <i class="fas fa-envelope"></i>
                     </div>
                     <div class="input-field">
-                        <input type="email" id="email" placeholder=" " required>
+                        <input type="email" id="email" name="email" placeholder=" " required>
                         <label for="email">Email</label>
                     </div>
                 </div>
@@ -425,7 +465,7 @@
                         <i class="fas fa-id-card"></i>
                     </div>
                     <div class="input-field">
-                        <input type="text" id="nimNip" placeholder=" " required>
+                        <input type="text" id="nimNip" name="nomor_induk" placeholder=" " required>
                         <label for="nimNip">NIM / NIP</label>
                     </div>
                 </div>
@@ -435,7 +475,7 @@
                         <i class="fas fa-lock"></i>
                     </div>
                     <div class="input-field">
-                        <input type="password" id="password" placeholder=" " required>
+                        <input type="password" id="password" name="password" placeholder=" " required>
                         <label for="password">Password</label>
                         <button type="button" class="toggle-password" id="togglePassword">
                             <i class="fas fa-eye"></i>
@@ -448,7 +488,7 @@
                         <i class="fas fa-lock"></i>
                     </div>
                     <div class="input-field">
-                        <input type="password" id="confirmPassword" placeholder=" " required>
+                        <input type="password" id="confirmPassword" name="password_confirmation" placeholder=" " required>
                         <label for="confirmPassword">Konfirmasi Password</label>
                         <button type="button" class="toggle-password" id="toggleConfirmPassword">
                             <i class="fas fa-eye"></i>
@@ -461,7 +501,7 @@
                 </button>
 
                 <div class="login-link">
-                    <p>Sudah punya akun? <a href="login.blade.php">Sign In</a></p>
+                    <p>Sudah punya akun? <a href="{{ route('login') }}">Sign In</a></p>
                 </div>
             </form>
         </div>
@@ -502,7 +542,6 @@
 
             const registerForm = document.getElementById('registerForm');
             const namaInput = document.getElementById('nama');
-            const usernameInput = document.getElementById('username');
             const emailInput = document.getElementById('email');
             const nimNipInput = document.getElementById('nimNip');
 
@@ -534,10 +573,6 @@
                 return nama.trim().length >= 3;
             }
 
-            function validateUsername(username) {
-                return /^[a-zA-Z0-9_]{3,20}$/.test(username);
-            }
-
             function validateEmail(email) {
                 const re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
                 return re.test(email);
@@ -548,7 +583,7 @@
             }
 
             function validatePassword(password) {
-                return password.length >= 6;
+                return password.length >= 8;
             }
 
             function validateConfirmPassword(password, confirmPassword) {
@@ -573,9 +608,7 @@
 
             function handleRegister(e) {
                 e.preventDefault();
-
                 const nama = namaInput.value.trim();
-                const username = usernameInput.value.trim();
                 const email = emailInput.value.trim();
                 const nimNip = nimNipInput.value.trim();
                 const password = passwordInput.value;
@@ -594,15 +627,6 @@
                     hasError = true;
                 } else if (!validateNama(nama)) {
                     showError(namaInput.closest('.input-group'), 'Nama minimal 3 karakter');
-                    hasError = true;
-                }
-
-                if (!username) {
-                    showError(usernameInput.closest('.input-group'), 'Username harus diisi');
-                    hasError = true;
-                } else if (!validateUsername(username)) {
-                    showError(usernameInput.closest('.input-group'),
-                        'Username hanya huruf, angka, underscore, 3-20 karakter');
                     hasError = true;
                 }
 
@@ -626,7 +650,7 @@
                     showError(passwordInput.closest('.input-group'), 'Password harus diisi');
                     hasError = true;
                 } else if (!validatePassword(password)) {
-                    showError(passwordInput.closest('.input-group'), 'Password minimal 6 karakter');
+                    showError(passwordInput.closest('.input-group'), 'Password minimal 8 karakter');
                     hasError = true;
                 }
 
@@ -639,50 +663,7 @@
                 }
 
                 if (hasError) return;
-
-                const registerBtn = document.querySelector('.register-btn');
-                const originalText = registerBtn.innerHTML;
-                registerBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mendaftar...';
-                registerBtn.disabled = true;
-
-                const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                const emailExists = existingUsers.some(user => user.email === email);
-                const usernameExists = existingUsers.some(user => user.username === username);
-
-                setTimeout(() => {
-                    if (emailExists) {
-                        showError(emailInput.closest('.input-group'), 'Email sudah terdaftar');
-                        registerBtn.innerHTML = originalText;
-                        registerBtn.disabled = false;
-                        return;
-                    }
-
-                    if (usernameExists) {
-                        showError(usernameInput.closest('.input-group'), 'Username sudah digunakan');
-                        registerBtn.innerHTML = originalText;
-                        registerBtn.disabled = false;
-                        return;
-                    }
-
-                    const newUser = {
-                        nama: nama,
-                        username: username,
-                        email: email,
-                        nimNip: nimNip,
-                        password: password,
-                        role: nimNip.length >= 10 ? 'student' : 'lecturer',
-                        registeredAt: new Date().toISOString()
-                    };
-
-                    existingUsers.push(newUser);
-                    localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
-
-                    showSuccessMessage('Pendaftaran berhasil! Mengalihkan ke halaman login...');
-
-                    setTimeout(() => {
-                        window.location.href = 'login.blade.php';
-                    }, 2000);
-                }, 1500);
+                registerForm.submit();
             }
 
             if (registerForm) {
@@ -709,11 +690,6 @@
 
             if (namaInput) {
                 addRealTimeValidation(namaInput, validateNama, 'Nama minimal 3 karakter');
-            }
-
-            if (usernameInput) {
-                addRealTimeValidation(usernameInput, validateUsername,
-                    'Username hanya huruf, angka, underscore, 3-20 karakter');
             }
 
             if (emailInput) {

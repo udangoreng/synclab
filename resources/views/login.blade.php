@@ -461,7 +461,7 @@
                 </button>
 
                 <div class="register-link">
-                    <p>Belum punya akun? <a href="#" id="signupLink">Sign Up</a></p>
+                    <p>Belum punya akun? <a href="{{ route('register') }}">Sign Up</a></p>
                 </div>
             </form>
         </div>
@@ -473,6 +473,13 @@
 
     <script>
         (function() {
+            // Check for registration success flag
+            @if(session('register_success'))
+                window.onload = function() {
+                    alert('Akun berhasil didaftarkan! Silakan login dengan akun Anda.');
+                };
+            @endif
+
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
 

@@ -179,6 +179,12 @@
                 <li class="nav-item {{ request()->routeIs('cekPendaftaran') ? 'active' : '' }}"><a
                         href={{ route('cekPendaftaran') }}><i class="fas fa-clipboard-list"></i> Status Pendaftaran</a>
                 </li>
+                <li class="nav-item {{ request()->routeIs('manageAsisten') ? 'active' : '' }}"><a
+                        href={{ route('manageAsisten') }}><i class="fas fa-user-graduate"></i> Kelola Asisten</a>
+                </li>
+                <li class="nav-item {{ request()->routeIs('manageLaboran') ? 'active' : '' }}"><a
+                        href={{ route('manageLaboran') }}><i class="fas fa-user-cog"></i> Kelola Laboran</a>
+                </li>
             </ul>
             <div class="logout-btn">
                 <a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt"></i> Log Out</a>
