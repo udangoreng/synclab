@@ -62,4 +62,9 @@ class LaporanController extends Controller
     {
         //
     }
+
+    public function masterLaporan()
+    {
+        return view('laboran/laporan_lab');
+    }
 }

@@ -1,22 +1,3 @@
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('active');
-}
-
-function toggleDropdown(){
-  const dropdown = document.getElementById('dropdown');
-  dropdown.style.display =
-    dropdown.style.display === 'block' ? 'none' : 'block';
-}
-
-document.addEventListener("click", function(e) {
-  const sidebar = document.getElementById("sidebar");
-  const toggle = document.querySelector(".toggle");
-
-  if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-    sidebar.classList.remove("active");
-  }
-});
-
 const data = [
   {
     title: "Pengolahan Citra Digital",

@@ -87,4 +87,14 @@ class PraktikumController extends Controller
     {
         return view('asisten/praktikum_asisten');
     }
+
+    public function masterPraktikum()
+    {
+        return view('laboran/kelolaPraktikum_lab');
+    }
+
+    public function masterMonitoring()
+    {
+        return view('laboran/monitoring_lab');
+    }
 }

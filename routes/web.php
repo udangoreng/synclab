@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AsistenController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PresensiController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
 
 Route::middleware(['guest'])->group(function () {
+    Route::get('/', [AuthController::class, 'welcome']);
     Route::get('/login', [AuthController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -20,14 +23,13 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/register', [AuthController::class, 'store'])->name('register.store');
 });
 
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan')->name('mahasiswa');
     Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
     Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten')->name('asisten');
-    Route::get('/admin', [AuthController::class, 'welcome'])->middleware('checkRole:admin');
+    Route::get('/admin', [AuthController::class, 'admin'])->middleware('checkRole:Admin')->name('admin');
 
     Route::prefix('mahasiswa')->group(function () {
         Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('praktikum');
@@ -67,6 +69,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nilai', [NilaiController::class, 'index'])->name('addNilai');
         Route::get('/nilai/rekap', [NilaiController::class, 'rekapNilai'])->name('rekapNilai');
         Route::get('/mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('seeMahasiswa');
+    });
+
+    Route::prefix('admin')->group(function () {
+        Route::get('/praktikum', [PraktikumController::class, 'masterPraktikum'])->name('masterPraktikum');
+        Route::get('/jadwal', [JadwalController::class, 'masterJadwal'])->name('masterJadwal');
+        Route::get('/asisten', [AsistenController::class, 'masterAsisten'])->name('masterAsisten');
+        Route::get('/monitoring', [PraktikumController::class, 'masterMonitoring'])->name('masterMonitoring');
+        Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');
     });
 
     // Laboratorium routes 

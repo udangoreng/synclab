@@ -10,6 +10,11 @@ class AuthController extends Controller
     function index() {
         return view('login');
     }
+    
+    public function welcome()
+    {
+        return view('landing');
+    }
 
     function login(Request $request) {
         $request->validate([
@@ -97,7 +102,7 @@ class AuthController extends Controller
         return view('asisten/dashboard_asistent');
     }
 
-    function laboran(){
-        return view('mahasiswa/dashboard');
+    function admin(){
+        return view('laboran/dashboard_lab');
     }
 }

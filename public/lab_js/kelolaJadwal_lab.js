@@ -23,20 +23,6 @@ let data = [
 
 let editIndex = null;
 
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("show");
-}
-
-function toggleDropdown(id) {
-  document.getElementById(id).classList.toggle("open");
-}
-
-function logout() {
-  localStorage.removeItem("token");
-  sessionStorage.clear();
-  window.location.href = "login.html";
-}
-
 document.addEventListener("click", function(e) {
   const sidebar = document.getElementById("sidebar");
   const toggle = document.querySelector(".toggle");

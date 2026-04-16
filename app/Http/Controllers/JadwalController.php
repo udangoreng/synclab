@@ -62,4 +62,9 @@ class JadwalController extends Controller
     {
         //
     }
+
+    public function masterJadwal()
+    {
+        return view('laboran/kelolaJadwal_lab');
+    }
 }

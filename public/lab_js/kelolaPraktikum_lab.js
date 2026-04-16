@@ -1,22 +1,8 @@
 let data = [];
 let editIndex = null;
 
-function goPage(page) {
-  window.location.href = page;
-}
-
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("show");
-}
-
-function toggleDropdown(id) {
-  document.getElementById(id).classList.toggle("open");
-}
-
-function logout() {
-  localStorage.removeItem("token");
-  sessionStorage.clear();
-  window.location.href = "login.html";
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('active');
 }
 
 document.addEventListener("click", function(e) {
