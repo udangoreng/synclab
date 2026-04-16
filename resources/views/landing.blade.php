@@ -1093,9 +1093,11 @@
                 <li><a href="#about">Tentang</a></li>
                 <li><a href="#contact">Kontak</a></li>
             </ul>
-            <div class="nav-buttons">
-                <a href="{{route('login')}}" class="btn-login">Masuk</a>
-            </div>
+            @guest
+                <div class="nav-buttons">
+                    <a href="{{route('login')}}" class="btn-login">Masuk</a>
+                </div>
+            @endguest
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                 <i class="fas fa-bars"></i>
             </button>
