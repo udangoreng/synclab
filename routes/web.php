@@ -14,8 +14,8 @@ use App\Http\Controllers\PretestController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
 
+Route::get('/', [AuthController::class, 'welcome']);
 Route::middleware(['guest'])->group(function () {
-    Route::get('/', [AuthController::class, 'welcome']);
     Route::get('/login', [AuthController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
