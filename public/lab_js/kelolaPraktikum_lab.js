@@ -1,11 +1,11 @@
 let data = [];
 let editIndex = null;
 
-function toggleSidebar(){
+function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('active');
 }
 
-document.addEventListener("click", function(e) {
+document.addEventListener("click", function (e) {
   const sidebar = document.getElementById("sidebar");
   const toggle = document.querySelector(".toggle");
 
@@ -13,33 +13,6 @@ document.addEventListener("click", function(e) {
     sidebar.classList.remove("active");
   }
 });
-
-function renderTable() {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
-
-  data.forEach((d, i) => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${d.mk}</td>
-        <td>${d.pertemuan}</td>
-        <td>${d.praktikum}</td>
-        <td>${d.deskripsi}</td>
-        <td>${d.kelas.length}</td>
-        <td>
-          <span class="status ${d.status === 'Active' ? 'active' : 'non'}">
-            ${d.status}
-          </span>
-        </td>
-        <td>
-          <button class="edit" onclick="editData(${i})">Edit</button>
-          <button class="delete" onclick="deleteData(${i})">Hapus</button>
-          <button class="detail" onclick="showDetail(${i})">Detail</button>
-        </td>
-      </tr>
-    `;
-  });
-}
 
 function openAdd() {
   document.getElementById("formModal").style.display = "flex";
@@ -62,101 +35,133 @@ function clearForm() {
   document.getElementById("status").value = "Active";
 }
 
-function saveData() {
-  const mk = document.getElementById("mk").value.trim();
-  const pertemuan = document.getElementById("pertemuan").value.trim();
-  const praktikum = document.getElementById("praktikum").value.trim();
-  const deskripsi = document.getElementById("deskripsi").value.trim();
-  const kelas = document
-    .getElementById("kelas")
-    .value.split(",")
-    .map(k => k.trim())
-    .filter(k => k !== "");
-  const status = document.getElementById("status").value;
-
-  const obj = { mk, pertemuan, praktikum, deskripsi, kelas, status };
-
-  if (editIndex === null) {
-    data.push(obj);
-  } else {
-    data[editIndex] = obj;
-  }
-
-  closeModal();
-  renderTable();
-}
-
-function editData(i) {
-  const d = data[i];
-
-  document.getElementById("mk").value = d.mk;
-  document.getElementById("pertemuan").value = d.pertemuan;
-  document.getElementById("praktikum").value = d.praktikum;
-  document.getElementById("deskripsi").value = d.deskripsi;
-  document.getElementById("kelas").value = d.kelas.join(",");
-  document.getElementById("status").value = d.status;
-
-  document.getElementById("modalTitle").innerText = "Edit Practicum";
-
-  editIndex = i;
-  document.getElementById("formModal").style.display = "flex";
-}
-
-function deleteData(i) {
-  const yakin = confirm("Yakin mau hapus data ini?");
-
-  if (yakin) {
-    data.splice(i, 1);
-    renderTable();
+function openEditModal(id) {
+  const item = praktikumData.find(p => p.id === id);
+  if (item) {
+    document.getElementById('edit_kode').value = item.kode_praktikum;
+    document.getElementById('edit_nama').value = item.nama_praktikum;
+    document.getElementById('edit_angkatan').value = item.angkatan;
+    document.getElementById('edit_semester').value = item.semester;
+    document.getElementById('editModal').style.display = 'flex';
   }
 }
 
-function showDetail(i) {
-  const d = data[i];
+function openDetailModal(id) {
+  const item = praktikumData.find(p => p.id === id);
+  if (!item) return;
 
-  document.getElementById("d_mk").innerText = "Mata Kuliah: " + d.mk;
-  document.getElementById("d_pertemuan").innerText = "Pertemuan: " + d.pertemuan;
-  document.getElementById("d_praktikum").innerText = "Praktikum: " + d.praktikum;
-  document.getElementById("d_deskripsi").innerText = "Deskripsi: " + d.deskripsi;
+  document.getElementById('detailInfo').innerHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">Kode Praktikum</span>
+                    <span class="detail-value">${escapeHtml(item.kode_praktikum)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Nama Praktikum</span>
+                    <span class="detail-value">${escapeHtml(item.nama_praktikum)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Angkatan</span>
+                    <span class="detail-value">${escapeHtml(item.angkatan)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Semester</span>
+                    <span class="detail-value">Semester ${escapeHtml(item.semester)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value"><span class="status-badge status-active">Active</span></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Dibuat Pada</span>
+                    <span class="detail-value">${item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '-'}</span>
+                </div>
+            `;
 
-  const tbody = document.getElementById("detailTable");
-  tbody.innerHTML = "";
+  // const jadwalList = allJadwalData[id] || [];
+  // const asistenList = allAsistenData[id] || [];
+  // const mahasiswaList = allMahasiswaData[id] || [];
 
-  d.kelas.forEach(k => {
-    tbody.innerHTML += `
-      <tr>
-        <td>-</td>
-        <td>-</td>
-        <td>30</td>
-        <td>${k}</td>
-      </tr>
-    `;
+  document.getElementById('detailStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Total Jadwal</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Total Asisten</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Total Mahasiswa</div>
+                </div>
+            `;
+
+  // if (jadwalList.length > 0) {
+  //   document.getElementById('jadwalBody').innerHTML = jadwalList.map(j => `
+  //                   <tr>
+  //                       <td>${escapeHtml(j.hari || '-')}</td>
+  //                       <td>${escapeHtml(j.jam_mulai || '-')}</td>
+  //                       <td>${escapeHtml(j.jam_selesai || '-')}</td>
+  //                       <td>${escapeHtml(j.ruangan || '-')}</td>
+  //                       <td>${escapeHtml(j.asisten_nama || j.asisten?.nama || '-')}</td>
+  //                       <td><span class="status-badge ${j.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(j.status || 'Active')}</span></td>
+  //                   </tr>
+  //               `).join('');
+  // } else {
+  //   document.getElementById('jadwalBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Belum ada jadwal</td></tr>';
+  // }
+
+  // if (asistenList.length > 0) {
+  //   document.getElementById('asistenBody').innerHTML = asistenList.map(a => `
+  //                   <tr>
+  //                       <td>${escapeHtml(a.nim || '-')}</td>
+  //                       <td>${escapeHtml(a.nama || a.name || '-')}</td>
+  //                       <td>${escapeHtml(a.prodi || '-')}</td>
+  //                       <td>${escapeHtml(a.kelas || '-')}</td>
+  //                       <td><span class="status-badge ${a.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(a.status || 'Active')}</span></td>
+  //                   </tr>
+  //               `).join('');
+  // } else {
+  //   document.getElementById('asistenBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada asisten</td></tr>';
+  // }
+
+  // if (mahasiswaList.length > 0) {
+  //   document.getElementById('mahasiswaBody').innerHTML = mahasiswaList.map(m => `
+  //                   <tr>
+  //                       <td>${escapeHtml(m.nim || '-')}</td>
+  //                       <td>${escapeHtml(m.nama || m.name || '-')}</td>
+  //                       <td>${escapeHtml(m.prodi || '-')}</td>
+  //                       <td>${escapeHtml(m.kelas || '-')}</td>
+  //                       <td>${escapeHtml(m.kelompok || '-')}</td>
+  //                   </tr>
+  //               `).join('');
+  // } else {
+  //   document.getElementById('mahasiswaBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada mahasiswa</td></tr>';
+  // }
+
+  document.getElementById('kelolaJadwalBtn').href = "{{ url('jadwal') }}/" + id;
+  document.getElementById('alokasiAsistenBtn').href = "{{ url('asisten/alokasi') }}/" + id;
+  document.getElementById('listMahasiswaBtn').href = "{{ url('mahasiswa/list') }}/" + id;
+
+  document.getElementById('detailModal').style.display = 'flex';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>]/g, function (m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
   });
+}
 
-  document.getElementById("detailModal").style.display = "flex";
+window.onclick = function (event) {
+  if (event.target.classList && event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+  }
 }
 
 function closeDetail() {
   document.getElementById("detailModal").style.display = "none";
 }
-
-data = [
-  {
-    mk: "Pemrograman Dasar",
-    pertemuan: "1",
-    praktikum: "Variabel & Tipe Data",
-    deskripsi: "Pengenalan variabel",
-    kelas: ["A", "B", "C"],
-    status: "Active"
-  },
-  {
-    mk: "Jaringan Komputer",
-    pertemuan: "2",
-    praktikum: "Topologi Jaringan",
-    deskripsi: "Jenis topologi",
-    kelas: ["A", "B"],
-    status: "Non Active"
-  }
-];
-
-renderTable();

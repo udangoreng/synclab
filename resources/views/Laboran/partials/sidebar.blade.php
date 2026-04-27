@@ -7,7 +7,7 @@
     <title>Dashboard Praktikum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        a{
+        a {
             all: unset;
         }
 
@@ -162,31 +162,31 @@
 
             <li class="menu-item dropdown">
                 <div class="dropdown-btn" onclick="toggleDropdown()">
-                    <span><i class="fas fa-folder"></i> Management</span>
+                    <span><i class="fas fa-folder"></i> Manajemen Sistem</span>
                     <span><i class="fas fa-chevron-down"></i></span>
                 </div>
 
                 <ul class="dropdown-menu" id="dropdown">
                     <li class="{{ request()->routeIs('masterPraktikum') ? 'active' : '' }}"><a
-                            href="{{ route('masterPraktikum') }}"><i class="fas fa-flask"></i> Practicum Management </a>
+                            href="{{ route('masterPraktikum') }}"><i class="fas fa-flask"></i> Kelola Praktikum </a>
                     </li>
                     <li class="{{ request()->routeIs('masterJadwal') ? 'active' : '' }}"><a
-                            href="{{ route('masterJadwal') }}"><i class="fas fa-calendar"></i> Schedule Management</a>
+                            href="{{ route('masterJadwal') }}"><i class="fas fa-calendar"></i>Kelola Jadwal</a>
                     </li>
-                    <li class="{{ request()->routeIs('masterAsisten') ? 'active' : '' }}"><a
-                            href="{{ route('masterAsisten') }}"><i class="fas fa-users"></i> Assistant Management</a>
+                    <li class="{{ request()->routeIs('masterUser') ? 'active' : '' }}"><a
+                            href="{{ route('masterUser') }}"><i class="fas fa-users"></i> Kelola Pengguna</a>
                     </li>
                 </ul>
             </li>
 
             <li class="menu-item {{ request()->routeIs('masterMonitoring') ? 'active' : '' }}"><a
                     href="{{ route('masterMonitoring') }}">
-                    <i class="fas fa-chart-line"></i> System Monitoring</a>
+                    <i class="fas fa-chart-line"></i> Monitoring Sistem</a>
             </li>
 
             <li class="menu-item {{ request()->routeIs('masterLaporan') ? 'active' : '' }}"><a
                     href="{{ route('masterLaporan') }}">
-                    <i class="fas fa-file-alt"></i> Reports</a>
+                    <i class="fas fa-file-alt"></i> Rekap Praktikum</a>
             </li>
         </ul>
 
@@ -203,7 +203,7 @@
     function toggleDropdown() {
         const dropdown = document.getElementById('dropdown');
         dropdown.style.display =
-        dropdown.style.display === 'block' ? 'none' : 'block';
+            dropdown.style.display === 'block' ? 'none' : 'block';
         console.log(dropdown.style.display);
     }
 

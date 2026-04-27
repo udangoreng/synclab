@@ -12,7 +12,7 @@ class PertemuanController extends Controller
      */
     public function index()
     {
-        //
+        return view('kelolaPertemuan_lab.blade.php');
     }
 
     /**

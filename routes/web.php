@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AsistenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaboratoriumController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\ModulController;
 use App\Http\Controllers\PretestController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'welcome']);
 Route::middleware(['guest'])->group(function () {
@@ -45,13 +45,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/validasi', [NilaiController::class, 'index'])->name('validasiNilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('cekPresensi');
         Route::get('/pendaftaran', [PraktikumController::class, 'cekStatusPendaftaran'])->name('cekPendaftaran');
-        
+
         // Manage Asisten routes
         Route::get('/asisten', [DosenController::class, 'manageAsisten'])->name('manageAsisten');
         Route::post('/asisten', [DosenController::class, 'storeAsisten'])->name('storeAsisten');
         Route::put('/asisten/{id}', [DosenController::class, 'updateAsisten'])->name('updateAsisten');
         Route::delete('/asisten/{id}', [DosenController::class, 'destroyAsisten'])->name('destroyAsisten');
-        
+
         // Manage Laboran routes
         Route::get('/laboran', [DosenController::class, 'manageLaboran'])->name('manageLaboran');
         Route::post('/laboran', [DosenController::class, 'storeLaboran'])->name('storeLaboran');
@@ -71,10 +71,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('seeMahasiswa');
     });
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/praktikum', [PraktikumController::class, 'masterPraktikum'])->name('masterPraktikum');
+    Route::prefix('admin')->middleware('checkRole:Admin')->group(function () {
+        Route::get('/praktikum', [PraktikumController::class, 'index'])->name('masterPraktikum');
+        Route::post('/praktikum', [PraktikumController::class, 'store'])->name('addPraktikum');
+        Route::put('/praktikum/{id}', [PraktikumController::class, 'update'])->name('updatePraktikum');
+        Route::delete('/praktikum/{id}', [PraktikumController::class, 'destroy'])->name('deletePraktikum')->middleware('checkRole:Admin');
+
+        Route::get('/user', [UserController::class, 'index'])->name('masterUser');
+        Route::post('/user', [UserController::class, 'store'])->name('addUser');
+        Route::put('/user/{id}', [UserController::class, 'update'])->name('updateUser');
+        Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
+
         Route::get('/jadwal', [JadwalController::class, 'masterJadwal'])->name('masterJadwal');
-        Route::get('/asisten', [AsistenController::class, 'masterAsisten'])->name('masterAsisten');
         Route::get('/monitoring', [PraktikumController::class, 'masterMonitoring'])->name('masterMonitoring');
         Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');
     });

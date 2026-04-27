@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,7 @@ class AuthController extends Controller
     }
 
     function login(Request $request) {
+        
         $request->validate([
             'email'=>'required',
             'password'=>'required'
@@ -67,13 +69,10 @@ class AuthController extends Controller
         'password.required'   => 'Password harus diisi.',
     ]);
 
-    // Tentukan role berdasarkan nomor_induk
-    // Jika nomor_induk dimulai dengan 0 atau 1, maka role adalah Dosen
-    // Selain itu, role adalah Praktikan
     $firstChar = substr($request->nomor_induk, 0, 1);
     $role = (in_array($firstChar, ['0', '1'])) ? 'Dosen' : 'Praktikan';
 
-    \App\Models\User::create([
+    User::create([
         'nomor_induk' => $request->nomor_induk,
         'nama' => $request->nama,
         'email' => $request->email,
@@ -81,7 +80,6 @@ class AuthController extends Controller
         'role' => $role,
     ]);
 
-    // Redirect dengan flag untuk popup
     return redirect('/login')->with('register_success', true);
     }
 
