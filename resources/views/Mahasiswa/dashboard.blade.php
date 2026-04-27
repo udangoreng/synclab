@@ -474,6 +474,9 @@
             .page-title {
                 font-size: 1.4rem;
                 margin-bottom: 16px;
+                justify-content: center;
+                width: 100%;
+                text-align: center;
             }
 
             .hero-card {

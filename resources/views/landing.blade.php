@@ -1128,7 +1128,7 @@
                 <p>SyncLab adalah platform laboratorium digital yang terintegrasi untuk presensi, pretest, praktikum,
                     dan pelaporan kegiatan laboratorium secara online.</p>
                 <div class="hero-buttons">
-                    <a href="login.html" class="btn-primary">Mulai Sekarang <i class="fas fa-arrow-right"></i></a>
+                    <a href="{{route('login')}}" class="btn-primary">Mulai Sekarang <i class="fas fa-arrow-right"></i></a>
                     <a href="#features" class="btn-secondary">Pelajari Lebih <i class="fas fa-play"></i></a>
                 </div>
                 <div class="hero-stats">

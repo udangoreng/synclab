@@ -27,12 +27,16 @@
         .dashboard-container {
             display: flex;
             min-height: 100vh;
+            width: 100%;
         }
 
         .main-content {
             flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
             padding: 28px 32px;
-            overflow-x: auto;
+            min-width: 0;
         }
 
         .page-header {
@@ -143,8 +147,9 @@
 
         .scores-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 24px;
+            width: 100%;
         }
 
         .score-card {
@@ -331,6 +336,10 @@
 
             .page-title {
                 font-size: 1.4rem;
+                margin-bottom: 16px;
+                justify-content: center;
+                width: 100%;
+                text-align: center;
             }
 
             .filter-section {

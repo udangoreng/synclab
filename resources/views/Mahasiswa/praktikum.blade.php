@@ -27,12 +27,15 @@
         .dashboard-container {
             display: flex;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
         }
 
         .main-content {
             flex: 1;
-            padding: 28px 32px;
-            overflow-x: auto;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 100vw;
         }
 
         .page-header {
@@ -89,17 +92,18 @@
 
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            width: 100%;
         }
 
         .course-card {
             background: white;
             border-radius: 24px;
-            padding: 20px;
+            padding: 25px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: 0.3s;
         }
@@ -443,6 +447,14 @@
 
             .sidebar {
                 width: 100%;
+            }
+
+            .page-title {
+                font-size: 1.4rem;
+                margin-bottom: 16px;
+                justify-content: center;
+                width: 100%;
+                text-align: center;
             }
 
             .mobile-menu-toggle {
@@ -1875,7 +1887,7 @@
             // TAB NAVIGATION
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabs = {
-                all: 'tab-all',
+                active: 'tab-all',
                 upcoming: 'tab-upcoming',
                 completed: 'tab-completed'
             };
