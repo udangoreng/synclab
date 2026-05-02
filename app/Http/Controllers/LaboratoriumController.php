@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Laboratorium;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,13 +12,24 @@ class LaboratoriumController extends Controller
     /**
      * Display a listing of all laboratorium resources
      */
-    public function index()
+    public function index(Request $request)
     {
-        $laboratoriums = Laboratorium::with('kepalLab', 'praktikums')->get();
-        return response()->json([
-            'success' => true,
-            'data' => $laboratoriums
-        ]);
+        $laboratoriums = Laboratorium::with('kepalaLab')
+            ->when($request->search, function ($q, $search) {
+                return $q->where('nama_laboratorium', 'like', "%{$search}%")
+                    ->orWhere('lokasi', 'like', "%{$search}%");
+            })
+            ->paginate(15);
+
+        $kepalaLabs = User::whereIn('role', ['Dosen', 'Admin'])
+            ->orderBy('nama', 'asc')
+            ->get();
+
+        return view('laboran.kelolaLaboratorium_lab', compact('laboratoriums', 'kepalaLabs'));
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $laboratoriums
+        // ]);
     }
 
     /**
@@ -43,8 +55,7 @@ class LaboratoriumController extends Controller
      */
     public function store(Request $request)
     {
-        // Authorization: Only Admin can create
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'Admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Only admin can create laboratorium.'
@@ -52,6 +63,7 @@ class LaboratoriumController extends Controller
         }
 
         $validated = $request->validate([
+            'kode_laboratorium' => 'required|string|max:255',
             'nama_laboratorium' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'kapasitas' => 'required|integer|min:1',
@@ -60,13 +72,22 @@ class LaboratoriumController extends Controller
         ]);
 
         try {
-            $laboratorium = Laboratorium::create($validated);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Laboratorium created successfully',
-                'data' => $laboratorium->load('kepalLab', 'praktikums')
-            ], 201);
+            Laboratorium::create([
+                'kode_laboratorium' => $request->kode_laboratorium,
+                'nama_laboratorium' => $request->nama_laboratorium,
+                'lokasi' => $request->lokasi,
+                'kapasitas' => $request->kapasitas,
+                'kepala_lab' => $request->kepala_lab,
+                'status' => $request->status,
+            ]);
+
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Laboratorium created successfully',
+            //     'data' => $laboratorium->load('kepalLab', 'praktikums')
+            // ], 201);
+            return redirect('/admin/laboratorium')->with('success', 'Laboratorium berhasil ditambahkan!');
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -101,7 +122,7 @@ class LaboratoriumController extends Controller
     public function edit($id)
     {
         // Authorization: Only Admin can edit
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'Admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Only admin can edit laboratorium.'
@@ -127,7 +148,7 @@ class LaboratoriumController extends Controller
     public function update(Request $request, $id)
     {
         // Authorization: Only Admin can update
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'Admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Only admin can update laboratorium.'
@@ -138,6 +159,7 @@ class LaboratoriumController extends Controller
             $laboratorium = Laboratorium::findOrFail($id);
 
             $validated = $request->validate([
+                'kode_laboratorium' => 'sometimes|string|max:255',
                 'nama_laboratorium' => 'sometimes|string|max:255',
                 'lokasi' => 'sometimes|string|max:255',
                 'kapasitas' => 'sometimes|integer|min:1',
@@ -145,13 +167,21 @@ class LaboratoriumController extends Controller
                 'status' => 'sometimes|in:Terpakai,Tersedia',
             ]);
 
-            $laboratorium->update($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Laboratorium updated successfully',
-                'data' => $laboratorium->load('kepalLab', 'praktikums')
+            $laboratorium->update([
+                'kode_laboratorium' => $request->kode_laboratorium,
+                'nama_laboratorium' => $request->nama_laboratorium,
+                'lokasi' => $request->lokasi,
+                'kapasitas' => $request->kapasitas,
+                'kepala_lab' => $request->kepala_lab,
+                'status' => $request->status,
             ]);
+
+            return redirect('/admin/laboratorium')->with('success', 'Laboratorium berhasil diupdate!');
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Laboratorium updated successfully',
+            //     'data' => $laboratorium->load('kepalLab', 'praktikums')
+            // ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
@@ -172,7 +202,7 @@ class LaboratoriumController extends Controller
     public function destroy($id)
     {
         // Authorization: Only Admin can delete
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'Admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Only admin can delete laboratorium.'
@@ -183,10 +213,11 @@ class LaboratoriumController extends Controller
             $laboratorium = Laboratorium::findOrFail($id);
             $laboratorium->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Laboratorium deleted successfully'
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Laboratorium deleted successfully'
+            // ]);
+            return redirect('/admin/laboratorium')->with('success', 'Laboratorium berhasil dihapus!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,

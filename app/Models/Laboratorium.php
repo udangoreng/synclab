@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Laboratorium extends Model
 {
+    protected $table = 'laboratoriums';
     protected $fillable = [
+        'kode_laboratorium',
         'nama_laboratorium',
         'lokasi',
         'kapasitas',
@@ -27,7 +29,7 @@ class Laboratorium extends Model
     /**
      * Kepala lab adalah User
      */
-    public function kepalLab(): BelongsTo
+    public function kepalaLab(): BelongsTo
     {
         return $this->belongsTo(User::class, 'kepala_lab');
     }

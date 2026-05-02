@@ -170,11 +170,17 @@
                     <li class="{{ request()->routeIs('masterPraktikum') ? 'active' : '' }}"><a
                             href="{{ route('masterPraktikum') }}"><i class="fas fa-flask"></i> Kelola Praktikum </a>
                     </li>
+                    <li class="{{ request()->routeIs('masterUser') ? 'active' : '' }}"><a
+                        href="{{ route('masterUser') }}"><i class="fas fa-users"></i> Kelola Pengguna</a>
+                    </li>
+                    <li class="{{ request()->routeIs('masterLaboratorium') ? 'active' : '' }}"><a
+                        href="{{ route('masterLaboratorium') }}"><i class="fa-solid fa-users-viewfinder"></i> Kelola Laboratorium</a>
+                    </li>
+                    <li class="{{ request()->routeIs('masterPertemuan') ? 'active' : '' }}"><a
+                        href="{{ route('masterPertemuan') }}"><i class="fa-solid fa-chalkboard-user"></i> Kelola Pertemuan</a>
+                    </li>
                     <li class="{{ request()->routeIs('masterJadwal') ? 'active' : '' }}"><a
                             href="{{ route('masterJadwal') }}"><i class="fas fa-calendar"></i>Kelola Jadwal</a>
-                    </li>
-                    <li class="{{ request()->routeIs('masterUser') ? 'active' : '' }}"><a
-                            href="{{ route('masterUser') }}"><i class="fas fa-users"></i> Kelola Pengguna</a>
                     </li>
                 </ul>
             </li>

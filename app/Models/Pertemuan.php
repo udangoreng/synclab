@@ -11,6 +11,8 @@ class Pertemuan extends Model
         'id_jadwal',
         'id_laporan',
         'id_modul',
+        'id_nilai',
+        'id_presensi',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('id_dosen')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_laboratorium')->references('id')->on('laboratoriums')->onDelete('cascade')->onUpdate('cascade');
             $table->string('hari');
-            $table->time('jam');
+            $table->time('jam_mulai');
+            $table->time('jam_selesai');
             $table->integer('jumlah_max_peserta');
             $table->enum('status', ['Dibuka', 'Penuh', 'Selesai']);
             $table->timestamps();

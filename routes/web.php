@@ -12,6 +12,7 @@ use App\Http\Controllers\ModulController;
 use App\Http\Controllers\PretestController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\PertemuanController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'welcome']);
@@ -73,16 +74,30 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('admin')->middleware('checkRole:Admin')->group(function () {
         Route::get('/praktikum', [PraktikumController::class, 'index'])->name('masterPraktikum');
-        Route::post('/praktikum', [PraktikumController::class, 'store'])->name('addPraktikum');
-        Route::put('/praktikum/{id}', [PraktikumController::class, 'update'])->name('updatePraktikum');
+        Route::post('/praktikum', [PraktikumController::class, 'store'])->name('addPraktikum')->middleware('checkRole:Admin');
+        Route::put('/praktikum/{id}', [PraktikumController::class, 'update'])->name('updatePraktikum')->middleware('checkRole:Admin');
         Route::delete('/praktikum/{id}', [PraktikumController::class, 'destroy'])->name('deletePraktikum')->middleware('checkRole:Admin');
 
         Route::get('/user', [UserController::class, 'index'])->name('masterUser');
-        Route::post('/user', [UserController::class, 'store'])->name('addUser');
-        Route::put('/user/{id}', [UserController::class, 'update'])->name('updateUser');
-        Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
+        Route::post('/user', [UserController::class, 'store'])->name('addUser')->middleware('checkRole:Admin');
+        Route::put('/user/{id}', [UserController::class, 'update'])->name('updateUser')->middleware('checkRole:Admin');
+        Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser')->middleware('checkRole:Admin');
 
-        Route::get('/jadwal', [JadwalController::class, 'masterJadwal'])->name('masterJadwal');
+        Route::get('/laboratorium', [LaboratoriumController::class, 'index'])->name('masterLaboratorium');
+        Route::post('/laboratorium', [LaboratoriumController::class, 'store'])->name('addLaboratorium')->middleware('checkRole:Admin');
+        Route::put('/laboratorium/{id}', [LaboratoriumController::class, 'update'])->name('updateLaboratorium')->middleware('checkRole:Admin');
+        Route::delete('/laboratorium/{id}', [LaboratoriumController::class, 'destroy'])->name('deleteLaboratorium')->middleware('checkRole:Admin');
+
+        Route::get('/jadwal', [JadwalController::class, 'index'])->name('masterJadwal');
+        Route::post('/jadwal', [JadwalController::class, 'store'])->name('addJadwal')->middleware('checkRole:Admin');
+        Route::put('/jadwal/{id}', [JadwalController::class, 'update'])->name('updateJadwal')->middleware('checkRole:Admin');
+        Route::delete('/jadwal/{id}', [JadwalController::class, 'destroy'])->name('deleteJadwal')->middleware('checkRole:Admin');
+
+        Route::get('/pertemuan', [PertemuanController::class, 'index'])->name('masterPertemuan');
+        Route::post('/pertemuan', [PertemuanController::class, 'store'])->name('addPertemuan')->middleware('checkRole:Admin');
+        Route::put('/pertemuan/{id}', [PertemuanController::class, 'update'])->name('updatePertemuan')->middleware('checkRole:Admin');
+        Route::delete('/pertemuan/{id}', [PertemuanController::class, 'destroy'])->name('deletePertemuan')->middleware('checkRole:Admin');
+
         Route::get('/monitoring', [PraktikumController::class, 'masterMonitoring'])->name('masterMonitoring');
         Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');
     });

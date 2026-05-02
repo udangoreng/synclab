@@ -30,7 +30,7 @@ function openEditModal(id) {
     document.getElementById('edit_nama').value = user.nama;
     document.getElementById('edit_email').value = user.email;
     document.getElementById('edit_nohp').value = user.nohp !== '-' ? user.nohp : '';
-     const roleSelect = document.getElementById('edit_role');
+    const roleSelect = document.getElementById('edit_role');
     if (roleSelect && user.role) {
         const userRole = user.role.toLowerCase();
         let optionFound = false;

@@ -7,6 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Nilai;
+use App\Models\Presensi;
+use App\Models\Praktikum;
 
 class User extends Authenticatable
 {
@@ -41,6 +44,14 @@ class User extends Authenticatable
     public function presensis()
     {
         return $this->hasMany(Presensi::class, 'id_user');
+    }
+
+    /**
+     * User memiliki banyak Praktikum
+     */
+    public function praktikums() 
+    { 
+        return $this->belongsToMany(Praktikum::class, 'pendaftaran_praktikum', 'id_user', 'id_praktikum'); 
     }
 
     /**

@@ -10,9 +10,17 @@ class PertemuanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('kelolaPertemuan_lab.blade.php');
+        $pertemuans = Pertemuan::with(['jadwal', 'jadwal.praktikum', 'jadwal.laboratorium', 'modul'])
+            ->when($request->search, function ($q, $search) {
+                return $q->where('nama_pertemuan', 'like', "%{$search}%")
+                    ->orWhere('deskripsi_pertemuan', 'like', "%{$search}%");
+            })
+            ->orderBy('pertemuan_ke', 'asc')
+            ->paginate(15);
+
+        return view('laboran/kelolaPertemuan_lab', compact('pertemuans'));
     }
 
     /**
