@@ -55,6 +55,14 @@ class User extends Authenticatable
     }
 
     /**
+     * User memiliki banyak Jadwal (sebagai dosen/asisten)
+     */
+    public function jadwals()
+    {
+        return $this->hasMany(Jadwal::class, 'id_dosen');
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
