@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Presensi;
+use App\Models\Pertemuan;
+use App\Models\Praktikum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,13 +19,19 @@ class PresensiController extends Controller
 
         try {
             if ($user->role === 'Praktikan') {
+                // Get presensi with pertemuan -> jadwal -> praktikum
                 $presensis = Presensi::where('id_user', $user->id)
-                    ->with(['praktikum', 'user'])
+                    ->with(['pertemuan.jadwal.praktikum', 'user'])
                     ->get();
 
-                return view('mahasiswa/presensi', compact('presensis'));
+                // Group by praktikum for summary
+                $presensiPerPraktikum = $presensis->groupBy(function($presensi) {
+                    return $presensi->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? 'Unknown';
+                });
+
+                return view('mahasiswa/presensi', compact('presensis', 'presensiPerPraktikum'));
             } else {
-                $presensis = Presensi::with('praktikum', 'user')->get();
+                $presensis = Presensi::with('pertemuan.jadwal.praktikum', 'user')->get();
 
                 if ($user->role === 'Dosen') {
                     return view('dosen/presensi', compact('presensis'));
@@ -46,7 +54,7 @@ class PresensiController extends Controller
     }
 
     function getHistoryPresensi() {
-        $presensis = Presensi::with('praktikum', 'user')->get();
+        $presensis = Presensi::with('pertemuan.jadwal.praktikum', 'user')->get();
         return view('asisten/presensiDua_asisten', compact('presensis'));
     }
 
@@ -65,7 +73,7 @@ class PresensiController extends Controller
         }
 
         $validated = $request->validate([
-            'id_praktikum' => 'required|integer|exists:praktikums,id',
+            'id_pertemuan' => 'required|integer|exists:pertemuans,id',
             'id_user' => 'required|integer|exists:users,id',
             'kehadiran' => 'required|in:Hadir,Izin,Sakit,Alpha',
             'status' => 'sometimes|in:Dikonfirmasi,Pending,Ditolak',
@@ -76,7 +84,7 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi created successfully',
-                'data' => $presensi->load('praktikum', 'user')
+                'data' => $presensi->load('pertemuan', 'user')
             ], 201);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Praktikum;
+use App\Models\User;
+use App\Models\Nilai;
+use App\Models\Presensi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PraktikumController extends Controller
 {
@@ -65,12 +69,42 @@ class PraktikumController extends Controller
 
     function pendaftaranShow()
     {
-        return view('mahasiswa/pendaftaran');
+        // Get all available praktikums for registration
+        $praktikums = Praktikum::with('jadwals.laboratorium', 'jadwals.dosen')->get();
+        $user = Auth::user();
+        
+        // Get user's registrations
+        $myPraktikums = Praktikum::whereHas('nilais', function($query) use ($user) {
+            $query->where('id_user', $user->id);
+        })->get();
+        
+        return view('mahasiswa/pendaftaran', compact('praktikums', 'myPraktikums'));
     }
 
     function getMyPraktikum()
     {
-        return view('mahasiswa/praktikum');
+        $user = Auth::user();
+        
+        // Get praktikums where user has nilai (registered)
+        $myPraktikums = Praktikum::whereHas('jadwals.pertemuan.nilais', function($query) use ($user) {
+            $query->where('id_user', $user->id);
+        })->with([
+            'jadwals.laboratorium', 
+            'jadwals.dosen',
+            'jadwals.pertemuans.modul',
+            'jadwals.pertemuans.nilais' => function($q) use ($user) {
+                $q->where('id_user', $user->id);
+            }
+        ])->get();
+        
+        // Get all available praktikums
+        $allPraktikums = Praktikum::with([
+            'jadwals.laboratorium', 
+            'jadwals.dosen',
+            'jadwals.pertemuans.modul'
+        ])->get();
+        
+        return view('mahasiswa/praktikum', compact('myPraktikums', 'allPraktikums'));
     }
 
     function monitoringPraktikum()

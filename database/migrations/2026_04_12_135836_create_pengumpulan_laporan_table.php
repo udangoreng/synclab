@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_laporan')->references('id')->on('laporans')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('file_path');
+            $table->text('keterangan');
             $table->enum('status', ['Disubmit', 'Dalam Review', 'Diterima', 'Ditolak', 'Terlambat']);
-            $table->integer('nilai');
-            $table->longText('komentar');
+            $table->integer('nilai')->nullable();
+            $table->longText('komentar')->nullable();
             $table->timestamps();
         });
     }

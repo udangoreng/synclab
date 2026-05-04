@@ -561,12 +561,69 @@
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                     <select id="filterMatkul">
                         <option value="all">Semua Mata Kuliah</option>
+                        @foreach($presensiPerPraktikum as $praktikum => $data)
+                        <option value="{{ $praktikum }}">{{ $praktikum }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <div class="presensi-grid" id="presensiGrid"></div>
+            {{-- Tampilkan presensi per praktikum --}}
+            @forelse($presensiPerPraktikum as $praktikumNama => $presensiList)
+            <div class="presensi-card" data-praktikum="{{ $praktikumNama }}">
+                <div class="card-header">
+                    <h3>{{ $praktikumNama }}</h3>
+                    <p>{{ $presensiList->count() }} Pertemuan</p>
+                </div>
+                <div class="card-body">
+                    {{-- Hitung total kehadiran --}}
+                    @php
+                        $hadir = $presensiList->where('kehadiran', 'Hadir')->count();
+                        $izin = $presensiList->where('kehadiran', 'Izin')->count();
+                        $sakit = $presensiList->where('kehadiran', 'Sakit')->count();
+                        $alpha = $presensiList->where('kehadiran', 'Alpha')->count();
+                        $total = $presensiList->count();
+                        $persen = $total > 0 ? round(($hadir / $total) * 100) : 0;
+                    @endphp
+                    <div class="kehadiran-circle">
+                        <svg viewBox="0 0 140 140">
+                            <circle class="circle-bg" cx="70" cy="70" r="60"></circle>
+                            <circle class="circle-progress" cx="70" cy="70" r="60" 
+                                stroke-dasharray="{{ round(377 * $persen / 100) }}" 
+                                stroke-dashoffset="0"></circle>
+                        </svg>
+                        <div class="circle-text">
+                            <div class="percent">{{ $persen }}%</div>
+                            <div class="label">Kehadiran</div>
+                        </div>
+                    </div>
+                    <div class="kehadiran-stats">
+                        <div class="stat-item stat-hadir">
+                            <div class="stat-value">{{ $hadir }}</div>
+                            <div class="stat-label">Hadir</div>
+                        </div>
+                        <div class="stat-item stat-izin">
+                            <div class="stat-value">{{ $izin }}</div>
+                            <div class="stat-label">Izin</div>
+                        </div>
+                        <div class="stat-item stat-sakit">
+                            <div class="stat-value">{{ $sakit }}</div>
+                            <div class="stat-label">Sakit</div>
+                        </div>
+                        <div class="stat-item stat-alpha">
+                            <div class="stat-value">{{ $alpha }}</div>
+                            <div class="stat-label">Alpha</div>
+                        </div>
+                    </div>
+                    <button class="btn-lihat" onclick="showDetailModal('{{ $praktikumNama }}')">
+                        <i class="fas fa-eye"></i> Lihat Detail
+                    </button>
+                </div>
+            </div>
+            @empty
+            <div class="empty-state">Belum ada data presensi</div>
+            @endforelse
         </main>
     </div>
 
@@ -576,7 +633,54 @@
                 <h3><i class="fas fa-calendar-check"></i> Detail Presensi</h3>
                 <button class="modal-close" id="closeDetailModal">&times;</button>
             </div>
-            <div class="modal-body" id="detailModalBody"></div>
+            <div class="modal-body" id="detailModalBody">
+                {{-- Detail akan di-load dari server --}}
+                @forelse($presensiPerPraktikum as $praktikumNama => $presensiList)
+                <div id="detail-{{ Str::slug($praktikumNama) }}" style="display:none;">
+                    <div class="detail-header">
+                        <h2>{{ $praktikumNama }}</h2>
+                        <p>Rekap Kehadiran per Pertemuan</p>
+                    </div>
+                    <div class="detail-summary">
+                        @php
+                            $hadir = $presensiList->where('kehadiran', 'Hadir')->count();
+                            $izin = $presensiList->where('kehadiran', 'Izin')->count();
+                            $sakit = $presensiList->where('kehadiran', 'Sakit')->count();
+                            $alpha = $presensiList->where('kehadiran', 'Alpha')->count();
+                        @endphp
+                        <div class="summary-box hadir">
+                            <div class="summary-label">Hadir</div>
+                            <div class="summary-number">{{ $hadir }}</div>
+                        </div>
+                        <div class="summary-box izin">
+                            <div class="summary-label">Izin</div>
+                            <div class="summary-number">{{ $izin }}</div>
+                        </div>
+                        <div class="summary-box sakit">
+                            <div class="summary-label">Sakit</div>
+                            <div class="summary-number">{{ $sakit }}</div>
+                        </div>
+                        <div class="summary-box alpha">
+                            <div class="summary-label">Alpha</div>
+                            <div class="summary-number">{{ $alpha }}</div>
+                        </div>
+                    </div>
+                    <div class="pertemuan-list">
+                        @foreach($presensiList as $presensi)
+                        <div class="pertemuan-item">
+                            <div class="pertemuan-info">
+                                <div class="pertemuan-title">{{ $presensi->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</div>
+                                <div class="pertemuan-date">{{ $presensi->created_at->format('d M Y') }}</div>
+                            </div>
+                            <span class="status-badge status-{{ strtolower($presensi->kehadiran) }}">
+                                {{ $presensi->kehadiran }}
+                            </span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endforelse
+            </div>
             <div class="modal-footer">
                 <button class="btn-cancel" id="closeDetailModalBtn">Tutup</button>
             </div>
@@ -584,381 +688,22 @@
     </div>
     <script>
         (function() {
-            const presensiData = {
-                "Jaringan Komputer": {
-                    totalPertemuan: 14,
-                    pertemuan: [{
-                            pertemuan: 1,
-                            tanggal: "1 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 2,
-                            tanggal: "8 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 3,
-                            tanggal: "15 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 4,
-                            tanggal: "22 April 2026",
-                            status: "Izin"
-                        },
-                        {
-                            pertemuan: 5,
-                            tanggal: "29 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 6,
-                            tanggal: "6 Mei 2026",
-                            status: "Sakit"
-                        },
-                        {
-                            pertemuan: 7,
-                            tanggal: "13 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 8,
-                            tanggal: "20 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 9,
-                            tanggal: "27 Mei 2026",
-                            status: "Alpha"
-                        },
-                        {
-                            pertemuan: 10,
-                            tanggal: "3 Juni 2026",
-                            status: "Hadir"
-                        }
-                    ]
-                },
-                "Rekayasa Perangkat Lunak (RPL)": {
-                    totalPertemuan: 14,
-                    pertemuan: [{
-                            pertemuan: 1,
-                            tanggal: "2 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 2,
-                            tanggal: "9 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 3,
-                            tanggal: "16 April 2026",
-                            status: "Izin"
-                        },
-                        {
-                            pertemuan: 4,
-                            tanggal: "23 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 5,
-                            tanggal: "30 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 6,
-                            tanggal: "7 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 7,
-                            tanggal: "14 Mei 2026",
-                            status: "Sakit"
-                        },
-                        {
-                            pertemuan: 8,
-                            tanggal: "21 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 9,
-                            tanggal: "28 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 10,
-                            tanggal: "4 Juni 2026",
-                            status: "Hadir"
-                        }
-                    ]
-                },
-                "Pengolahan Citra Digital": {
-                    totalPertemuan: 14,
-                    pertemuan: [{
-                            pertemuan: 1,
-                            tanggal: "3 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 2,
-                            tanggal: "10 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 3,
-                            tanggal: "17 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 4,
-                            tanggal: "24 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 5,
-                            tanggal: "1 Mei 2026",
-                            status: "Izin"
-                        },
-                        {
-                            pertemuan: 6,
-                            tanggal: "8 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 7,
-                            tanggal: "15 Mei 2026",
-                            status: "Alpha"
-                        },
-                        {
-                            pertemuan: 8,
-                            tanggal: "22 Mei 2026",
-                            status: "Sakit"
-                        },
-                        {
-                            pertemuan: 9,
-                            tanggal: "29 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 10,
-                            tanggal: "5 Juni 2026",
-                            status: "Hadir"
-                        }
-                    ]
-                },
-                "Basis Data": {
-                    totalPertemuan: 14,
-                    pertemuan: [{
-                            pertemuan: 1,
-                            tanggal: "4 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 2,
-                            tanggal: "11 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 3,
-                            tanggal: "18 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 4,
-                            tanggal: "25 April 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 5,
-                            tanggal: "2 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 6,
-                            tanggal: "9 Mei 2026",
-                            status: "Izin"
-                        },
-                        {
-                            pertemuan: 7,
-                            tanggal: "16 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 8,
-                            tanggal: "23 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 9,
-                            tanggal: "30 Mei 2026",
-                            status: "Hadir"
-                        },
-                        {
-                            pertemuan: 10,
-                            tanggal: "6 Juni 2026",
-                            status: "Alpha"
-                        }
-                    ]
-                }
-            };
-
-            let filteredData = [];
-
-            function updateDropdown() {
-                const matkuls = Object.keys(presensiData);
-                const select = document.getElementById('filterMatkul');
-                select.innerHTML = '<option value="all">Semua Mata Kuliah</option>' +
-                    matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
-            }
-
-            function hitungPersentase(pertemuan) {
-                const hadir = pertemuan.filter(p => p.status === "Hadir").length;
-                const total = pertemuan.length;
-                return Math.round((hadir / total) * 100);
-            }
-
-            function hitungStatistik(pertemuan) {
-                const hadir = pertemuan.filter(p => p.status === "Hadir").length;
-                const izin = pertemuan.filter(p => p.status === "Izin").length;
-                const sakit = pertemuan.filter(p => p.status === "Sakit").length;
-                const alpha = pertemuan.filter(p => p.status === "Alpha").length;
-                return {
-                    hadir,
-                    izin,
-                    sakit,
-                    alpha,
-                    total: pertemuan.length
-                };
-            }
-
-            function renderPresensi() {
-                const selectedMatkul = document.getElementById('filterMatkul').value;
-
-                filteredData = selectedMatkul === 'all' ? Object.keys(presensiData) : [selectedMatkul];
-                filteredData = filteredData.filter(m => presensiData[m]);
-
-                const container = document.getElementById('presensiGrid');
-
-                if (filteredData.length === 0) {
-                    container.innerHTML = '<div class="empty-state">Belum ada data presensi</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-
-                filteredData.forEach(matkul => {
-                    const data = presensiData[matkul];
-                    const persentase = hitungPersentase(data.pertemuan);
-                    const stats = hitungStatistik(data.pertemuan);
-                    const circumference = 2 * Math.PI * 60;
-                    const offset = circumference - (persentase / 100) * circumference;
-
-                    const card = document.createElement('div');
-                    card.className = 'presensi-card';
-                    card.innerHTML = `
-                <div class="card-header">
-                    <h3>${matkul}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="kehadiran-circle">
-                        <svg viewBox="0 0 140 140">
-                            <circle cx="70" cy="70" r="60" class="circle-bg"></circle>
-                            <circle cx="70" cy="70" r="60" class="circle-progress" style="stroke-dasharray: ${circumference}; stroke-dashoffset: ${offset}; stroke: #10b981;"></circle>
-                        </svg>
-                        <div class="circle-text">
-                            <span class="percent">${persentase}%</span>
-                            <span class="label">Kehadiran</span>
-                        </div>
-                    </div>
-                    <div class="kehadiran-stats">
-                        <div class="stat-item stat-hadir">
-                            <div class="stat-value">${stats.hadir}</div>
-                            <div class="stat-label">Hadir</div>
-                        </div>
-                        <div class="stat-item stat-izin">
-                            <div class="stat-value">${stats.izin}</div>
-                            <div class="stat-label">Izin</div>
-                        </div>
-                        <div class="stat-item stat-sakit">
-                            <div class="stat-value">${stats.sakit}</div>
-                            <div class="stat-label">Sakit</div>
-                        </div>
-                        <div class="stat-item stat-alpha">
-                            <div class="stat-value">${stats.alpha}</div>
-                            <div class="stat-label">Alpha</div>
-                        </div>
-                    </div>
-                    <button class="btn-lihat" data-matkul="${matkul}">
-                        <i class="fas fa-eye"></i> Lihat Kehadiran
-                    </button>
-                </div>
-            `;
-                    container.appendChild(card);
+            // Data dari server (Blade)
+            const presensiData = @json($presensiPerPraktikum->toArray());
+            
+            function showDetailModal(praktikumNama) {
+                // Hide all detail sections first
+                document.querySelectorAll('[id^="detail-"]').forEach(el => {
+                    el.style.display = 'none';
                 });
-
-                document.querySelectorAll('.btn-lihat').forEach(btn => {
-                    btn.addEventListener('click', () => openDetailModal(btn.dataset.matkul));
-                });
-            }
-
-            function openDetailModal(matkul) {
-                const data = presensiData[matkul];
-                if (!data) return;
-
-                const persentase = hitungPersentase(data.pertemuan);
-                const stats = hitungStatistik(data.pertemuan);
-
-                const pertemuanListHtml = data.pertemuan.map(p => {
-                    let statusClass = '';
-                    if (p.status === 'Hadir') statusClass = 'status-hadir';
-                    else if (p.status === 'Izin') statusClass = 'status-izin';
-                    else if (p.status === 'Sakit') statusClass = 'status-sakit';
-                    else statusClass = 'status-alpha';
-
-                    return `
-                <div class="pertemuan-item">
-                    <div class="pertemuan-info">
-                        <div class="pertemuan-title">Pertemuan ${p.pertemuan}</div>
-                        <div class="pertemuan-date">${p.tanggal}</div>
-                    </div>
-                    <span class="status-badge ${statusClass}">${p.status}</span>
-                </div>
-            `;
-                }).join('');
-
-                const modalBody = document.getElementById('detailModalBody');
-                modalBody.innerHTML = `
-            <div class="detail-header">
-                <h2>${matkul}</h2>
-                <p>Kelas: ${data.kelas} | Total Pertemuan: ${data.pertemuan.length} dari ${data.totalPertemuan}</p>
-            </div>
-            <div class="detail-summary">
-                <div class="summary-box hadir">
-                    <div class="summary-label">Hadir</div>
-                    <div class="summary-number">${stats.hadir}</div>
-                </div>
-                <div class="summary-box izin">
-                    <div class="summary-label">Izin</div>
-                    <div class="summary-number">${stats.izin}</div>
-                </div>
-                <div class="summary-box sakit">
-                    <div class="summary-label">Sakit</div>
-                    <div class="summary-number">${stats.sakit}</div>
-                </div>
-                <div class="summary-box alpha">
-                    <div class="summary-label">Alpha</div>
-                    <div class="summary-number">${stats.alpha}</div>
-                </div>
-            </div>
-            <div class="detail-header">
-                <h4>Persentase Kehadiran: ${persentase}%</h4>
-            </div>
-            <div class="pertemuan-list">
-                ${pertemuanListHtml}
-            </div>
-        `;
-
+                
+                // Show selected praktikum detail
+                const slug = praktikumNama.toLowerCase().replace(/\s+/g, '-');
+                const detailEl = document.getElementById('detail-' + slug);
+                if (detailEl) {
+                    detailEl.style.display = 'block';
+                }
+                
                 document.getElementById('detailModal').classList.add('active');
             }
 
@@ -966,16 +711,27 @@
                 document.getElementById('detailModal').classList.remove('active');
             }
 
-            document.getElementById('applyFilter').addEventListener('click', renderPresensi);
             document.getElementById('closeDetailModal').addEventListener('click', closeModal);
             document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('modal')) closeModal();
             });
 
-            updateDropdown();
-            renderPresensi();
+            // Filter functionality
+            document.getElementById('applyFilter').addEventListener('click', function() {
+                const selected = document.getElementById('filterMatkul').value;
+                const cards = document.querySelectorAll('.presensi-card[data-praktikum]');
+                
+                cards.forEach(card => {
+                    if (selected === 'all' || card.dataset.praktikum === selected) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
 
+            // Mobile menu toggle
             const mobileToggle = document.getElementById('mobileMenuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
@@ -994,6 +750,8 @@
                     if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
                 });
             });
+        })();
+    </script>
 
             document.querySelectorAll('.submenu li').forEach(item => {
                 item.addEventListener('click', () => {

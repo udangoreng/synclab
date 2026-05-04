@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Nilai extends Model
 {
     protected $fillable = [
-        'id_praktikum',
+        'id_pertemuan',
         'id_user',
         'nilai_pretest',
         'nilai_laporan',
@@ -19,15 +19,15 @@ class Nilai extends Model
     ];
 
     /**
-     * Nilai memiliki satu Praktikum
+     * Nilai dimiliki oleh satu Pertemuan
      */
-    public function praktikum(): BelongsTo
+    public function pertemuan(): BelongsTo
     {
-        return $this->belongsTo(Praktikum::class, 'id_praktikum');
+        return $this->belongsTo(Pertemuan::class, 'id_pertemuan');
     }
 
     /**
-     * Nilai memiliki satu User (Praktikan)
+     * Nilai dimiliki oleh satu User (Praktikan)
      */
     public function user(): BelongsTo
     {

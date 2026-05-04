@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('pertemuans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_laporan')->references('id')->on('laporans')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_modul')->references('id')->on('moduls')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_nilai')->references('id')->on('nilais')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_presensi')->references('id')->on('presensis')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('kode_praktikum');
+            $table->foreign('kode_praktikum')->nullable()->references('kode_praktikum')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_pertemuan');
             $table->integer('pertemuan_ke');
             $table->longText('deskripsi_pertemuan');

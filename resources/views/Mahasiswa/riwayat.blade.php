@@ -455,12 +455,50 @@
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                     <select id="filterMatkul">
                         <option value="all">Semua Mata Kuliah</option>
+                        @foreach($nilais as $nilai)
+                        <option value="{{ $nilai->praktikum->nama_praktikum }}">{{ $nilai->praktikum->nama_praktikum }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
 
-            <div class="riwayat-grid" id="riwayatGrid"></div>
+            <div class="riwayat-grid" id="riwayatGrid">
+                @forelse($nilais as $nilai)
+                <div class="riwayat-card">
+                    <div class="card-header">
+                        <div>
+                            <h3>{{ $nilai->praktikum->nama_praktikum ?? '-' }}</h3>
+                            <p>{{ $nilai->created_at->format('d M Y') }}</p>
+                        </div>
+                        <span class="status-badge status-completed">{{ $nilai->status ?? 'Pending' }}</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="riwayat-table">
+                            <tr>
+                                <td>Nilai Pretest</td>
+                                <td>{{ $nilai->nilai_pretest ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nilai Laporan</td>
+                                <td>{{ $nilai->nilai_laporan ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nilai Total</td>
+                                <td>{{ $nilai->nilai_total ?? '-' }}</td>
+                            </tr>
+                        </table>
+                        <div class="nilai-akhir">
+                            <span>Nilai Akhir</span>
+                            <span>{{ $nilai->nilai_akhir ?? '-' }}</span>
+                        </div>
+                        <button class="btn-detail"><i class="fas fa-eye"></i> Lihat Detail</button>
+                    </div>
+                </div>
+                @empty
+                <div class="empty-state">Belum ada riwayat aktivitas</div>
+                @endforelse
+            </div>
         </main>
     </div>
 

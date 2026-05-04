@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('pendaftaran_praktikum', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->enum('role', ['Praktikan', 'Asisten', 'Dosen']);
+            $table->enum('role', ['Praktikan', 'Asisten']);
             $table->timestamps();
+            
+            // Unique constraint: 1 user hanya bisa daftar 1x ke 1 jadwal
+            $table->unique(['id_jadwal', 'id_user']);
         });
     }
 

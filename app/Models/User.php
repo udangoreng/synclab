@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -29,7 +30,7 @@ class User extends Authenticatable
     /**
      * User memiliki banyak Nilai
      */
-    public function nilais()
+    public function nilais(): HasMany
     {
         return $this->hasMany(Nilai::class, 'id_user');
     }
@@ -37,9 +38,33 @@ class User extends Authenticatable
     /**
      * User memiliki banyak Presensi
      */
-    public function presensis()
+    public function presensis(): HasMany
     {
         return $this->hasMany(Presensi::class, 'id_user');
+    }
+
+    /**
+     * User memiliki banyak Pendaftaran Praktikum
+     */
+    public function pendaftaranPraktikums(): HasMany
+    {
+        return $this->hasMany(PendaftaranPraktikum::class, 'id_user');
+    }
+
+    /**
+     * User memiliki banyak Pengumpulan Laporan
+     */
+    public function pengumpulanLaporans(): HasMany
+    {
+        return $this->hasMany(PengumpulanLaporan::class, 'id_user');
+    }
+
+    /**
+     * User memiliki satu Praktikum (jika role Dosen)
+     */
+    public function praktikum()
+    {
+        return $this->hasOne(Praktikum::class, 'id_dosen');
     }
 
     /**

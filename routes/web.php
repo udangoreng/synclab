@@ -26,7 +26,7 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/mahasiswa', [AuthController::class, 'mahasiswa'])->middleware('checkRole:Praktikan')->name('mahasiswa');
+    Route::get('/mahasiswa', [MahasiswaController::class, 'dashboard'])->middleware('checkRole:Praktikan')->name('mahasiswa');
     Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
     Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten')->name('asisten');
     Route::get('/admin', [AuthController::class, 'admin'])->middleware('checkRole:Admin')->name('admin');
