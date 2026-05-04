@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Jadwal;
 use App\Models\Nilai;
 use App\Models\User;
-use App\Models\Presensi;
 
 class Praktikum extends Model
 {
@@ -55,13 +54,5 @@ class Praktikum extends Model
                     ->where('pendaftaran_praktikum.role', 'Praktikan')
                     ->where('pendaftaran_praktikum.status', 'Dikonfirmasi')
                     ->withTimestamps();
-    }
-
-    /**
-     * Praktikum memiliki banyak Presensi
-     */
-    public function presensis(): HasMany
-    {
-        return $this->hasMany(Presensi::class, 'id_praktikum');
     }
 }

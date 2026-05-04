@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Praktikum;
+use App\Models\Laboratorium;
+use App\Models\Pertemuan;
 
 class Jadwal extends Model
 {
@@ -25,6 +29,11 @@ class Jadwal extends Model
     public function laboratorium()
     {
         return $this->belongsTo(Laboratorium::class, 'id_laboratorium');
+    }
+
+    public function pertemuan(): HasMany
+    {
+        return $this->hasMany(Pertemuan::class, 'id_jadwal');
     }
     
     public function dosen()

@@ -1,185 +1,132 @@
-// Modal Functions
-function openModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.add('show');
+document.getElementById('searchPraktikum')?.addEventListener('keyup', function (e) {
+  const search = e.target.value.toLowerCase();
+  document.querySelectorAll('.praktikum-card').forEach(card => {
+    const nama = card.dataset.nama?.toLowerCase() || '';
+    card.style.display = nama.includes(search) ? '' : 'none';
+  });
+});
+
+// Edit praktikum
+document.querySelectorAll('.btn-edit').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const praktikum = JSON.parse(this.dataset.praktikum);
+    document.getElementById('editNama').value = praktikum.nama_praktikum;
+    document.getElementById('editKode').value = praktikum.kode_praktikum;
+    document.getElementById('editAngkatan').value = praktikum.angkatan;
+    document.getElementById('editSemester').value = praktikum.semester;
+    document.getElementById('formEditPraktikum').action = `/laboran/updatePraktikum/${praktikum.id}`;
+    document.getElementById('modalPraktikumEdit').classList.add('show');
+  });
+});
+
+// Delete praktikum
+let deleteId = null;
+document.querySelectorAll('.btn-delete').forEach(btn => {
+  btn.addEventListener('click', function () {
+    deleteId = this.dataset.id;
+    document.getElementById('deletePraktikumNama').innerText = this.dataset.nama;
+    document.getElementById('modalPraktikumDelete').classList.add('show');
+  });
+});
+document.getElementById('confirmDeleteBtn')?.addEventListener('click', function () {
+  if (deleteId) {
+    fetch(`/laboran/deletePraktikum/${deleteId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+      }
+    }).then(() => window.location.reload());
   }
+});
+
+// Detail praktikum
+function showPraktikumDetail(praktikum) {
+  document.getElementById('detailNama').innerText = praktikum.nama_praktikum;
+  document.getElementById('detailKode').innerText = praktikum.kode_praktikum;
+  document.getElementById('detailAngkatan').innerText = praktikum.angkatan;
+  document.getElementById('detailSemester').innerText = praktikum.semester;
+  document.getElementById('modalPraktikumDetail').classList.add('show');
+}
+document.querySelectorAll('.btn-detail').forEach(btn => {
+  btn.addEventListener('click', function () {
+    showPraktikumDetail(JSON.parse(this.dataset.praktikum));
+  });
+});
+
+// Asisten detail
+function showAsistenDetail(asisten) {
+  const content = `
+                <p><strong>Nama:</strong> ${asisten.nama}</p>
+                <p><strong>Email:</strong> ${asisten.email || '-'}</p>
+                <p><strong>No HP:</strong> ${asisten.nohp || '-'}</p>
+                <p><strong>Jumlah Kelas:</strong> ${asisten.jadwals_count || 0}</p>
+                <p><strong>Status:</strong> <span class="badge ${asisten.jadwals_count > 2 ? 'badge-warning' : 'badge-success'}">${asisten.jadwals_count > 2 ? 'Overload' : 'Normal'}</span></p>
+            `;
+  document.getElementById('asistenDetailContent').innerHTML = content;
+  document.getElementById('modalAsistenDetail').classList.add('show');
+}
+
+// Asisten jadwal
+function showAsistenJadwal(id, nama) {
+  document.getElementById('asistenNamaJadwal').innerText = nama;
+  fetch(`/laboran/asisten-jadwal/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      let html = '';
+      if (data.length === 0) {
+        html = '<p style="text-align:center;color:#999;">Tidak ada jadwal</p>';
+      } else {
+        html = '<ul style="list-style:none;padding:0;">';
+        data.forEach(j => {
+          html += `<li style="padding:8px 0;border-bottom:1px solid #eee;">
+                                <strong>${j.hari}</strong> - ${j.jam_mulai} s/d ${j.jam_selesai}<br>
+                                ${j.praktikum?.nama_praktikum || '-'} - ${j.laboratorium?.nama_laboratorium || '-'}
+                            </li>`;
+        });
+        html += '</ul>';
+      }
+      document.getElementById('asistenJadwalContent').innerHTML = html;
+      document.getElementById('modalAsistenJadwal').classList.add('show');
+    });
+}
+
+// Jadwal detail
+function showJadwalDetail(jadwal) {
+  const content = `
+                <p><strong>Praktikum:</strong> ${jadwal.praktikum?.nama_praktikum || '-'}</p>
+                <p><strong>Hari:</strong> ${jadwal.hari}</p>
+                <p><strong>Jam:</strong> ${jadwal.jam_mulai} - ${jadwal.jam_selesai}</p>
+                <p><strong>Laboratorium:</strong> ${jadwal.laboratorium?.nama_laboratorium || '-'}</p>
+                <p><strong>Dosen:</strong> ${jadwal.dosen?.nama || '-'}</p>
+                <p><strong>Max Peserta:</strong> ${jadwal.jumlah_max_peserta || '-'}</p>
+                <p><strong>Status:</strong> ${jadwal.bentrok ? '❌ Bentrok' : (jadwal.status || 'Aktif')}</p>
+            `;
+  document.getElementById('jadwalDetailContent').innerHTML = content;
+  document.getElementById('modalJadwalDetail').classList.add('show');
+}
+
+// Export functions
+function exportLaporan(type, format) {
+  const praktikumId = document.getElementById('filterPraktikumLaporan')?.value || '';
+  const semester = document.getElementById('filterSemesterLaporan')?.value || '';
+  const date = document.getElementById('filterDateLaporan')?.value || '';
+  window.location.href = `/laboran/export/${type}/${format}?praktikum_id=${praktikumId}&semester=${semester}&date=${date}`;
+}
+
+function showDetailNilai() {
+  window.location.href = '/laboran/master-nilai';
+}
+
+function showDetailLaporan() {
+  window.location.href = '/laboran/master-laporan';
 }
 
 function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.remove('show');
-  }
+  document.getElementById(modalId).classList.remove('show');
 }
 
-// Close modal when clicking outside
-window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
+window.onclick = function (event) {
+  if (event.target.classList && event.target.classList.contains('modal')) {
     event.target.classList.remove('show');
   }
 }
-
-// Initialize event listeners
-document.addEventListener('DOMContentLoaded', function() {
-  // Search functionality for praktikum
-  const searchInput = document.getElementById('searchPraktikum');
-  if (searchInput) {
-    searchInput.addEventListener('keyup', function() {
-      const searchTerm = this.value.toLowerCase();
-      const cards = document.querySelectorAll('.praktikum-card');
-      
-      cards.forEach(card => {
-        const nama = card.getAttribute('data-nama').toLowerCase();
-        if (nama.includes(searchTerm)) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  }
-
-  // Jadwal timeline click handler
-  document.addEventListener('click', function(e) {
-    const timelineItem = e.target.closest('.timeline-item');
-    if (timelineItem && timelineItem.getAttribute('data-jadwal')) {
-      const jadwalData = JSON.parse(timelineItem.getAttribute('data-jadwal'));
-      document.getElementById('jadwalPraktikum').textContent = jadwalData.praktikum?.nama_praktikum || 'Unknown';
-      document.getElementById('jadwalHari').textContent = jadwalData.hari;
-      document.getElementById('jadwalJam').textContent = jadwalData.jam_mulai + ' - ' + jadwalData.jam_selesai;
-      document.getElementById('jadwalLab').textContent = jadwalData.laboratorium?.nama_laboratorium || 'Unknown';
-      document.getElementById('jadwalDosen').textContent = jadwalData.dosen?.nama || 'Unknown';
-      document.getElementById('jadwalMaxPeserta').textContent = jadwalData.jumlah_max_peserta || '-';
-      document.getElementById('jadwalStatus').textContent = jadwalData.status || 'Normal';
-      openModal('modalJadwalDetail');
-    }
-  });
-
-  // Praktikum Detail Button
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn-detail') && e.target.closest('.praktikum-card')) {
-      const praktikumData = JSON.parse(e.target.getAttribute('data-praktikum'));
-      document.getElementById('detailNama').textContent = praktikumData.nama_praktikum;
-      document.getElementById('detailKode').textContent = praktikumData.kode_praktikum;
-      document.getElementById('detailAngkatan').textContent = praktikumData.angkatan || '-';
-      document.getElementById('detailSemester').textContent = praktikumData.semester || '-';
-      openModal('modalPraktikumDetail');
-    }
-
-    // Praktikum Edit Button
-    if (e.target.classList.contains('btn-edit') && e.target.closest('.praktikum-card')) {
-      const praktikumData = JSON.parse(e.target.getAttribute('data-praktikum'));
-      document.getElementById('editNama').value = praktikumData.nama_praktikum;
-      document.getElementById('editKode').value = praktikumData.kode_praktikum;
-      document.getElementById('editAngkatan').value = praktikumData.angkatan || '';
-      document.getElementById('editSemester').value = praktikumData.semester || '';
-      document.getElementById('editNama').dataset.id = praktikumData.id;
-      openModal('modalPraktikumEdit');
-    }
-
-    // Praktikum Delete Button
-    if (e.target.classList.contains('btn-delete') && e.target.closest('.praktikum-card')) {
-      const id = e.target.getAttribute('data-id');
-      const nama = e.target.getAttribute('data-nama');
-      document.getElementById('deletePraktikumNama').textContent = nama;
-      document.getElementById('confirmDeleteBtn').dataset.id = id;
-      openModal('modalPraktikumDelete');
-    }
-
-    // Asisten Detail Button
-    if (e.target.classList.contains('btn-detail-asisten')) {
-      const id = e.target.getAttribute('data-id');
-      const nama = e.target.getAttribute('data-nama');
-      const email = e.target.getAttribute('data-email');
-      const nohp = e.target.getAttribute('data-nohp');
-      const kelas = e.target.getAttribute('data-kelas');
-      
-      document.getElementById('asistenNamaDetail').textContent = nama;
-      document.getElementById('asistenEmailDetail').textContent = email || '-';
-      document.getElementById('asistenNohpDetail').textContent = nohp || '-';
-      document.getElementById('asistenKelasDetail').textContent = kelas;
-      document.getElementById('asistenStatusDetail').textContent = parseInt(kelas) > 2 ? 'Overload' : 'Normal';
-      openModal('modalAsisteDetail');
-    }
-
-    // Asisten Jadwal Button
-    if (e.target.classList.contains('btn-jadwal-asisten')) {
-      const id = e.target.getAttribute('data-id');
-      const nama = e.target.getAttribute('data-nama');
-      
-      document.getElementById('asistenNamaJadwal').textContent = nama;
-      
-      // Fetch jadwal data - in production, this would call an API
-      const asistenCard = e.target.closest('.asisten');
-      const jadwalData = JSON.parse(asistenCard.getAttribute('data-asisten')).jadwals;
-      
-      let jadwalHtml = '<div style="max-height: 300px; overflow-y: auto;">';
-      if (jadwalData && jadwalData.length > 0) {
-        jadwalData.forEach(jadwal => {
-          jadwalHtml += `<div style="padding: 10px; border-bottom: 1px solid #eee;">
-            <p><strong>${jadwal.praktikum?.nama_praktikum || 'Unknown'}</strong></p>
-            <p>Hari: ${jadwal.hari}</p>
-            <p>Jam: ${jadwal.jam_mulai} - ${jadwal.jam_selesai}</p>
-            <p>Lab: ${jadwal.laboratorium?.nama_laboratorium || 'Unknown'}</p>
-          </div>`;
-        });
-      } else {
-        jadwalHtml += '<p style="padding: 20px; text-align: center; color: #999;">Tidak ada jadwal mengajar</p>';
-      }
-      jadwalHtml += '</div>';
-      
-      document.getElementById('asistenJadwalContent').innerHTML = jadwalHtml;
-      openModal('modalAsisteJadwal');
-    }
-
-    // Laporan Detail Buttons
-    if (e.target.classList.contains('btn-detail') && e.target.closest('.laporan-card')) {
-      const card = e.target.closest('.laporan-card');
-      const tipe = card.querySelector('h4').textContent;
-      document.getElementById('laporanType').textContent = tipe;
-      openModal('modalLaporanExport');
-    }
-
-    // PDF Export
-    if (e.target.classList.contains('btn-pdf')) {
-      const card = e.target.closest('.laporan-card');
-      const tipe = card.querySelector('h4').textContent;
-      alert('Mengunduh ' + tipe + ' dalam format PDF...\n(Dalam produksi, ini akan menghasilkan PDF asli)');
-    }
-
-    // Excel Export
-    if (e.target.classList.contains('btn-excel')) {
-      const card = e.target.closest('.laporan-card');
-      const tipe = card.querySelector('h4').textContent;
-      alert('Mengunduh ' + tipe + ' dalam format Excel...\n(Dalam produksi, ini akan menghasilkan Excel asli)');
-    }
-  });
-
-  // Form Edit Praktikum Submit
-  const formEdit = document.getElementById('formEditPraktikum');
-  if (formEdit) {
-    formEdit.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const id = document.getElementById('editNama').dataset.id;
-      const nama = document.getElementById('editNama').value;
-      const kode = document.getElementById('editKode').value;
-      const angkatan = document.getElementById('editAngkatan').value;
-      const semester = document.getElementById('editSemester').value;
-      
-      alert(`Praktikum "${nama}" telah diperbarui!\n(Dalam produksi, ini akan mengirim ke server)`);
-      closeModal('modalPraktikumEdit');
-    });
-  }
-
-  // Delete Confirm Button
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', function() {
-      const id = this.dataset.id;
-      alert(`Praktikum telah dihapus!\n(Dalam produksi, ini akan mengirim ke server)`);
-      closeModal('modalPraktikumDelete');
-      // In production: window.location.reload();
-    });
-  }
-});

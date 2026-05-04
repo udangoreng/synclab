@@ -13,6 +13,7 @@ use App\Http\Controllers\ModulController;
 use App\Http\Controllers\PretestController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PertemuanController;
 use App\Http\Controllers\UserController;
 
@@ -103,8 +104,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/asisten/{id}', [AsistenController::class, 'store'])->name('storeAlokasiAsisten');
         Route::delete('/asisten/{praktikumId}/{asistenId}', [AsistenController::class, 'destroy'])->name('deleteAlokasiAsisten');
 
-        Route::get('/monitoring', [PraktikumController::class, 'masterMonitoring'])->name('masterMonitoring');
         Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');
+
+        Route::get('/pengumpulanLaporan', [LaporanController::class, 'adminShowLaporan'])->name('kelolaLaporan');
+
+        Route::get('/nilai', [NilaiController::class, 'masterNilai'])->name('kelolaNilai');
+
+        Route::get('/pendaftaran', [PendaftaranController::class, 'masterPendaftaran'])->name('kelolaPendaftaran');
     });
 
     // Laboratorium routes 

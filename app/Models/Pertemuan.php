@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Jadwal;
+use App\Models\Modul;
 
 class Pertemuan extends Model
 {
@@ -29,5 +32,15 @@ class Pertemuan extends Model
     public function modul(): BelongsTo
     {
         return $this->belongsTo(Modul::class, 'id_modul');
+    }
+
+    public function presensi(): HasMany
+    {
+        return $this->hasMany(Presensi::class, 'id_pertemuan');
+    }
+
+    public function nilai(): HasMany
+    {
+        return $this->hasMany(Nilai::class, 'id_pertemuan');
     }
 }

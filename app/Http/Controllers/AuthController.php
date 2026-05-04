@@ -114,7 +114,7 @@ class AuthController extends Controller
 
     function asisten()
     {
-        return view('asisten/dashboard_asistent');
+        return view('asisten.dashboard_asistent');
     }
 
     function admin(Request $request)
@@ -127,6 +127,7 @@ class AuthController extends Controller
         $totalPraktikum = Praktikum::count();
         $totalAsisten = User::where('role', 'Asisten')->count();
         $totalPraktikan = User::where('role', 'Praktikan')->count();
+        $totalPendaftaran = DB::table('pendaftaran_praktikum')->where('role', 'Praktikan')->count();
 
         // Today's schedule
         $hariIni = Carbon::now()->locale('id')->translatedFormat('l');
@@ -196,6 +197,8 @@ class AuthController extends Controller
 
         $asistenAktif = User::where('role', 'Asisten')
             ->withCount('jadwals')
+            ->latest()
+            ->limit(5)
             ->get();
 
         $asistenMengajar = $asistenAktif->filter(function ($a) use ($hariIni) {
@@ -204,6 +207,7 @@ class AuthController extends Controller
 
         return view('laboran/dashboard_lab', compact(
             'totalPraktikum',
+            'totalPendaftaran',
             'totalAsisten',
             'totalPraktikan',
             'jadwalHariIni',

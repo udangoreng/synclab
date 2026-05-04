@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class AsistenController extends Controller
 {
-    public function index($id)
+    public function index(int $id)
     {
         $praktikum = Praktikum::with(['asisten'])->findOrFail($id);
         $allAsisten = User::where('role', 'asisten')->orderBy('nama')->get();
@@ -17,7 +17,7 @@ class AsistenController extends Controller
 
         return view('laboran.alokasiAsisten', compact('praktikum', 'allAsisten', 'currentAsistenIds'));
     }
-    public function store(Request $request, $id)
+    public function store(Request $request, int $id)
     {
         $praktikum = Praktikum::findOrFail($id);
 
@@ -38,13 +38,14 @@ class AsistenController extends Controller
                 ->delete();
         }
 
-        // Add new asisten
         foreach ($toAdd as $asistenId) {
             DB::table('pendaftaran_praktikum')->insert([
                 'id_praktikum' => $id,
                 'id_user' => $asistenId,
                 'role' => 'asisten',
                 'status' => 'Dikonfirmasi',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -55,7 +56,7 @@ class AsistenController extends Controller
     /**
      * Delete single asisten from praktikum
      */
-    public function destroy($praktikumId, $asistenId)
+    public function destroy(int $praktikumId, int $asistenId)
     {
         $deleted = DB::table('pendaftaran_praktikum')->where('id_praktikum', $praktikumId)
             ->where('id_user', $asistenId)

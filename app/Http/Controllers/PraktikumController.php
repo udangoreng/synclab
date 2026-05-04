@@ -122,11 +122,6 @@ class PraktikumController extends Controller
         return view('mahasiswa/praktikum');
     }
 
-    function monitoringPraktikum()
-    {
-        return view('dosen/monitoring');
-    }
-
     function cekStatusPendaftaran()
     {
         return view('dosen/statuspendaftaran');

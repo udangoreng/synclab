@@ -78,40 +78,8 @@ function nextMonth() {
   renderCalendar();
 }
 
-const data = [
-  {
-    title: "Pemrograman Dasar",
-    practicum: "Struktur Kontrol (If, Switch)",
-    room: "Lab RPL",
-    date: "2 January 2026",
-    time: "09.00 - 11.00",
-    total: "33 mhs"
-  },
-  {
-    title: "Rekayasa Perangkat Lunak",
-    practicum: "Pengujian Perangkat Lunak",
-    room: "Lab RPL",
-    date: "9 January 2026",
-    time: "09.00 - 11.00",
-    total: "30 mhs"
-  },
-  {
-    title: "Pengolahan Citra Digital",
-    practicum: "Transformasi Citra (Negatif, Thresholding)",
-    room: "Lab Multimedia",
-    date: "16 January 2026",
-    time: "09.00 - 11.00",
-    total: "28 mhs"
-  },
-  {
-    title: "Jaringan Komputer",
-    practicum: "Simulasi Jaringan (Packet Tracer)",
-    room: "Lab Jaringan",
-    date: "23 January 2026",
-    time: "09.00 - 11.00",
-    total: "32 mhs"
-  }
-];
+// Data loaded dynamically from server via blade @json
+let praktikums = [];
 
 const colors = ["pink", "blue", "green", "yellow"];
 
