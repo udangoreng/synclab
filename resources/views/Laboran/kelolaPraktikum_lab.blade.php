@@ -65,6 +65,7 @@
                     @forelse ($praktikums as $prak)
                         <script>
                             const praktikumData = @json($praktikums->items());
+                            console.log(praktikumData);
                         </script>
                         <tr>
                             <td>{{ $prak->kode_praktikum }}</td>
@@ -160,8 +161,7 @@
                                     <th>Hari</th>
                                     <th>Jam Mulai</th>
                                     <th>Jam Selesai</th>
-                                    <th>Ruangan</th>
-                                    <th>Asisten</th>
+                                    <th>Laboratorium</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -182,8 +182,6 @@
                                 <tr>
                                     <th>NIM</th>
                                     <th>Nama Asisten</th>
-                                    <th>Program Studi</th>
-                                    <th>Kelas</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -204,9 +202,6 @@
                                 <tr>
                                     <th>NIM</th>
                                     <th>Nama Mahasiswa</th>
-                                    <th>Program Studi</th>
-                                    <th>Kelas</th>
-                                    <th>Kelompok</th>
                                 </tr>
                             </thead>
                             <tbody id="mahasiswaBody">
@@ -221,10 +216,8 @@
                 <div class="detail-actions">
                     <a href="#" id="kelolaJadwalBtn" class="btn-primary"><i class="fas fa-clock"></i> Kelola
                         Jadwal</a>
-                    <a href="#" id="alokasiAsistenBtn" class="btn-primary"><i class="fas fa-user-plus"></i>
+                    <a href="" id="alokasiAsistenBtn" class="btn-primary"><i class="fas fa-user-plus"></i>
                         Alokasi Asisten</a>
-                    <a href="#" id="listMahasiswaBtn" class="btn-primary"><i class="fas fa-list"></i> List
-                        Mahasiswa</a>
                     <button type="button" class="btn-secondary"
                         onclick="document.getElementById('detailModal').style.display='none'">Tutup</button>
                 </div>

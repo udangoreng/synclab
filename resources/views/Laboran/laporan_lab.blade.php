@@ -50,25 +50,77 @@
 
                 <div class="card summary-2">
                     <p>Presensi</p>
-                    <h3>80%</h3>
+                    <h3>{{ $persenPresen }}%</h3>
                 </div>
 
                 <div class="card summary-3">
                     <p>Nilai</p>
-                    <h3>70%</h3>
+                    <h3>{{ $persenNilai }}%</h3>
                 </div>
 
                 <div class="card summary-4">
                     <p>Jadwal</p>
-                    <h3>1 Bentrok</h3>
+                    <h3>{{ $bentrokCount }} Bentrok!</h3>
                 </div>
             </div>
 
             <div class="chart-box">
+                <script>
+                    function renderStats(@json($nilai)) {
+                        let tinggi = 0,
+                            rendah = 0,
+                            totalNilai = 0;
+
+                        data.forEach(d => {
+                            const nilai = hitungNilai(d);
+                            totalNilai += nilai;
+
+                            if (nilai >= 75) tinggi++;
+                            else rendah++;
+                        });
+
+                        const rata = Math.round(totalNilai / data.length);
+
+                        document.getElementById("valTinggi").innerText = tinggi;
+                        document.getElementById("valRendah").innerText = rendah;
+                        document.getElementById("valRata").innerText = rata;
+
+                        const ctx = document.getElementById("chart");
+                        if (!ctx) return;
+
+                        if (chartInstance) chartInstance.destroy();
+
+                        chartInstance = new Chart(ctx, {
+                            type: "doughnut",
+                            data: {
+                                labels: ["Tinggi", "Rendah"],
+                                datasets: [{
+                                    data: [tinggi, rendah],
+                                    backgroundColor: [
+                                        "#86efac",
+                                        "#fca5a5"
+                                    ],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                cutout: "65%",
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </script>
                 <h3 class="chart-title">Statistik</h3>
 
                 <div class="chart-content">
-                    <canvas id="chart"></canvas>
+                    <canvas id="chart">
+                    </canvas>
 
                     <div class="chart-legend">
                         <div><span class="dot tinggi"></span> Nilai Tinggi</div>
@@ -98,7 +150,38 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBody">
+                    @forelse ($nilai as $n)
+                        <tr>
+                            <td>{{ $n->user->nama }}</td>
+                            <td>{{ $n->user->nomor_induk }}</td>
+                            <td>{{ $n->nilai_pretest }}</td>
+                            <td>{{ $n->nilai_laporan }}</td>
+                            <td>{{ $n->nilai_akhir }}</td>
+                            <td>
+                                @if ($n->nilai_akhir >= 65)
+                                    C
+                                @elseif($n->nilai_akhir >= 75)
+                                    B
+                                @elseif($n->nilai_akhir >= 85)
+                                    A
+                                @else
+                                    D
+                                @endif
+                            </td>
+                            <td>
+                                <span
+                                    class="status-laporan {{ $nilai_akhir >= 75 ? 'lulus' : ($nilai_akhir >= 60 ? 'revisi' : 'tidak-lulus') }}">
+                                    {{ $nilai_akhir >= 75 ? 'Lulus' : ($nilai_akhir >= 60 ? 'Revisi' : 'Tidak Lulus') }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <td colspan="7" style="align-content: center">
+                            Tidak Ada Data Ditemukan!
+                        </td>
+                    @endforelse
+                </tbody>
             </table>
         </div>
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AsistenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaboratoriumController;
@@ -97,6 +98,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pertemuan', [PertemuanController::class, 'store'])->name('addPertemuan')->middleware('checkRole:Admin');
         Route::put('/pertemuan/{id}', [PertemuanController::class, 'update'])->name('updatePertemuan')->middleware('checkRole:Admin');
         Route::delete('/pertemuan/{id}', [PertemuanController::class, 'destroy'])->name('deletePertemuan')->middleware('checkRole:Admin');
+
+        Route::get('/asisten/{id}', [AsistenController::class, 'index'])->name('alokasiAsisten');
+        Route::post('/asisten/{id}', [AsistenController::class, 'store'])->name('storeAlokasiAsisten');
+        Route::delete('/asisten/{praktikumId}/{asistenId}', [AsistenController::class, 'destroy'])->name('deleteAlokasiAsisten');
 
         Route::get('/monitoring', [PraktikumController::class, 'masterMonitoring'])->name('masterMonitoring');
         Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');

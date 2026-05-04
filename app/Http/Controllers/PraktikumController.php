@@ -15,7 +15,7 @@ class PraktikumController extends Controller
         $praktikums = Praktikum::when($request->search, function ($query, $search) {
             return $query->where('kode_praktikum', 'like', "%{$search}%")
                 ->orWhere('nama_praktikum', 'like', "%{$search}%");
-        })->paginate(15);
+        })->with('jadwals', 'jadwals.laboratorium', 'asisten', 'mahasiswa')->paginate(15);
 
         return view('laboran/kelolaPraktikum_lab', compact('praktikums'));
     }

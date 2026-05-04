@@ -77,9 +77,9 @@ function openDetailModal(id) {
                 </div>
             `;
 
-  // const jadwalList = allJadwalData[id] || [];
-  // const asistenList = allAsistenData[id] || [];
-  // const mahasiswaList = allMahasiswaData[id] || [];
+  const jadwalList = item.jadwals|| [];
+  const asistenList = item.asisten || [];
+  const mahasiswaList =item.mahasiswa || [];
 
   document.getElementById('detailStats').innerHTML = `
                 <div class="stat-card">
@@ -96,52 +96,45 @@ function openDetailModal(id) {
                 </div>
             `;
 
-  // if (jadwalList.length > 0) {
-  //   document.getElementById('jadwalBody').innerHTML = jadwalList.map(j => `
-  //                   <tr>
-  //                       <td>${escapeHtml(j.hari || '-')}</td>
-  //                       <td>${escapeHtml(j.jam_mulai || '-')}</td>
-  //                       <td>${escapeHtml(j.jam_selesai || '-')}</td>
-  //                       <td>${escapeHtml(j.ruangan || '-')}</td>
-  //                       <td>${escapeHtml(j.asisten_nama || j.asisten?.nama || '-')}</td>
-  //                       <td><span class="status-badge ${j.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(j.status || 'Active')}</span></td>
-  //                   </tr>
-  //               `).join('');
-  // } else {
-  //   document.getElementById('jadwalBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Belum ada jadwal</td></tr>';
-  // }
+  if (jadwalList.length > 0) {
+    document.getElementById('jadwalBody').innerHTML = jadwalList.map(j => `
+                    <tr>
+                        <td>${escapeHtml(j.hari || '-')}</td>
+                        <td>${escapeHtml(j.jam_mulai || '-')}</td>
+                        <td>${escapeHtml(j.jam_selesai || '-')}</td>
+                        <td>${escapeHtml(j.laboratorium.nama_laboratorium || '-')}</td>
+                        <td><span class="status-badge ${j.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(j.status || 'Active')}</span></td>
+                    </tr>
+                `).join('');
+  } else {
+    document.getElementById('jadwalBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Belum ada jadwal</td></tr>';
+  }
 
-  // if (asistenList.length > 0) {
-  //   document.getElementById('asistenBody').innerHTML = asistenList.map(a => `
-  //                   <tr>
-  //                       <td>${escapeHtml(a.nim || '-')}</td>
-  //                       <td>${escapeHtml(a.nama || a.name || '-')}</td>
-  //                       <td>${escapeHtml(a.prodi || '-')}</td>
-  //                       <td>${escapeHtml(a.kelas || '-')}</td>
-  //                       <td><span class="status-badge ${a.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(a.status || 'Active')}</span></td>
-  //                   </tr>
-  //               `).join('');
-  // } else {
-  //   document.getElementById('asistenBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada asisten</td></tr>';
-  // }
+  if (asistenList.length > 0) {
+    document.getElementById('asistenBody').innerHTML = asistenList.map(a => `
+                    <tr>
+                        <td>${escapeHtml(a.nim || '-')}</td>
+                        <td>${escapeHtml(a.nama || a.name || '-')}</td>
+                        <td><span class="status-badge ${a.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(a.status || 'Active')}</span></td>
+                    </tr>
+                `).join('');
+  } else {
+    document.getElementById('asistenBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada asisten</td></tr>';
+  }
 
-  // if (mahasiswaList.length > 0) {
-  //   document.getElementById('mahasiswaBody').innerHTML = mahasiswaList.map(m => `
-  //                   <tr>
-  //                       <td>${escapeHtml(m.nim || '-')}</td>
-  //                       <td>${escapeHtml(m.nama || m.name || '-')}</td>
-  //                       <td>${escapeHtml(m.prodi || '-')}</td>
-  //                       <td>${escapeHtml(m.kelas || '-')}</td>
-  //                       <td>${escapeHtml(m.kelompok || '-')}</td>
-  //                   </tr>
-  //               `).join('');
-  // } else {
-  //   document.getElementById('mahasiswaBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada mahasiswa</td></tr>';
-  // }
+  if (mahasiswaList.length > 0) {
+    document.getElementById('mahasiswaBody').innerHTML = mahasiswaList.map(m => `
+                    <tr>
+                        <td>${escapeHtml(m.nim || '-')}</td>
+                        <td>${escapeHtml(m.nama || m.name || '-')}</td>
+                    </tr>
+                `).join('');
+  } else {
+    document.getElementById('mahasiswaBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada mahasiswa</td></tr>';
+  }
 
-  document.getElementById('kelolaJadwalBtn').href = "{{ url('jadwal') }}/" + id;
-  document.getElementById('alokasiAsistenBtn').href = "{{ url('asisten/alokasi') }}/" + id;
-  document.getElementById('listMahasiswaBtn').href = "{{ url('mahasiswa/list') }}/" + id;
+  document.getElementById('kelolaJadwalBtn').href = "/admin/jadwal?praktikum_id=" + id;
+  document.getElementById('alokasiAsistenBtn').href = "/admin/asisten/" + id;
 
   document.getElementById('detailModal').style.display = 'flex';
 }

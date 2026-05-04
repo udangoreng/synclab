@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('role', ['Praktikan', 'Asisten', 'Dosen']);
+            $table->enum('status', ['Dikonfirmasi', 'Ditolak', 'Pending']);
             $table->timestamps();
         });
     }
