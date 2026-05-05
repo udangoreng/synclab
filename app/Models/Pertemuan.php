@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Jadwal;
 use App\Models\Modul;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Presensi;
+use App\Models\Nilai;
 
 class Pertemuan extends Model
 {

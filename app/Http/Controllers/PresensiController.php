@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Presensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use App\Models\Praktikum;
+use App\Models\Pertemuan;
+use App\Models\User;
 
 class PresensiController extends Controller
 {
@@ -28,14 +33,52 @@ class PresensiController extends Controller
                 if ($user->role === 'Dosen') {
                     return view('dosen/presensi', compact('presensis'));
                 } elseif ($user->role === 'Asisten') {
-                    return view('asisten/presensiSatu_asisten', compact('presensis'));
+                    $user = Auth::user();
+
+                    $praktikumIds = DB::table('pendaftaran_praktikum')
+                        ->where('id_user', $user->id)
+                        ->where('role', 'Asisten')
+                        ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+                        ->pluck('id_praktikum')
+                        ->toArray();
+
+                    $praktikums = Praktikum::whereIn('id', $praktikumIds)
+                        ->with(['jadwals.pertemuan'])
+                        ->get();
+
+                    $praktikumList = [];
+                    $counter = 1;
+
+                    foreach ($praktikums as $praktikum) {
+                        foreach ($praktikum->jadwals as $jadwal) {
+                            if ($jadwal->pertemuan && $jadwal->pertemuan->isNotEmpty()) {
+                                foreach ($jadwal->pertemuan as $pertemuan) {
+                                    $praktikumList[] = [
+                                        'no'              => $counter++,
+                                        'id'              => $praktikum->id,
+                                        'kode_praktikum'  => $praktikum->kode_praktikum,
+                                        'nama_praktikum'  => $praktikum->nama_praktikum,
+                                        'pertemuan_id'    => $pertemuan->id,
+                                        'pertemuan_ke'    => $pertemuan->pertemuan_ke,
+                                        'nama_pertemuan'  => $pertemuan->nama_pertemuan,
+                                        'jadwal_id'       => $jadwal->id,
+                                        'hari'            => $jadwal->hari,
+                                        'jam_mulai'       => $jadwal->jam_mulai,
+                                        'jam_selesai'     => $jadwal->jam_selesai,
+                                    ];
+                                }
+                            }
+                        }
+                    }
+
+                    return view('Asisten.presensiSatu_asisten', compact('praktikumList'));
                 }
             }
 
-            return response()->json([
-                'success' => true,
-                'data' => $presensis
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'data' => $presensis
+            // ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -45,9 +88,216 @@ class PresensiController extends Controller
         }
     }
 
-    function getHistoryPresensi() {
-        $presensis = Presensi::with('praktikum', 'user')->get();
-        return view('asisten/presensiDua_asisten', compact('presensis'));
+    public function recordAttendance(Request $request)
+    {
+        $pertemuanId = $request->get('pertemuan_id');
+        $praktikumId = $request->get('praktikum_id');
+        $user = Auth::user();
+
+        $hasAccess = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('id_praktikum', $praktikumId)
+            ->where('role', 'Asisten')
+            ->exists();
+
+        if (!$hasAccess) {
+            return redirect()->back()->with('error', 'Akses ditolak');
+        }
+
+        $pertemuan = Pertemuan::with(['jadwal.praktikum', 'jadwal.laboratorium'])
+            ->where('id', $pertemuanId)
+            ->firstOrFail();
+
+
+        $praktikanIds = DB::table('pendaftaran_praktikum')
+            ->where('id_praktikum', $praktikumId)
+            ->where('role', 'Praktikan')
+            ->where('status', 'Dikonfirmasi')
+            ->pluck('id_user')
+            ->toArray();
+
+        $mahasiswas = User::whereIn('id', $praktikanIds)
+            ->select('id', 'nomor_induk', 'nama')
+            ->orderBy('nama')
+            ->get();
+
+        $existingPresensi = Presensi::where('id_pertemuan', $pertemuanId)
+            ->get()
+            ->keyBy('id_user');
+
+        $attendanceData = [];
+        foreach ($mahasiswas as $mahasiswa) {
+            $presensi = $existingPresensi->get($mahasiswa->id);
+            $attendanceData[] = [
+                'user_id' => $mahasiswa->id,
+                'nim' => $mahasiswa->nomor_induk,
+                'nama' => $mahasiswa->nama,
+                'status' => $presensi ? $presensi->kehadiran : null,
+            ];
+        }
+
+        return view('asisten.presensi_asisten', compact('pertemuan', 'attendanceData', 'praktikumId'));
+    }
+
+    public function saveAttendance(Request $request)
+    {
+        $request->validate([
+            'pertemuan_id' => 'required|exists:pertemuans,id',
+            'praktikum_id' => 'required|exists:praktikums,id',
+            'attendance' => 'required|array',
+        ]);
+
+        $user = Auth::user();
+
+        $hasAccess = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('id_praktikum', $request->praktikum_id)
+            ->where('role', 'Asisten')
+            ->exists();
+
+        if (!$hasAccess) {
+            return redirect()->back()->with('error', 'Akses ditolak');
+        }
+
+        $savedCount = 0;
+        $updatedCount = 0;
+
+        foreach ($request->attendance as $userId => $status) {
+            if ($status && in_array($status, ['Hadir', 'Izin', 'Sakit', 'Alpha'])) {
+                $existing = Presensi::where('id_user', $userId)
+                    ->where('id_pertemuan', $request->pertemuan_id)
+                    ->first();
+
+                if ($existing) {
+                    $existing->update([
+                        'kehadiran' => $status,
+                        'status' => 'Dikonfirmasi',
+                    ]);
+                    $updatedCount++;
+                } else {
+                    Presensi::create([
+                        'id_user' => $userId,
+                        'id_pertemuan' => $request->pertemuan_id,
+                        'kehadiran' => $status,
+                        'status' => 'Dikonfirmasi',
+                    ]);
+                    $savedCount++;
+                }
+            }
+        }
+
+        return redirect()->route('konfirmasiPresensi')
+            ->with('success', "Presensi berhasil disimpan! {$savedCount} data baru, {$updatedCount} data diperbarui.");
+    }
+
+    public function getHistoryPresensi()
+    {
+        $user = Auth::user();
+
+        $praktikumIds = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('role', 'Asisten')
+            ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+            ->pluck('id_praktikum')
+            ->toArray();
+
+        $pertemuans = Pertemuan::with(['jadwal.praktikum', 'presensi'])
+            ->whereHas('jadwal', function ($query) use ($praktikumIds) {
+                $query->whereIn('id_praktikum', $praktikumIds);
+            })
+            ->orderBy('pertemuan_ke')
+            ->get();
+
+        $groupedPertemuans = [];
+        foreach ($pertemuans as $pertemuan) {
+            $praktikumName = $pertemuan->jadwal->praktikum->nama_praktikum;
+            $praktikumCode = $pertemuan->jadwal->praktikum->kode_praktikum;
+            $praktikumId = $pertemuan->jadwal->praktikum->id; 
+
+            if (!isset($groupedPertemuans[$praktikumName])) {
+                $groupedPertemuans[$praktikumName] = [
+                    'id_praktikum' => $praktikumId,
+                    'kode_praktikum' => $praktikumCode,
+                    'nama_praktikum' => $praktikumName,
+                    'pertemuans' => []
+                ];
+            }
+
+            $totalPresensi = $pertemuan->presensi->count() ?? 0;
+            $hadirCount = $pertemuan->presensi->where('kehadiran', 'Hadir')->count();
+            $izinCount = $pertemuan->presensi->where('kehadiran', 'Izin')->count();
+            $sakitCount = $pertemuan->presensi->where('kehadiran', 'Sakit')->count();
+            $alphaCount = $pertemuan->presensi->where('kehadiran', 'Alpha')->count();
+
+            $groupedPertemuans[$praktikumName]['pertemuans'][] = [
+                'id' => $pertemuan->id,
+                'pertemuan_ke' => $pertemuan->pertemuan_ke,
+                'nama_pertemuan' => $pertemuan->nama_pertemuan,
+                'hari' => $pertemuan->jadwal->hari,
+                'jam_mulai' => $pertemuan->jadwal->jam_mulai,
+                'jam_selesai' => $pertemuan->jadwal->jam_selesai,
+                'tanggal' => $pertemuan->created_at,
+                'total_presensi' => $totalPresensi,
+                'hadir' => $hadirCount,
+                'izin' => $izinCount,
+                'sakit' => $sakitCount,
+                'alpha' => $alphaCount,
+            ];
+        }
+
+        return view('asisten.presensiDua_asisten', compact('groupedPertemuans'));
+    }
+
+    public function viewAttendanceDetail(Request $request)
+    {
+        $pertemuanId = $request->get('pertemuan_id');
+        $praktikumId = $request->get('praktikum_id');
+        $user = Auth::user();
+
+        $hasAccess = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('id_praktikum', $praktikumId)
+            ->where('role', 'Asisten')
+            ->exists();
+
+        if (!$hasAccess) {
+            return redirect()->route('riwayatPresensi')
+                ->with('error', 'Akses ditolak');
+        }
+
+        $pertemuan = Pertemuan::with(['jadwal.praktikum', 'jadwal.laboratorium'])
+            ->where('id', $pertemuanId)
+            ->firstOrFail();
+
+        $praktikanIds = DB::table('pendaftaran_praktikum')
+            ->where('id_praktikum', $praktikumId)
+            ->where('role', 'Praktikan')
+            ->where('status', 'Dikonfirmasi')
+            ->pluck('id_user')
+            ->toArray();
+
+        $mahasiswas = User::whereIn('id', $praktikanIds)
+            ->select('id', 'nomor_induk', 'nama')
+            ->orderBy('nama')
+            ->get();
+
+        $existingPresensi = Presensi::where('id_pertemuan', $pertemuanId)
+            ->get()
+            ->keyBy('id_user');
+
+        $attendanceData = [];
+        foreach ($mahasiswas as $mahasiswa) {
+            $presensi = $existingPresensi->get($mahasiswa->id);
+            $attendanceData[] = [
+                'user_id' => $mahasiswa->id,
+                'nim' => $mahasiswa->nomor_induk,
+                'nama' => $mahasiswa->nama,
+                'status' => $presensi ? $presensi->kehadiran : 'Alpha',
+                'status_konfirmasi' => $presensi ? $presensi->status : 'Pending',
+            ];
+        }
+
+        return view('asisten.detailPresensi', compact('pertemuan', 'attendanceData', 'praktikumId'));
     }
 
     /**
@@ -141,7 +391,7 @@ class PresensiController extends Controller
      * Get presensi by pertemuan
      *
      */
-    public function getByPraktikum($idPraktikum)
+    public function getByPraktikum(int $idPraktikum)
     {
         $user = Auth::user();
 
@@ -175,7 +425,7 @@ class PresensiController extends Controller
      * Get presensi by user
      *
      */
-    public function getByPraktikumUser($idPraktikum)
+    public function getByPraktikumUser(int $idPraktikum)
     {
         $user = Auth::user();
 
@@ -206,7 +456,7 @@ class PresensiController extends Controller
     /**
      * Get presensi by pertemuan and praktikum
      */
-    public function getByPraktikumPertemuan($idPraktikum)
+    public function getByPraktikumPertemuan(int $idPraktikum)
     {
         $user = Auth::user();
 

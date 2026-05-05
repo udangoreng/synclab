@@ -64,8 +64,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('asisten')->group(function () {
         Route::get('/praktikum', [PraktikumController::class, 'asistensiPraktikum'])->name('asistensi');
+
         Route::get('/presensi', [PresensiController::class, 'index'])->name('konfirmasiPresensi');
+        Route::get('/presensi/detail', [PresensiController::class, 'recordAttendance'])->name('detailPresensi');
         Route::get('/presensi/history', [PresensiController::class, 'getHistoryPresensi'])->name('riwayatPresensi');
+        Route::get('/presensi/history/detail', [PresensiController::class, 'viewAttendanceDetail'])->name('detailRiwayatPresensi');
+        Route::post('/presensi/save', [PresensiController::class, 'saveAttendance'])->name('savePresensi');
+        // Route::get('/presensi/record', function () {
+        //     return view('asisten.presensiSatu_asisten');
+        // })->name('presensi.record');
+        // Route::get('/presensi/record/index', function () {
+        //     return view('asisten.presensiSatu_asisten');
+        // })->name('presensi.record.index');
+
         Route::get('/modul', [ModulController::class, 'addModul'])->name('addModul');
         Route::get('/pretest', [PretestController::class, 'addPretest'])->name('addPretest');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');

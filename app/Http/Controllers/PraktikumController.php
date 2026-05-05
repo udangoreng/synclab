@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Praktikum;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Jadwal;
 
 class PraktikumController extends Controller
 {
@@ -129,11 +134,91 @@ class PraktikumController extends Controller
 
     function asistensiPraktikum()
     {
-        return view('asisten/praktikum_asisten');
-    }
-
-    public function masterMonitoring()
-    {
-        return view('laboran/monitoring_lab');
+           $user = Auth::user();
+        
+        $praktikumIds = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('role', 'Asisten')
+            ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+            ->pluck('id_praktikum')
+            ->toArray();
+        
+        $praktikums = Praktikum::whereIn('id', $praktikumIds)
+            ->with(['jadwals.laboratorium', 'jadwals.pertemuan'])
+            ->get();
+        
+        foreach ($praktikums as $praktikum) {
+            $praktikum->mahasiswa_count = DB::table('pendaftaran_praktikum')
+                ->where('id_praktikum', $praktikum->id)
+                ->where('role', 'Praktikan')
+                ->where('status', 'Dikonfirmasi')
+                ->count();
+            
+            $firstJadwal = $praktikum->jadwals->first();
+            if ($firstJadwal) {
+                $praktikum->jadwal_hari = $firstJadwal->hari;
+                $praktikum->jadwal_jam_mulai = $firstJadwal->jam_mulai;
+                $praktikum->jadwal_jam_selesai = $firstJadwal->jam_selesai;
+                $praktikum->laboratorium_nama = $firstJadwal->laboratorium?->nama_laboratorium ?? 'Lab N/A';
+                $praktikum->laboratorium_lokasi = $firstJadwal->laboratorium?->lokasi ?? '-';
+                
+                if ($firstJadwal->pertemuan?->first()) {
+                    $praktikum->nama_pertemuan = $firstJadwal->pertemuan->first()->nama_pertemuan;
+                    $praktikum->deskripsi_pertemuan = $firstJadwal->pertemuan->first()->deskripsi_pertemuan;
+                } else {
+                    $praktikum->nama_pertemuan = 'Belum ada pertemuan';
+                    $praktikum->deskripsi_pertemuan = '-';
+                }
+            } else {
+                $praktikum->jadwal_hari = 'N/A';
+                $praktikum->jadwal_jam_mulai = 'N/A';
+                $praktikum->jadwal_jam_selesai = 'N/A';
+                $praktikum->laboratorium_nama = 'N/A';
+                $praktikum->nama_pertemuan = 'Belum ada jadwal';
+                $praktikum->deskripsi_pertemuan = '-';
+            }
+        }
+        
+        // Get today's schedules for the right sidebar
+        $today = Carbon::now()->locale('id')->dayName;
+        $dayMapping = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa', 
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+        $todayIndo = $dayMapping[$today] ?? $today;
+        
+        $todayJadwals = Jadwal::with(['praktikum', 'laboratorium', 'pertemuan'])
+            ->whereIn('id_praktikum', $praktikumIds)
+            ->where('hari', $todayIndo)
+            ->orderBy('jam_mulai')
+            ->get();
+        
+        // If no jadwal with Indonesian day, try English
+        if ($todayJadwals->isEmpty()) {
+            $todayJadwals = Jadwal::with(['praktikum', 'laboratorium', 'pertemuan'])
+                ->whereIn('id_praktikum', $praktikumIds)
+                ->where('hari', $today)
+                ->orderBy('jam_mulai')
+                ->get();
+        }
+        
+        // Add mahasiswa count to today's jadwals
+        foreach ($todayJadwals as $jadwal) {
+            $jadwal->mahasiswa_count = DB::table('pendaftaran_praktikum')
+                ->where('id_praktikum', $jadwal->id_praktikum)
+                ->where('role', 'Praktikan')
+                ->where('status', 'Dikonfirmasi')
+                ->count();
+        }
+        
+        // Get unique praktikum names for filter
+        $praktikumNames = $praktikums->pluck('nama_praktikum')->unique()->values();
+        
+        return view('asisten.praktikum_asisten', compact('praktikums', 'todayJadwals', 'praktikumNames'));
     }
 }

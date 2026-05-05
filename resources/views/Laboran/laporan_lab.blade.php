@@ -15,7 +15,7 @@
     <main class="main-content">
 
         <div class="header">
-            <h2> Reports </h2>
+            <h2> Rekapitulasi Praktikum </h2>
 
             <div class="actions">
                 <select id="filterPertemuan">
