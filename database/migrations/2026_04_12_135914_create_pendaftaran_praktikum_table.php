@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('role', ['Praktikan', 'Asisten', 'Dosen']);
-            $table->enum('status', ['Dikonfirmasi', 'Ditolak', 'Pending']);
             $table->timestamps();
             
             // Unique constraint: 1 user hanya bisa daftar 1x ke 1 jadwal

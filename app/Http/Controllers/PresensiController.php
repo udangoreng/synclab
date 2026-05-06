@@ -28,8 +28,8 @@ class PresensiController extends Controller
                     ->get();
 
                 // Group by praktikum for summary
-                $presensiPerPraktikum = $presensis->groupBy(function($presensi) {
-                    return $presensi->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? 'Unknown';
+                $presensiPerPraktikum = $presensis->groupBy(function ($presensi) {
+                    return $presensi->pertemuan?->praktikum?->nama_praktikum ?? 'Unknown';
                 });
 
                 return view('mahasiswa/presensi', compact('presensis', 'presensiPerPraktikum'));
@@ -79,6 +79,50 @@ class PresensiController extends Controller
 
                     return view('Asisten.presensiSatu_asisten', compact('praktikumList'));
                 }
+            }
+
+            if ($user->role === 'Dosen') {
+                return view('dosen/presensi', compact('presensis'));
+            } elseif ($user->role === 'Asisten') {
+                $user = Auth::user();
+
+                $praktikumIds = DB::table('pendaftaran_praktikum')
+                    ->where('id_user', $user->id)
+                    ->where('role', 'Asisten')
+                    ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+                    ->pluck('id_praktikum')
+                    ->toArray();
+
+                $praktikums = Praktikum::whereIn('id', $praktikumIds)
+                    ->with(['jadwals.pertemuan'])
+                    ->get();
+
+                $praktikumList = [];
+                $counter = 1;
+
+                foreach ($praktikums as $praktikum) {
+                    foreach ($praktikum->jadwals as $jadwal) {
+                        if ($jadwal->pertemuan && $jadwal->pertemuan->isNotEmpty()) {
+                            foreach ($jadwal->pertemuan as $pertemuan) {
+                                $praktikumList[] = [
+                                    'no'              => $counter++,
+                                    'id'              => $praktikum->id,
+                                    'kode_praktikum'  => $praktikum->kode_praktikum,
+                                    'nama_praktikum'  => $praktikum->nama_praktikum,
+                                    'pertemuan_id'    => $pertemuan->id,
+                                    'pertemuan_ke'    => $pertemuan->pertemuan_ke,
+                                    'nama_pertemuan'  => $pertemuan->nama_pertemuan,
+                                    'jadwal_id'       => $jadwal->id,
+                                    'hari'            => $jadwal->hari,
+                                    'jam_mulai'       => $jadwal->jam_mulai,
+                                    'jam_selesai'     => $jadwal->jam_selesai,
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                return view('Asisten.presensiSatu_asisten', compact('praktikumList'));
             }
 
             // return response()->json([
@@ -218,7 +262,7 @@ class PresensiController extends Controller
         foreach ($pertemuans as $pertemuan) {
             $praktikumName = $pertemuan->jadwal->praktikum->nama_praktikum;
             $praktikumCode = $pertemuan->jadwal->praktikum->kode_praktikum;
-            $praktikumId = $pertemuan->jadwal->praktikum->id; 
+            $praktikumId = $pertemuan->jadwal->praktikum->id;
 
             if (!isset($groupedPertemuans[$praktikumName])) {
                 $groupedPertemuans[$praktikumName] = [
@@ -402,7 +446,9 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
-            $query = Presensi::where('id_praktikum', $idPraktikum)->with(['praktikum', 'user']);
+            $query = Presensi::whereHas('pertemuan', function ($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
 
             if ($user->role === 'Praktikan') {
                 $presensis = Presensi::where('id_praktikum', $idPraktikum)
@@ -436,6 +482,10 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
+            $query = Presensi::whereHas('pertemuan', function ($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
+
             if ($user->role === 'Praktikan') {
                 $presensis = Presensi::where('id_praktikum', $idPraktikum)
                     ->where('id_user', $user->id)
@@ -467,6 +517,10 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
+            $query = Presensi::whereHas('pertemuan', function ($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
+
             if ($user->role === 'Praktikan') {
                 $presensis = Presensi::where('id_praktikum', $idPraktikum)
                     ->where('id_user', $user->id)

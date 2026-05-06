@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Database\Seeders\LaboratoriumSeeder;
 use Database\Seeders\PraktikumSeeder;
 use Database\Seeders\PendaftaranPraktikumSeeder;
@@ -14,6 +13,7 @@ use Database\Seeders\LaporanSeeder;
 use Database\Seeders\PresensiSeeder;
 use Database\Seeders\NilaiSeeder;
 use Database\Seeders\PengumpulanLaporanSeeder;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {

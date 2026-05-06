@@ -67,7 +67,6 @@ class UserSeeder extends Seeder
             'nohp' => '08678901234',
             'role' => 'Admin',
         ]);
-
         // Dosen - untuk praktikum berbeda
         User::create([
             'nama' => 'Dr. Alek Skom, M.Kom',

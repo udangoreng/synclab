@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Laboratorium;
 use App\Models\Pertemuan;
+use App\Models\PendaftaranPraktikum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Jadwal extends Model
@@ -21,6 +22,11 @@ class Jadwal extends Model
         'jumlah_max_peserta',
         'status',
     ];
+
+    public function praktikum()
+    {
+        return $this->belongsTo(Praktikum::class, 'id_praktikum');
+    }
 
     /**
      * Jadwal memiliki satu Laboratorium

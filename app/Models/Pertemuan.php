@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Jadwal;
 use App\Models\Modul;
 use App\Models\Presensi;
+use App\Models\PengumpulanLaporan;
 use App\Models\Laporan;
 use App\Models\Nilai;
 use Illuminate\Database\Eloquent\Relations\HasOne;

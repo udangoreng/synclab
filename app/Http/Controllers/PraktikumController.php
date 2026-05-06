@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Jadwal;
+use App\Models\PendaftaranPraktikum;
 
 class PraktikumController extends Controller
 {
@@ -131,7 +132,55 @@ class PraktikumController extends Controller
         return view('mahasiswa/pendaftaran', compact('praktikums', 'myPraktikums'));
     }
 
-    function getMyPraktikum()
+    public function daftarJadwal(Request $request)
+{
+    $request->validate(['id_jadwal' => 'required|integer|exists:jadwals,id']);
+ 
+    $user   = Auth::user();
+    $jadwal = Jadwal::with(['pendaftarans', 'pertemuan'])->findOrFail($request->id_jadwal);
+ 
+    // 1. Pastikan jadwal masih dibuka
+    if (!in_array($jadwal->status, ['Dibuka', 'Penuh'])) {
+        return response()->json(['success' => false, 'message' => 'Jadwal sudah tidak dapat didaftari.'], 422);
+    }
+ 
+    // 2. Cek kuota
+    $terisi = $jadwal->pendaftarans->count();
+    $maks   = $jadwal->jumlah_max_peserta ?? 0;
+    if ($maks > 0 && $terisi >= $maks) {
+        return response()->json(['success' => false, 'message' => 'Kuota jadwal sudah penuh.'], 422);
+    }
+ 
+    // 3. Cek apakah user sudah terdaftar di pertemuan yang sama
+    $idPertemuan = $jadwal->id_pertemuan;
+    $sudahDaftar = \App\Models\PendaftaranPraktikum::where('id_user', $user->id)
+        ->whereHas('jadwal', fn($q) => $q->where('id_pertemuan', $idPertemuan))
+        ->exists();
+ 
+    if ($sudahDaftar) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Anda sudah terdaftar di pertemuan ini. Hanya 1 jadwal per pertemuan yang diizinkan.',
+        ], 422);
+    }
+ 
+    // 4. Simpan pendaftaran
+    \App\Models\PendaftaranPraktikum::create([
+        'id_jadwal' => $jadwal->id,
+        'id_user'   => $user->id,
+        'role'      => 'Praktikan',
+    ]);
+ 
+    // 5. Perbarui status jadwal jika sudah penuh
+    $terbaru = $jadwal->pendaftarans()->count() + 1;
+    if ($maks > 0 && $terbaru >= $maks) {
+        $jadwal->update(['status' => 'Penuh']);
+    }
+ 
+    return response()->json(['success' => true, 'message' => 'Pendaftaran berhasil!']);
+}
+
+     function getMyPraktikum()
     {
         $user = Auth::user();
         

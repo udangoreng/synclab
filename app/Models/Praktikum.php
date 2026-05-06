@@ -69,6 +69,5 @@ class Praktikum extends Model
                     ->where('pendaftaran_praktikum.role', 'Praktikan')
                     ->where('pendaftaran_praktikum.status', 'Dikonfirmasi')
                     ->withTimestamps();
-        return $this->hasMany(Jadwal::class, 'kode_praktikum', 'kode_praktikum');
     }
 }
