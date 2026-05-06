@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Jadwal;
 use App\Models\Modul;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Presensi;
 use App\Models\Nilai;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pertemuan extends Model
 {
@@ -22,9 +22,9 @@ class Pertemuan extends Model
     ];
 
     /**
-     * Pertemuan memiliki satu Jadwal
+     * Pertemuan dimiliki oleh satu Praktikum
      */
-    public function jadwal(): BelongsTo
+    public function praktikum(): BelongsTo
     {
         return $this->belongsTo(Jadwal::class, 'id_jadwal');
     }
@@ -32,9 +32,49 @@ class Pertemuan extends Model
     /**
      * Pertemuan memiliki satu Modul
      */
-    public function modul(): BelongsTo
+    public function modul(): HasOne
     {
-        return $this->belongsTo(Modul::class, 'id_modul');
+        return $this->hasOne(Modul::class, 'id_pertemuan');
+    }
+
+    /**
+     * Pertemuan memiliki satu Laporan
+     */
+    public function laporan(): HasOne
+    {
+        return $this->hasOne(Laporan::class, 'id_pertemuan');
+    }
+
+    /**
+     * Pertemuan memiliki banyak Jadwal
+     */
+    public function jadwals(): HasMany
+    {
+        return $this->hasMany(Jadwal::class, 'id_pertemuan');
+    }
+
+    /**
+     * Pertemuan memiliki banyak Presensi
+     */
+    public function presensis(): HasMany
+    {
+        return $this->hasMany(Presensi::class, 'id_pertemuan');
+    }
+
+    /**
+     * Pertemuan memiliki banyak Nilai (satu per praktikan)
+     */
+    public function nilais(): HasMany
+    {
+        return $this->hasMany(Nilai::class, 'id_pertemuan');
+    }
+
+    /**
+     * Pertemuan memiliki banyak Pengumpulan Laporan
+     */
+    public function pengumpulanLaporans(): HasMany
+    {
+        return $this->hasMany(PengumpulanLaporan::class, 'id_pertemuan');
     }
 
     public function presensi(): HasMany

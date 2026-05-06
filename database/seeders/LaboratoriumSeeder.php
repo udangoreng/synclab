@@ -13,6 +13,7 @@ class LaboratoriumSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD
         // Get or create a user to be kepala_lab (head of lab)
         $kepalaLab = User::where('role', 'Admin')->first();
         
@@ -55,3 +56,55 @@ class LaboratoriumSeeder extends Seeder
         }
     }
 }
+=======
+        // Get admin users untuk kepala lab (bukan dosen)
+        $admins = User::where('role', 'Admin')->get();
+        
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        $laboratoriums = [
+            [
+                'nama_laboratorium' => 'Lab Komputer A - Pemrograman',
+                'lokasi' => 'Gedung A Lt. 1',
+                'kapasitas' => 30,
+                'kepala_lab' => $admins[0]->id,
+                'status' => 'Tersedia',
+            ],
+            [
+                'nama_laboratorium' => 'Lab Komputer B - Dasar',
+                'lokasi' => 'Gedung A Lt. 2',
+                'kapasitas' => 25,
+                'kepala_lab' => $admins[1]->id,
+                'status' => 'Tersedia',
+            ],
+            [
+                'nama_laboratorium' => 'Lab Jaringan - Network',
+                'lokasi' => 'Gedung B Lt. 1',
+                'kapasitas' => 20,
+                'kepala_lab' => $admins[2]->id,
+                'status' => 'Tersedia',
+            ],
+            [
+                'nama_laboratorium' => 'Lab Multimedia - Design',
+                'lokasi' => 'Gedung B Lt. 2',
+                'kapasitas' => 15,
+                'kepala_lab' => $admins[3]->id,
+                'status' => 'Tersedia',
+            ],
+            [
+                'nama_laboratorium' => 'Lab Database - SQL Server',
+                'lokasi' => 'Gedung C Lt. 1',
+                'kapasitas' => 20,
+                'kepala_lab' => $admins[4]->id,
+                'status' => 'Tersedia',
+            ],
+        ];
+
+        foreach ($laboratoriums as $lab) {
+            Laboratorium::create($lab);
+        }
+    }
+}
+>>>>>>> origin/integrasi-mahasiswa
