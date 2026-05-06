@@ -41,6 +41,7 @@
             flex-direction: column;
             max-height: 100vh;
             overflow-y: hidden;
+            position: sticky;
         }
 
         .profile {

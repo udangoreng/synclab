@@ -17,6 +17,8 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow-y: hidden;
+  top:0;
 }
 
 .menu-toggle {
@@ -678,6 +680,7 @@ body {
   body {
     flex-direction: column;
   }
+  
   .sidebar {
     position: fixed;
     top: 0;

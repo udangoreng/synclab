@@ -72,7 +72,7 @@ class LaporanController extends Controller
 
     public function masterLaporan()
     {
-        $nilaiLatest = Nilai::with('users')->latest()->limit(5)->get();
+        $nilaiLatest = Nilai::with('user')->latest()->limit(5)->get();
         $nilai = Nilai::all();
         $bentrokCount = 0;
         $labSchedule = [];

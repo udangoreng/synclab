@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+<<<<<<< HEAD:database/migrations/2026_04_12_015914_create_pendaftaran_praktikum_table.php
             $table->enum('role', ['Praktikan', 'Asisten']);
+=======
+            $table->enum('role', ['Praktikan', 'Asisten', 'Dosen']);
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423:database/migrations/2026_04_12_135914_create_pendaftaran_praktikum_table.php
             $table->timestamps();
             
             // Unique constraint: 1 user hanya bisa daftar 1x ke 1 jadwal

@@ -18,6 +18,10 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .profile {

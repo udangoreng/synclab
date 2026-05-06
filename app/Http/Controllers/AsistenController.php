@@ -17,6 +17,7 @@ class AsistenController extends Controller
 
         return view('laboran.alokasiAsisten', compact('praktikum', 'allAsisten', 'currentAsistenIds'));
     }
+    
     public function store(Request $request, int $id)
     {
         $praktikum = Praktikum::findOrFail($id);

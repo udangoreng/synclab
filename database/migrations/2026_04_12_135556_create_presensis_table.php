@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('presensis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('kehadiran', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
             $table->enum('status', ['Dikonfirmasi', 'Pending', 'Ditolak']);

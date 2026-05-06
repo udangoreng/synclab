@@ -1,3 +1,4 @@
+<!-- sidebar.blade.php -->
 <!DOCTYPE html>
 <html lang="id">
 
@@ -6,6 +7,17 @@
     <title>Dashboard Asisten</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 90%;
+            overflow-x: hidden;
+        }
+
         a {
             all: unset;
         }
@@ -48,44 +60,160 @@
             display: block;
         }
 
-        @media (min-width: 1200px) {
-            .sidebar {
-                width: 280px;
-            }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        @media (max-width: 1199px) and (min-width: 769px) {
-            .sidebar {
-                width: 240px;
-                padding: 16px;
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 2000;
+            background: #111827;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .profile {
+            text-align: center;
+            margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+
+        .profile h4 {
+            margin: 8px 0 4px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #a78bfa, #6366f1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .avatar i {
+            font-size: 28px;
+        }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu li {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .menu li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu li i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .logout {
+            background: #ef4444;
+            border: none;
+            padding: 10px;
+            color: white;
+            border-radius: 6px;
+            margin-top: auto;
+            flex-shrink: 0;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #dc2626;
+        }
+
+        @media (min-width: 769px) {
+            body {
+                margin-left: 250px;
             }
 
-            .profile h4 {
-                font-size: 1.1rem;
+            .sidebar {
+                transform: translateX(0) !important;
+            }
+
+            .menu-toggle {
+                display: none !important;
+            }
+
+            .overlay {
+                display: none !important;
             }
         }
 
         @media (max-width: 768px) {
+            body {
+                margin-left: 0;
+            }
+
             .menu-toggle {
                 display: block !important;
             }
 
-            aside.sidebar#sidebar {
-                position: fixed !important;
-                top: 0 !important;
-                transform: translateX(-100%) !important;
-                left: 0 !important;
-                width: 280px !important;
-                max-width: 85vw !important;
-                height: 100vh !important;
-                z-index: 2000 !important;
-                transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-                overflow-y: auto !important;
-                background: #0f172a !important;
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                max-width: 85vw;
+                box-shadow: none;
             }
 
-            aside.sidebar#sidebar.show {
-                transform: translateX(0) !important;
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
             }
 
             .profile {
@@ -103,7 +231,6 @@
 
             .profile h4 {
                 font-size: 1rem;
-                margin: 8px 0;
             }
 
             .profile span,
@@ -135,25 +262,25 @@
             .logout {
                 padding: 14px;
                 font-size: 15px;
-                margin-top: 10px;
             }
         }
 
         @media (max-width: 480px) {
             .menu-toggle {
-                padding: 10px 12px;
-                top: 10px;
-                left: 10px;
+                padding: 8px 12px;
+                top: 12px;
+                left: 12px;
             }
 
             .sidebar {
-                width: 90vw;
+                width: 100vw;
+                max-width: 100vw;
             }
 
             .menu li,
             .logout {
-                font-size: 16px;
-                padding: 16px 14px;
+                font-size: 14px;
+                padding: 12px;
             }
         }
 
@@ -191,57 +318,57 @@
             </li>
 
             <li class="{{ request()->routeIs('asistensi') ? 'active' : '' }}"><a href="{{ route('asistensi') }}">
-                    <i class="fas fa-laptop-code"></i> Practicum</a>
+                    <i class="fas fa-laptop-code"></i> Praktikum</a>
             </li>
 
             <li class="dropdown">
                 <div onclick="toggleDropdown('presensi')">
-                    <i class="fas fa-calendar-check"></i> Attendance
+                    <i class="fas fa-calendar-check"></i> Presensi
                     <i class="fas fa-chevron-down right sb-right"></i>
                 </div>
 
                 <ul id="presensi">
                     <li class="{{ request()->routeIs('konfirmasiPresensi') ? 'active' : '' }}"><a
-                            href="{{ route('konfirmasiPresensi') }}">Record Attendance</a></li>
+                            href="{{ route('konfirmasiPresensi') }}">Rekam Presensi</a></li>
                     <li class="{{ request()->routeIs('riwayatPresensi') ? 'active' : '' }}"><a
-                            href="{{ route('riwayatPresensi') }}">Attendance History</a></li>
+                            href="{{ route('riwayatPresensi') }}">Riwayat Presensi</a></li>
                 </ul>
             </li>
 
             <li class="dropdown">
-                <div onclick="toggleDropdown('modul')">
-                    <i class="fas fa-book"></i> Resource & Test
+                <div onclick="toggleDropdown('modul')" style="display: flex;">
+                    <i class="fas fa-book"></i> Modul dan Pretest
                     <i class="fas fa-chevron-down right sb-right"></i>
                 </div>
 
                 <ul id="modul">
                     <li class="{{ request()->routeIs('addModul') ? 'active' : '' }}"><a
-                            href="{{ route('addModul') }}">Add Resource</a></li>
+                            href="{{ route('addModul') }}">Tambah Modul</a></li>
                     <li class="{{ request()->routeIs('addPretest') ? 'active' : '' }}"><a
-                            href="{{ route('addPretest') }}">Create Test</a></li>
+                            href="{{ route('addPretest') }}">Tambah Pretest</a></li>
                 </ul>
             </li>
 
             <li class="{{ request()->routeIs('nilaiLaporan') ? 'active' : '' }}"><a href="{{route('nilaiLaporan')}}">
-                <i class="fas fa-file"></i>Reports</a>
+                <i class="fas fa-file"></i>Laporan</a>
             </li>
 
             <li class="dropdown">
                 <div onclick="toggleDropdown('nilai')">
-                    <i class="fas fa-chart-line"></i>Grades
+                    <i class="fas fa-chart-line"></i>Nilai
                     <i class="fas fa-chevron-down right sb-right"></i>
                 </div>
 
                 <ul id="nilai">
                     <li class="{{ request()->routeIs('addMilai') ? 'active' : '' }}"><a
-                            href="{{ route('addNilai') }}">Record Grades</a></li>  
+                            href="{{ route('addNilai') }}">Simpan Nilai</a></li>  
                     <li class="{{ request()->routeIs('rekapNilai') ? 'active' : '' }}"><a
-                            href="{{ route('rekapNilai') }}">Grade Summary</a></li>  
+                            href="{{ route('rekapNilai') }}">Rekap Nilai</a></li>  
                 </ul>
             </li>
 
             <li class="{{ request()->routeIs('seeMahasiswa') ? 'active' : '' }}"><a href="{{route('seeMahasiswa')}}">
-                <i class="fas fa-users"></i>Students
+                <i class="fas fa-users"></i>Mahasiswa
             </a>
             </li>
         </ul>
@@ -280,19 +407,33 @@
             menu.classList.toggle("open");
         }
 
+        // Close sidebar when clicking outside on desktop as well? Only on mobile.
         document.addEventListener("click", function(e) {
             const sidebar = document.getElementById("sidebar");
             const toggle = document.querySelector(".menu-toggle");
             const overlay = document.getElementById("overlay");
+            const isMobile = window.innerWidth <= 768;
 
-            if (overlay && overlay.contains(e.target)) {
+            if (isMobile && overlay && overlay.contains(e.target)) {
                 closeSidebar();
                 return;
             }
 
-            if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            if (isMobile && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
                 closeSidebar();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById("sidebar");
+                const overlay = document.getElementById("overlay");
+                sidebar.classList.remove("show");
+                overlay.classList.remove("active");
+                document.body.classList.remove("sidebar-open");
             }
         });
     </script>
 </body>
+</html>

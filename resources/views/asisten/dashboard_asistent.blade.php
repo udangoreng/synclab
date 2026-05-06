@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Asisten</title>
+    <title>Dashboard Asisten - {{ $user->nama }}</title>
     <link rel="stylesheet" href="{{ asset('asisten_css/dashboard_asisten.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -19,28 +20,25 @@
 
         <section class="top-section">
             <div class="notifikasi">
-                <h3>Selamat siang, Caca 👋</h3>
-                <div class="notif blue">
-                    <i class="fas fa-calendar"></i>
-                    Sesi praktikum berikutnya akan dimulai sebentar lagi.
-                </div>
-
-                <div class="notif yellow">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Silakan upload materi untuk pertemuan berikutnya.
-                </div>
-
-                <div class="notif green">
-                    <i class="fas fa-check-circle"></i>
-                    Input nilai untuk praktikum Pemrograman Dasar belum selesai.
-                </div>
+                <h3>Selamat {{ $greeting }}, {{ $user->nama }} 👋</h3>
+                @forelse($notifications as $notif)
+                    <div class="notif {{ $notif['type'] }}">
+                        <i class="{{ $notif['icon'] }}"></i>
+                        {{ $notif['message'] }}
+                    </div>
+                @empty
+                    <div class="notif blue">
+                        <i class="fas fa-info-circle"></i>
+                        Dashboard siap digunakan!
+                    </div>
+                @endforelse
             </div>
 
             <div class="calendar">
                 <div class="calendar-header">
-                    <button onclick="prevMonth()">❮</button>
+                    <button type="button" onclick="prevMonth()">❮</button>
                     <h4 id="monthYear"></h4>
-                    <button onclick="nextMonth()">❯</button>
+                    <button type="button" onclick="nextMonth()">❯</button>
                 </div>
 
                 <div class="calendar-days">
@@ -50,135 +48,58 @@
 
                 <div class="calendar-dates" id="calendarDates"></div>
             </div>
-
         </section>
 
         <section class="practicum">
             <h4>My Practicum</h4>
             <div class="practicum-list">
-                <div class="prac-card">
-                    <h5>📘 Rekayasan Perangkat Lunak</h5>
-                    <p>Senin, 10:00 - 12:00</p>
-                    <p>30 Mahasiswa • 5 Kelompok</p>
+                @forelse(array_slice($processedPraktikums, 0, 4) as $praktikum)
+                    <div class="prac-card">
+                        <h5>📘 {{ Str::limit($praktikum['nama_praktikum'], 25) }}</h5>
+                        <p>{{ $praktikum['hari'] }}, {{ $praktikum['jam_mulai'] }} - {{ $praktikum['jam_selesai'] }}</p>
+                        <p>{{ number_format($praktikum['total_mahasiswa']) }} Mahasiswa</p>
 
-                    <div class="progress">
-                        <span>Presensi</span>
-                        <div class="bar">
-                            <div style="width:80%"></div>
+                        <div class="progress">
+                            <span>Presensi</span>
+                            <div class="bar">
+                                <div style="width:{{ $praktikum['presensi_percent'] }}%"></div>
+                            </div>
+                            <small>{{ $praktikum['presensi_percent'] }}% ({{ $praktikum['presensi_hadir'] }}/{{ $praktikum['total_mahasiswa'] }})</small>
                         </div>
-                        <small>80% (24/30)</small>
-                    </div>
 
-                    <div class="progress">
-                        <span>Nilai</span>
-                        <div class="bar">
-                            <div style="width:60%"></div>
+                        <div class="progress">
+                            <span>Nilai</span>
+                            <div class="bar">
+                                <div style="width:{{ $praktikum['nilai_percent'] }}%"></div>
+                            </div>
+                            <small>{{ $praktikum['nilai_percent'] }}% ({{ $praktikum['nilai_lengkap'] }}/{{ $praktikum['total_mahasiswa'] }})</small>
                         </div>
-                        <small>60% (18/30)</small>
-                    </div>
 
-                    <p class="warning">⚠ 5 laporan belum direview</p>
-                    <p class="status active">🟢 Aktif</p>
+                        @if($praktikum['pending_laporan'] > 0)
+                            <p class="warning">⚠ {{ $praktikum['pending_laporan'] }} laporan belum direview</p>
+                        @endif
+                        <p class="status {{ $praktikum['has_active_jadwal'] ? 'active' : 'pending' }}">
+                            {{ $praktikum['has_active_jadwal'] ? '🟢 Aktif' : '⏳ Akan datang' }}
+                        </p>
 
-                    <div class="btn-group">
-                        <button onclick="goToPresensi()">Presensi</button>
-                        <button onclick="goToNilai()">Nilai</button>
-                        <a class="view" onclick="goToPracticum()">View</a>
-                    </div>
-                </div>
-
-                <div class="prac-card">
-                    <h5>📗 Jaringan Komputer</h5>
-                    <p>Selasa, 09:00 - 11:00</p>
-                    <p>25 Mahasiswa</p>
-
-                    <div class="progress">
-                        <span>Presensi</span>
-                        <div class="bar">
-                            <div style="width:70%"></div>
+                        <div class="btn-group">
+                            <form action="{{ route('konfirmasiPresensi') }}" method="GET" style="display: inline;">
+                                <input type="hidden" name="praktikum_id" value="{{ $praktikum['id'] }}">
+                                <button type="submit" class="presensi-btn">Presensi</button>
+                            </form>
+                            <form action="{{ route('nilai') }}" method="GET" style="display: inline;">
+                                <input type="hidden" name="praktikum_id" value="{{ $praktikum['id'] }}">
+                                <button type="submit" class="nilai-btn">Nilai</button>
+                            </form>
                         </div>
-                        <small>70% (18/25)</small>
                     </div>
-
-                    <div class="progress">
-                        <span>Nilai</span>
-                        <div class="bar">
-                            <div style="width:40%"></div>
-                        </div>
-                        <small>40% (10/25)</small>
+                @empty
+                    <div class="prac-card empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h5>Belum ada praktikum ditugaskan</h5>
+                        <p>Praktikum akan muncul di sini setelah alokasi</p>
                     </div>
-
-                    <p class="warning">⚠ Nilai belum lengkap</p>
-                    <p class="status pending">⏳ Akan datang</p>
-
-                    <div class="btn-group">
-                        <button onclick="goToPresensi()">Presensi</button>
-                        <button onclick="goToNilai()">Nilai</button>
-                        <a class="view" onclick="goToPracticum()">View</a>
-                    </div>
-                </div>
-
-                <div class="prac-card">
-                    <h5>📘 Pemrograman Dasar</h5>
-                    <p>Senin, 10:00 - 12:00</p>
-                    <p>30 Mahasiswa • 5 Kelompok</p>
-
-                    <div class="progress">
-                        <span>Presensi</span>
-                        <div class="bar">
-                            <div style="width:80%"></div>
-                        </div>
-                        <small>80% (24/30)</small>
-                    </div>
-
-                    <div class="progress">
-                        <span>Nilai</span>
-                        <div class="bar">
-                            <div style="width:60%"></div>
-                        </div>
-                        <small>60% (18/30)</small>
-                    </div>
-
-                    <p class="warning">⚠ 5 laporan belum direview</p>
-                    <p class="status active">🟢 Aktif</p>
-
-                    <div class="btn-group">
-                        <button onclick="goToPresensi()">Presensi</button>
-                        <button onclick="goToNilai()">Nilai</button>
-                        <a class="view" onclick="goToPracticum()">View</a>
-                    </div>
-                </div>
-
-                <div class="prac-card">
-                    <h5>📗 Pengolahan Citra Digital</h5>
-                    <p>Selasa, 09:00 - 11:00</p>
-                    <p>25 Mahasiswa</p>
-
-                    <div class="progress">
-                        <span>Presensi</span>
-                        <div class="bar">
-                            <div style="width:70%"></div>
-                        </div>
-                        <small>70% (18/25)</small>
-                    </div>
-
-                    <div class="progress">
-                        <span>Nilai</span>
-                        <div class="bar">
-                            <div style="width:40%"></div>
-                        </div>
-                        <small>40% (10/25)</small>
-                    </div>
-
-                    <p class="warning">⚠ Nilai belum lengkap</p>
-                    <p class="status pending">⏳ Akan datang</p>
-
-                    <div class="btn-group">
-                        <button onclick="goToPresensi()">Presensi</button>
-                        <button onclick="goToNilai()">Nilai</button>
-                        <a class="view" onclick="goToPracticum()">View</a>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </section>
 
@@ -186,100 +107,119 @@
             <h3>📅 Today Schedule</h3>
 
             <div class="summary">
-                <p><strong>Hari Ini:</strong> 2 kelas | 1 berlangsung | 1 akan datang</p>
+                <p><strong>Hari Ini:</strong> {{ $stats['total_praktikum'] }} praktikum |
+                    {{ $stats['ongoing_jadwal'] }} berlangsung | {{ $stats['upcoming_jadwal'] }} akan datang</p>
 
                 <div class="filter-jadwal">
-                    <button>Hari Ini</button>
-                    <button>Semua Jadwal</button>
+                    <form action="{{ route('asistensi') }}" method="GET" style="display: inline;">
+                        <button type="submit">Semua Jadwal</button>
+                    </form>
                 </div>
             </div>
 
             <div class="jadwal-hari">
-                <h4>Senin</h4>
+                <h4>{{ Carbon\Carbon::now()->locale('id')->translatedFormat('l') }}</h4>
 
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="time">10:00</div>
+                @forelse($processedJadwals as $jadwal)
+                    <div class="timeline-item {{ $loop->last ? 'last' : '' }}">
+                        <div class="time">{{ $jadwal['jam_mulai'] }}</div>
 
                         <div class="line"></div>
 
                         <div class="content">
-                            <h5>📘 Basis Data</h5>
-                            <p>🕒 10:00 - 12:00</p>
-                            <p>📍 Lab 1 • 30 Mahasiswa</p>
+                            <h5>📘 {{ $jadwal['praktikum']->nama_praktikum }}</h5>
+                            <p>🕒 {{ $jadwal['jam_mulai'] }} - {{ $jadwal['jam_selesai'] }}</p>
+                            <p>📍 {{ $jadwal['laboratorium']->nama_laboratorium ?? 'Lab N/A' }} • {{ $jadwal['total_mahasiswa'] }} Mahasiswa</p>
 
-                            <span class="status jadwal berjalan">🟢 Sedang berlangsung</span>
+                            @php
+                                $statusClass = match($jadwal['status']) {
+                                    'Dibuka' => 'active',
+                                    'Penuh' => 'warning',
+                                    'Selesai' => 'finished',
+                                    default => 'upcoming',
+                                };
+                                $statusIcon = match($jadwal['status']) {
+                                    'Dibuka' => '🟢',
+                                    'Penuh' => '🟡',
+                                    'Selesai' => '🔵',
+                                    default => '⏳',
+                                };
+                            @endphp
+                            <span class="status jadwal {{ $statusClass }}">{{ $statusIcon }} {{ ucfirst($jadwal['status']) }}</span>
 
-                            <p>Presensi : 25/30 (83%)</p>
+                            <p>Presensi: {{ $jadwal['presensi_hadir'] }}/{{ $jadwal['total_presensi'] }} ({{ $jadwal['presensi_percent'] }}%)</p>
 
-                            <p class="warning-text">⚠ 5 laporan belum dicek</p>
+                            @if($jadwal['pending_laporan'] > 0)
+                                <p class="warning-text">⚠ {{ $jadwal['pending_laporan'] }} laporan belum dicek</p>
+                            @endif
 
                             <div class="actions">
-                                <button class="btn primary" onclick="goToPresensi()">Input Presensi</button>
-                                <button class="btn pink" onclick="goToLaporan()">Review Laporan</button>
+                                @if($jadwal['pertemuan'])
+                                    <form action="{{ route('detailPresensi') }}" method="GET" style="display: inline;">
+                                        <input type="hidden" name="pertemuan_id" value="{{ $jadwal['pertemuan']->first()->id }}">
+                                        <input type="hidden" name="praktikum_id" value="{{ $jadwal['praktikum']->id }}">
+                                        <button type="submit" class="btn primary">Input Presensi</button>
+                                    </form>
+                                    @if($jadwal['pending_laporan'] > 0)
+                                        <form action="{{ route('laporan.index') }}" method="GET" style="display: inline;">
+                                            <input type="hidden" name="pertemuan_id" value="{{ $jadwal['pertemuan']->first()->id }}">
+                                            <button type="submit" class="btn pink">Review Laporan</button>
+                                        </form>
+                                    @endif
+                                @endif
                             </div>
                         </div>
                     </div>
-
+                @empty
                     <div class="timeline-item">
-                        <div class="time">12:00</div>
-
-                        <div class="line"></div>
-
-                        <div class="content">
-                            <p style="color:#999; font-size:13px;">Tidak ada jadwal</p>
+                        <div class="content empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>Tidak ada jadwal hari ini</p>
                         </div>
                     </div>
-
-                    <div class="timeline-item">
-                        <div class="time">13:00</div>
-
-                        <div class="line"></div>
-
-                        <div class="content">
-                            <h5>📗 Jaringan</h5>
-                            <p>🕒 13:00 - 15:00</p>
-                            <p>📍 Lab 2 • 25 Mahasiswa</p>
-
-                            <span class="status jadwal upcoming">⏳ Akan datang</span>
-
-                            <div class="actions">
-                                <button class="btn green" onclick="goToPracticum()">Lihat Detail</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item last">
-                        <div class="time">15:00</div>
-                    </div>
-
-                </div>
+                @endforelse
             </div>
         </section>
 
         <section class="bottom-section">
-
             <div class="attendance">
                 <h4>Attendance</h4>
-
                 <div class="attendance-container">
-
                     <div class="attendance-list">
-                        <div class="pill active">Pemrograman Dasar</div>
-                        <div class="pill">Rekayasa Perangkat Lunak</div>
-                        <div class="pill">Pengolahan Citra Digital</div>
-                        <div class="pill">Jaringan Komputer</div>
+                        @foreach(array_slice($processedPraktikums, 0, 4) as $index => $praktikum)
+                            <div class="pill {{ $loop->first ? 'active' : '' }}" onclick="showDetail({{ $index }})">
+                                {{ $praktikum['nama_praktikum'] }}
+                            </div>
+                        @endforeach
                     </div>
 
-                    <div class="attendance-detail" id="detailBox"></div>
+                    <div class="attendance-detail" id="detailBox">
+                        @if(!empty($processedPraktikums))
+                            @php $firstPraktikum = $processedPraktikums[0] ?? null;@endphp
+                            <div class="detail-title">{{ $firstPraktikum['nama_praktikum'] }}</div>
+                            <div class="detail-item"><b>Practicum:</b> {{ $firstPraktikum['kode_praktikum'] }}</div>
+                            <div class="detail-item"><b>Ruangan:</b> {{ $firstPraktikum['laboratorium_nama'] }}</div>
+                            <div class="detail-item"><b>Hari/Tgl:</b> {{ $firstPraktikum['hari'] }}</div>
+                            <div class="detail-item"><b>Jam:</b> {{ $firstPraktikum['jam_mulai'] }} - {{ $firstPraktikum['jam_selesai'] }}</div>
+                            <div class="detail-item"><b>Jumlah:</b> {{ $firstPraktikum['total_mahasiswa'] }} mhs</div>
+                            <form action="{{ route('konfirmasiPresensi') }}" method="GET">
+                                <input type="hidden" name="praktikum_id" value="{{ $firstPraktikum['id'] }}">
+                                <button type="submit" class="input-btn">Input</button>
+                            </form>
+                        @else
+                            <div class="detail-title">Belum Ada Praktikum</div>
+                            <div class="detail-item">Tidak ada data praktikum yang tersedia</div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </section>
-
     </main>
 
     <script>
         let currentDate = new Date();
+        const praktikums = @json(array_slice($processedPraktikums, 0, 4));
+        const colors = ["pink", "blue", "green", "yellow"];
 
         function renderCalendar() {
             const monthYear = document.getElementById("monthYear");
@@ -308,16 +248,9 @@
             const today = new Date();
 
             for (let i = 1; i <= lastDate; i++) {
-                let isToday =
-                    i === today.getDate() &&
-                    month === today.getMonth() &&
-                    year === today.getFullYear();
+                let isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 
-                calendarDates.innerHTML += `
-      <div class="${isToday ? "today" : ""}">
-        ${i}
-      </div>
-    `;
+                calendarDates.innerHTML += `<div class="${isToday ? "today" : ""}">${i}</div>`;
             }
         }
 
@@ -331,66 +264,46 @@
             renderCalendar();
         }
 
-        const data = [{
-                title: "Pemrograman Dasar",
-                practicum: "Struktur Kontrol (If, Switch)",
-                room: "Lab RPL",
-                date: "2 January 2026",
-                time: "09.00 - 11.00",
-                total: "33 mhs"
-            },
-            {
-                title: "Rekayasa Perangkat Lunak",
-                practicum: "Pengujian Perangkat Lunak",
-                room: "Lab RPL",
-                date: "9 January 2026",
-                time: "09.00 - 11.00",
-                total: "30 mhs"
-            },
-            {
-                title: "Pengolahan Citra Digital",
-                practicum: "Transformasi Citra (Negatif, Thresholding)",
-                room: "Lab Multimedia",
-                date: "16 January 2026",
-                time: "09.00 - 11.00",
-                total: "28 mhs"
-            },
-            {
-                title: "Jaringan Komputer",
-                practicum: "Simulasi Jaringan (Packet Tracer)",
-                room: "Lab Jaringan",
-                date: "23 January 2026",
-                time: "09.00 - 11.00",
-                total: "32 mhs"
-            }
-        ];
-
-        const colors = ["pink", "blue", "green", "yellow"];
-
         function showDetail(index) {
             const pills = document.querySelectorAll(".pill");
             pills.forEach(p => p.classList.remove("active"));
-            pills[index].classList.add("active");
+            if (pills[index]) pills[index].classList.add("active");
+
+            const praktikum = praktikums[index];
+            if (!praktikum) return;
 
             const box = document.getElementById("detailBox");
-            box.className = "attendance-detail " + colors[index];
-
-            const d = data[index];
+            box.className = "attendance-detail " + (colors[index] || "pink");
 
             box.innerHTML = `
-    <div class="detail-title">${d.title}</div>
-    <div class="detail-item"><b>Practicum:</b> ${d.practicum}</div>
-    <div class="detail-item"><b>Ruangan:</b> ${d.room}</div>
-    <div class="detail-item"><b>Hari/Tgl:</b> ${d.date}</div>
-    <div class="detail-item"><b>Jam:</b> ${d.time}</div>
-    <div class="detail-item"><b>Jumlah:</b> ${d.total}</div>
-    <div class="input-btn" onclick="goPage('presensi_asisten.html')">Input</div>
-  `;
+                <div class="detail-title">${escapeHtml(praktikum.nama_praktikum)}</div>
+                <div class="detail-item"><b>Practicum:</b> ${escapeHtml(praktikum.kode_praktikum)}</div>
+                <div class="detail-item"><b>Ruangan:</b> ${escapeHtml(praktikum.laboratorium_nama)}</div>
+                <div class="detail-item"><b>Hari/Tgl:</b> ${escapeHtml(praktikum.hari)}</div>
+                <div class="detail-item"><b>Jam:</b> ${escapeHtml(praktikum.jam_mulai)} - ${escapeHtml(praktikum.jam_selesai)}</div>
+                <div class="detail-item"><b>Jumlah:</b> ${praktikum.total_mahasiswa} mhs</div>
+                <form action="{{ route('konfirmasiPresensi') }}" method="GET">
+                    <input type="hidden" name="praktikum_id" value="${praktikum.id}">
+                    <button type="submit" class="input-btn">Input</button>
+                </form>
+            `;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             renderCalendar();
-            showDetail(0);
+            if (praktikums.length > 0) {
+                showDetail(0);
+            }
         });
     </script>
 </body>

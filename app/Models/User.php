@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+<<<<<<< HEAD
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+=======
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -53,6 +56,7 @@ class User extends Authenticatable
     public function jadwals()
     {
         return $this->hasMany(Jadwal::class, 'id_dosen');
+<<<<<<< HEAD
     }
 
     /**
@@ -60,6 +64,12 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+=======
+     /* User memiliki banyak Pendaftaran Praktikum
+     */
+    }
+
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
     public function pendaftaranPraktikums(): HasMany
     {
         return $this->hasMany(PendaftaranPraktikum::class, 'id_user');
@@ -74,10 +84,33 @@ class User extends Authenticatable
     }
 
     /**
+<<<<<<< HEAD
      * User memiliki satu Praktikum (jika role Dosen)
      */
     public function praktikum()
     {
         return $this->hasOne(Praktikum::class, 'id_dosen');
+=======
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
     }
 }

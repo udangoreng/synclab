@@ -2,8 +2,22 @@
 
 namespace Database\Seeders;
 
+<<<<<<< HEAD
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+=======
+use Database\Seeders\LaboratoriumSeeder;
+use Database\Seeders\PraktikumSeeder;
+use Database\Seeders\PendaftaranPraktikumSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\JadwalSeeder;
+use Database\Seeders\PertemuanSeeder;
+use Database\Seeders\ModulSeeder;
+use Database\Seeders\LaporanSeeder;
+use Database\Seeders\PresensiSeeder;
+use Database\Seeders\NilaiSeeder;
+use Database\Seeders\PengumpulanLaporanSeeder;
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,8 +27,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD
         // Call seeders in order of dependencies
         // User harus pertama karena dibutuhkan oleh seeder lain
+=======
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
         $this->call([
             UserSeeder::class,
             LaboratoriumSeeder::class,

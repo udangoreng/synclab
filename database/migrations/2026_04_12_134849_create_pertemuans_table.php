@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('pertemuans', function (Blueprint $table) {
             $table->id();
+<<<<<<< HEAD:database/migrations/2026_04_10_134846_create_pertemuans_table.php
             $table->foreignId('id_praktikum')->nullable()->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+=======
+            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+>>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423:database/migrations/2026_04_12_134849_create_pertemuans_table.php
             $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_pertemuan');
             $table->integer('pertemuan_ke');

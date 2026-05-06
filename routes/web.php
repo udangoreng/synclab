@@ -6,7 +6,6 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PresensiController;
-use App\Http\Controllers\PraktikumController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\ModulController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PertemuanController;
+use App\Http\Controllers\PraktikumController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'welcome']);
@@ -68,9 +68,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('asisten')->group(function () {
         Route::get('/praktikum', [PraktikumController::class, 'asistensiPraktikum'])->name('asistensi');
+
         Route::get('/presensi', [PresensiController::class, 'index'])->name('konfirmasiPresensi');
+        Route::get('/presensi/detail', [PresensiController::class, 'recordAttendance'])->name('detailPresensi');
         Route::get('/presensi/history', [PresensiController::class, 'getHistoryPresensi'])->name('riwayatPresensi');
+        Route::get('/presensi/history/detail', [PresensiController::class, 'viewAttendanceDetail'])->name('detailRiwayatPresensi');
+        Route::post('/presensi/save', [PresensiController::class, 'saveAttendance'])->name('savePresensi');
+
         Route::get('/modul', [ModulController::class, 'addModul'])->name('addModul');
+        Route::post('/modul', [ModulController::class, 'store'])->name('storeModul');
+        Route::put('/modul/{id}', [ModulController::class, 'update'])->name('updateModul');
+        Route::delete('/modul/{id}', [ModulController::class, 'destroy'])->name('deleteModul');
+
         Route::get('/pretest', [PretestController::class, 'addPretest'])->name('addPretest');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');
         Route::get('/nilai', [NilaiController::class, 'index'])->name('addNilai');
