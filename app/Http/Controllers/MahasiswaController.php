@@ -19,7 +19,6 @@ class MahasiswaController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ Fix utama: rantai relasi yang benar Modul -> pertemuan -> praktikum
         $moduls = Modul::with(['pertemuan.praktikum'])
             ->whereHas('pertemuan.praktikum.jadwals.pendaftarans', function ($query) use ($user) {
                 $query->where('id_user', $user->id);
@@ -30,7 +29,6 @@ class MahasiswaController extends Controller
             $pertemuan  = $modul->pertemuan;
             $praktikum  = $pertemuan?->praktikum;
 
-            // ✅ Query nyata untuk setiap status
             $statusAbsen = Presensi::where('id_pertemuan', $modul->id_pertemuan)
                 ->where('id_user', $user->id)
                 ->exists();
@@ -70,7 +68,6 @@ class MahasiswaController extends Controller
         $user  = Auth::user();
         $modul = Modul::findOrFail($modulId);
 
-        // Cegah duplikat
         $sudahAbsen = Presensi::where('id_pertemuan', $modul->id_pertemuan)
             ->where('id_user', $user->id)
             ->exists();
@@ -110,7 +107,6 @@ class MahasiswaController extends Controller
         $user  = Auth::user();
         $modul = Modul::findOrFail($modulId);
 
-        // Cek apakah sudah absen dulu
         $sudahAbsen = Presensi::where('id_pertemuan', $modul->id_pertemuan)
             ->where('id_user', $user->id)
             ->exists();
@@ -122,7 +118,6 @@ class MahasiswaController extends Controller
             ], 422);
         }
 
-        // Cegah mulai pretest dua kali
         $sudahPretest = Nilai::where('id_pertemuan', $modul->id_pertemuan)
             ->where('id_user', $user->id)
             ->whereNotNull('nilai_pretest')
@@ -136,8 +131,6 @@ class MahasiswaController extends Controller
         }
 
         try {
-            // Buat record nilai dengan nilai_pretest = 0 (tanda sudah mulai)
-            // Sesuaikan logika ini dengan kebutuhan sistem penilaian Anda
             Nilai::firstOrCreate(
                 [
                     'id_pertemuan' => $modul->id_pertemuan,
@@ -150,9 +143,8 @@ class MahasiswaController extends Controller
             );
 
             return response()->json([
-                'success'   => true,
-                'message'   => 'Pretest dimulai! Selamat mengerjakan.',
-                // 'redirect' => route('mahasiswa.pretest.soal', $modulId), // opsional
+                'success' => true,
+                'message' => 'Pretest dimulai! Selamat mengerjakan.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -171,11 +163,10 @@ class MahasiswaController extends Controller
         $modul = Modul::findOrFail($modulId);
 
         $request->validate([
-            'file'        => 'required|file|mimes:pdf,doc,docx,zip|max:10240', // max 10MB
-            'keterangan'  => 'nullable|string|max:500',
+            'file'       => 'required|file|mimes:pdf,doc,docx,zip|max:10240',
+            'keterangan' => 'nullable|string|max:500',
         ]);
 
-        // Cegah upload duplikat
         $sudahUpload = PengumpulanLaporan::where('id_pertemuan', $modul->id_pertemuan)
             ->where('id_user', $user->id)
             ->exists();
@@ -214,125 +205,157 @@ class MahasiswaController extends Controller
                 'error'   => $e->getMessage()
             ], 500);
         }
-}
+    }
 
-    function getMyHistory() {
+    public function getMyHistory()
+    {
         $user = Auth::user();
-        
-        // Get user's nilai history with pertemuan
+
         $nilais = Nilai::where('id_user', $user->id)
             ->with('pertemuan.praktikum')
             ->get();
-        
-        // Get user's presensi history
+
         $presensis = Presensi::where('id_user', $user->id)
             ->with('pertemuan.praktikum')
             ->get();
-        
+
         return view('mahasiswa/riwayat', compact('nilais', 'presensis'));
     }
 
-    function getMahasiswa() {
+    public function getMahasiswa()
+    {
         return view('asisten/mahasiswa_asisten');
     }
-    
-    function dashboard() {
-        $user = Auth::user();
-        
-        // Get user's nilai with pertemuan (per pertemuan)
-        $nilais = Nilai::where('id_user', $user->id)
-            ->with('pertemuan.praktikum')
-            ->get();
-        
-        // Get user's presensi with pertemuan
-        $presensis = Presensi::where('id_user', $user->id)
-            ->with('pertemuan.praktikum')
-            ->get();
-        
-        // Get user's registered praktikums
-        $praktikumCount = Praktikum::whereHas('jadwals.pendaftarans', function($query) use ($user) {
-            $query->where('id_user', $user->id);
-        })->count();
-        
-        // Calculate average nilai
-        $avgNilai = $nilais->avg('nilai_akhir') ?? 0;
-        
-        // Calculate attendance percentage
-        $hadirCount = $presensis->where('kehadiran', 'Hadir')->count();
-        $totalPresensi = $presensis->count();
-        $attendanceRate = $totalPresensi > 0 ? round(($hadirCount / $totalPresensi) * 100) : 0;
-        
-        // Get upcoming reminders
-        $reminders = [];
-        $tomorrow = now()->addDay()->toDateString();
-        
-        // 1. Praktikum H-1: Jadwal praktikum besok yang user sudah daftar
-        $jadwalTomorrow = Jadwal::whereDate('tanggal', $tomorrow)
-            ->whereHas('pendaftarans', function($q) use ($user) {
-                $q->where('id_user', $user->id);
-            })
-            ->with('pertemuan.praktikum')
-            ->get();
-        
-        foreach ($jadwalTomorrow as $jadwal) {
-            $reminders[] = "Praktikum {$jadwal->pertemuan->praktikum->nama_praktikum} ({$jadwal->jam_mulai} WIB)";
-        }
-        
-        // 2. Pretest H-1: Pertemuan dengan modul (pretest) besok yang user daftar
-        $pretestTomorrow = Pertemuan::whereHas('modul')
-            ->whereHas('jadwals', function($q) use ($tomorrow) {
-                $q->whereDate('tanggal', $tomorrow);
-            })
-            ->whereHas('jadwals.pendaftarans', function($q) use ($user) {
-                $q->where('id_user', $user->id);
-            })
-            ->with('praktikum', 'jadwals')
-            ->get();
-        
-        foreach ($pretestTomorrow as $pertemuan) {
-            $jadwal = $pertemuan->jadwals->first();
-            $reminders[] = "{$pertemuan->praktikum->nama_praktikum} - Pretest (Besok {$jadwal->jam_mulai} WIB)";
-        }
-        
-        // 3. Laporan belum submit: Pertemuan yang user daftar tapi belum submit laporan
-        $unsubmittedLaporan = Pertemuan::whereHas('jadwals.pendaftarans', function($q) use ($user) {
-                $q->where('id_user', $user->id);
-            })
-            ->whereDoesntHave('pengumpulanLaporans', function($q) use ($user) {
-                $q->where('id_user', $user->id);
-            })
-            ->with('praktikum', 'jadwals')
-            ->get();
-        
-        foreach ($unsubmittedLaporan as $pertemuan) {
-            $jadwal = $pertemuan->jadwals->first();
-            $deadline = $jadwal?->tanggal ? date('d M Y', strtotime($jadwal->tanggal)) : '-';
-            $reminders[] = "Laporan {$pertemuan->praktikum->nama_praktikum} (Deadline {$deadline})";
-        }
-        
-        // Get all nilai per pertemuan for display
-        $nilaiPerPertemuan = $nilais->map(function($nilai) {
-            return [
-                'praktikum' => $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-',
-                'pertemuan' => $nilai->pertemuan?->nama_pertemuan ?? '-',
-                'modul' => $nilai->pertemuan?->modul?->judul_modul ?? '-',
-                'nilai_pretest' => $nilai->nilai_pretest,
-                'nilai_laporan' => $nilai->nilai_laporan,
-                'nilai_total' => $nilai->nilai_total,
-                'nilai_akhir' => $nilai->nilai_akhir,
-                'status' => $nilai->status,
-            ];
-        });
-        
-        return view('mahasiswa/dashboard', compact(
-            'user', 
-            'praktikumCount', 
-            'nilais', 
-            'presensis', 
-            'avgNilai', 
-            'attendanceRate',
-            'reminders',
-            'nilaiPerPertemuan'
-        ));
+
+    public function dashboard()
+{
+    $user = Auth::user();
+ 
+    // ── Nilai & Presensi ──────────────────────────────────────
+    // PENTING: tambahkan 'pertemuan.jadwal' agar blade bisa akses
+    //          dosen, jam_mulai, ruangan dari jadwal.
+    $nilais = Nilai::where('id_user', $user->id)
+        ->with('pertemuan.praktikum', 'pertemuan.modul', 'pertemuan.jadwal')
+        ->get();
+ 
+    $presensis = Presensi::where('id_user', $user->id)
+        ->with('pertemuan.praktikum')
+        ->get();
+ 
+    // ── Jumlah praktikum terdaftar ────────────────────────────
+    $praktikumCount = Praktikum::whereHas('jadwals.pendaftarans', function ($query) use ($user) {
+        $query->where('id_user', $user->id);
+    })->count();
+ 
+    // ── Rata-rata nilai ───────────────────────────────────────
+    $avgNilai = $nilais->avg('nilai_akhir') ?? 0;
+ 
+    // ── Persentase kehadiran ──────────────────────────────────
+    $hadirCount     = $presensis->where('kehadiran', 'Hadir')->count();
+    $totalPresensi  = $presensis->count();
+    $attendanceRate = $totalPresensi > 0
+        ? round(($hadirCount / $totalPresensi) * 100)
+        : 0;
+ 
+    // ── Nama hari Indonesia ───────────────────────────────────
+    $hariMap = [
+        0 => 'Minggu',
+        1 => 'Senin',
+        2 => 'Selasa',
+        3 => 'Rabu',
+        4 => 'Kamis',
+        5 => 'Jumat',
+        6 => 'Sabtu',
+    ];
+ 
+    $hariIni   = $hariMap[now()->dayOfWeek];
+    $hariBesok = $hariMap[now()->copy()->addDay()->dayOfWeek]; // copy() cegah mutasi
+ 
+    // ── Jadwal HARI INI (baru) ────────────────────────────────
+    // Dipakai di blade untuk section "Hari Ini" pada Reminder.
+    $jadwalHariIniData = Jadwal::where('hari', $hariIni)
+        ->whereHas('pendaftarans', function ($q) use ($user) {
+            $q->where('id_user', $user->id);
+        })
+        ->with('praktikum')
+        ->get();
+ 
+    $jadwalHariIni = $jadwalHariIniData->map(function ($jadwal) {
+        return [
+            'praktikum' => $jadwal->praktikum->nama_praktikum ?? 'Praktikum',
+            'jam'       => $jadwal->jam_mulai ?? '-',
+            'ruangan'   => $jadwal->laboratorium?->nama_laboratorium   ?? '-',
+            'hari'      => $jadwal->hari       ?? '-',
+        ];
+    })->values()->toArray();
+ 
+    // ── Reminders (associative array) ────────────────────────
+    $reminders = [];
+ 
+    // Reminder 1: Jadwal praktikum besok
+    $jadwalBesok = Jadwal::where('hari', $hariBesok)
+        ->whereHas('pendaftarans', function ($q) use ($user) {
+            $q->where('id_user', $user->id);
+        })
+        ->with('praktikum')
+        ->get();
+ 
+    foreach ($jadwalBesok as $jadwal) {
+        $reminders[] = [
+            'praktikum' => $jadwal->praktikum->nama_praktikum ?? 'Praktikum',
+            'pertemuan' => 'Besok - ' . ($jadwal->hari ?? '-'),
+            'modul'     => ($jadwal->jam_mulai ?? '-') . ' WIB',
+            'nilai'     => '-',
+            'status'    => 'Jadwal Besok',
+        ];
     }
+ 
+    // Reminder 2: Pertemuan dengan pretest besok
+    $pretestBesok = Pertemuan::whereHas('modul')
+        ->whereHas('jadwal', function ($q) use ($hariBesok) {
+            $q->where('hari', $hariBesok);
+        })
+        ->whereHas('jadwal.pendaftarans', function ($q) use ($user) {
+            $q->where('id_user', $user->id);
+        })
+        ->with('praktikum', 'jadwal')
+        ->get();
+ 
+    foreach ($pretestBesok as $pertemuan) {
+        $jadwal = $pertemuan->jadwal;
+        $reminders[] = [
+            'praktikum' => $pertemuan->praktikum->nama_praktikum ?? '-',
+            'pertemuan' => $pertemuan->nama_pertemuan ?? '-',
+            'modul'     => ($jadwal?->jam_mulai ?? '-') . ' WIB',
+            'nilai'     => '-',
+            'status'    => 'Pretest Besok',
+        ];
+    }
+ 
+    // ── Nilai per pertemuan ───────────────────────────────────
+    $nilaiPerPertemuan = $nilais->map(function ($nilai) {
+        return [
+            'praktikum'     => $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-',
+            'pertemuan'     => $nilai->pertemuan?->nama_pertemuan ?? '-',
+            'modul'         => $nilai->pertemuan?->modul?->judul_modul ?? '-',
+            'nilai_pretest' => $nilai->nilai_pretest,
+            'nilai_laporan' => $nilai->nilai_laporan,
+            'nilai_total'   => $nilai->nilai_total,
+            'nilai_akhir'   => $nilai->nilai_akhir,
+            'status'        => $nilai->status,
+        ];
+    });
+ 
+    return view('mahasiswa/dashboard', compact(
+        'user',
+        'praktikumCount',
+        'nilais',
+        'presensis',
+        'avgNilai',
+        'attendanceRate',
+        'reminders',
+        'nilaiPerPertemuan',
+        'jadwalHariIni'  
+    ));
+}
 }

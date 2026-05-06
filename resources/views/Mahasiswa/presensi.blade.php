@@ -217,21 +217,10 @@
             color: #64748b;
         }
 
-        .stat-hadir .stat-value {
-            color: #10b981;
-        }
-
-        .stat-izin .stat-value {
-            color: #f59e0b;
-        }
-
-        .stat-sakit .stat-value {
-            color: #8b5cf6;
-        }
-
-        .stat-alpha .stat-value {
-            color: #ef4444;
-        }
+        .stat-hadir .stat-value { color: #10b981; }
+        .stat-izin .stat-value  { color: #f59e0b; }
+        .stat-sakit .stat-value { color: #8b5cf6; }
+        .stat-alpha .stat-value { color: #ef4444; }
 
         .btn-lihat {
             width: 100%;
@@ -286,15 +275,8 @@
         }
 
         @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .modal-header {
@@ -320,13 +302,9 @@
             color: #94a3b8;
         }
 
-        .modal-close:hover {
-            color: #ef4444;
-        }
+        .modal-close:hover { color: #ef4444; }
 
-        .modal-body {
-            padding: 24px;
-        }
+        .modal-body    { padding: 24px; }
 
         .modal-footer {
             display: flex;
@@ -373,32 +351,13 @@
             text-align: center;
         }
 
-        .summary-box .summary-label {
-            font-size: 0.7rem;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
+        .summary-box .summary-label  { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; }
+        .summary-box .summary-number { font-size: 1.3rem; font-weight: 700; }
 
-        .summary-box .summary-number {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .summary-box.hadir .summary-number {
-            color: #10b981;
-        }
-
-        .summary-box.izin .summary-number {
-            color: #f59e0b;
-        }
-
-        .summary-box.sakit .summary-number {
-            color: #8b5cf6;
-        }
-
-        .summary-box.alpha .summary-number {
-            color: #ef4444;
-        }
+        .summary-box.hadir .summary-number { color: #10b981; }
+        .summary-box.izin  .summary-number { color: #f59e0b; }
+        .summary-box.sakit .summary-number { color: #8b5cf6; }
+        .summary-box.alpha .summary-number { color: #ef4444; }
 
         .pertemuan-list {
             display: flex;
@@ -417,19 +376,9 @@
             gap: 8px;
         }
 
-        .pertemuan-info {
-            flex: 1;
-        }
-
-        .pertemuan-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .pertemuan-date {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
+        .pertemuan-info   { flex: 1; }
+        .pertemuan-title  { font-weight: 600; font-size: 0.9rem; }
+        .pertemuan-date   { font-size: 0.7rem; color: #64748b; }
 
         .status-badge {
             padding: 4px 12px;
@@ -438,25 +387,10 @@
             font-weight: 600;
         }
 
-        .status-hadir {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .status-izin {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .status-sakit {
-            background: #e9d5ff;
-            color: #7c3aed;
-        }
-
-        .status-alpha {
-            background: #fee2e2;
-            color: #dc2626;
-        }
+        .status-hadir { background: #dcfce7; color: #16a34a; }
+        .status-izin  { background: #fef3c7; color: #d97706; }
+        .status-sakit { background: #e9d5ff; color: #7c3aed; }
+        .status-alpha { background: #fee2e2; color: #dc2626; }
 
         .empty-state {
             text-align: center;
@@ -465,92 +399,31 @@
         }
 
         @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .sidebar-nav {
-                display: none;
-                padding: 0 20px 20px 20px;
-            }
-
-            .sidebar-nav.active {
-                display: flex;
-            }
-
-            .profile-section {
-                flex-direction: row;
-                gap: 16px;
-                text-align: left;
-            }
-
-            .avatar-circle {
-                width: 60px;
-                height: 60px;
-                margin: 0;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .page-title {
-                font-size: 1.4rem;
-                margin-bottom: 16px;
-                justify-content: center;
-                width: 100%;
-                text-align: center;
-            }
-
-            .filter-section {
-                flex-direction: column;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
-            .presensi-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .detail-summary {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-nav { display: none; padding: 0 20px 20px 20px; }
+            .sidebar-nav.active { display: flex; }
+            .profile-section { flex-direction: row; gap: 16px; text-align: left; }
+            .avatar-circle { width: 60px; height: 60px; margin: 0; }
+            .main-content { padding: 20px; }
+            .page-title { font-size: 1.4rem; margin-bottom: 16px; justify-content: center; width: 100%; text-align: center; }
+            .filter-section { flex-direction: column; }
+            .filter-group { width: 100%; }
+            .presensi-grid { grid-template-columns: 1fr; }
+            .detail-summary { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 480px) {
-            .main-content {
-                padding: 16px;
-            }
-
-            .kehadiran-circle {
-                width: 120px;
-                height: 120px;
-            }
-
-            .kehadiran-circle svg {
-                width: 120px;
-                height: 120px;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
+            .main-content { padding: 16px; }
+            .kehadiran-circle { width: 120px; height: 120px; }
+            .kehadiran-circle svg { width: 120px; height: 120px; }
+            .modal-content { width: 95%; }
         }
     </style>
 
     <div class="dashboard-container">
-      @include('mahasiswa/partials/sidebar')
-      
+        @include('mahasiswa/partials/sidebar')
+
         <main class="main-content">
             <div class="page-header">
                 <h1 class="page-title"><i class="fas fa-fingerprint"></i> My Presensi</h1>
@@ -562,71 +435,79 @@
                     <select id="filterMatkul">
                         <option value="all">Semua Mata Kuliah</option>
                         @foreach($presensiPerPraktikum as $praktikum => $data)
-                        <option value="{{ $praktikum }}">{{ $praktikum }}</option>
+                            <option value="{{ $praktikum }}">{{ $praktikum }}</option>
                         @endforeach
                     </select>
                 </div>
-                <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
+                <button class="apply-filter-btn" id="applyFilter">
+                    <i class="fas fa-search"></i> Terapkan
+                </button>
             </div>
 
-            {{-- Tampilkan presensi per praktikum --}}
-            @forelse($presensiPerPraktikum as $praktikumNama => $presensiList)
-            <div class="presensi-card" data-praktikum="{{ $praktikumNama }}">
-                <div class="card-header">
-                    <h3>{{ $praktikumNama }}</h3>
-                    <p>{{ $presensiList->count() }} Pertemuan</p>
-                </div>
-                <div class="card-body">
-                    {{-- Hitung total kehadiran --}}
+            {{-- ✅ Grid pembungkus kartu --}}
+            <div class="presensi-grid" id="presensiGrid">
+                @forelse($presensiPerPraktikum as $praktikumNama => $presensiList)
                     @php
                         $hadir = $presensiList->where('kehadiran', 'Hadir')->count();
-                        $izin = $presensiList->where('kehadiran', 'Izin')->count();
+                        $izin  = $presensiList->where('kehadiran', 'Izin')->count();
                         $sakit = $presensiList->where('kehadiran', 'Sakit')->count();
                         $alpha = $presensiList->where('kehadiran', 'Alpha')->count();
                         $total = $presensiList->count();
                         $persen = $total > 0 ? round(($hadir / $total) * 100) : 0;
+                        $circumference = 377;
+                        $dashArray = round($circumference * $persen / 100);
                     @endphp
-                    <div class="kehadiran-circle">
-                        <svg viewBox="0 0 140 140">
-                            <circle class="circle-bg" cx="70" cy="70" r="60"></circle>
-                            <circle class="circle-progress" cx="70" cy="70" r="60" 
-                                stroke-dasharray="{{ round(377 * $persen / 100) }}" 
-                                stroke-dashoffset="0"></circle>
-                        </svg>
-                        <div class="circle-text">
-                            <div class="percent">{{ $persen }}%</div>
-                            <div class="label">Kehadiran</div>
+                    <div class="presensi-card" data-praktikum="{{ $praktikumNama }}">
+                        <div class="card-header">
+                            <h3>{{ $praktikumNama }}</h3>
+                            <p>{{ $total }} Pertemuan</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="kehadiran-circle">
+                                <svg viewBox="0 0 140 140">
+                                    <circle class="circle-bg" cx="70" cy="70" r="60"></circle>
+                                    <circle class="circle-progress" cx="70" cy="70" r="60"
+                                        stroke-dasharray="{{ $dashArray }} {{ $circumference }}"
+                                        stroke-dashoffset="0">
+                                    </circle>
+                                </svg>
+                                <div class="circle-text">
+                                    <div class="percent">{{ $persen }}%</div>
+                                    <div class="label">Kehadiran</div>
+                                </div>
+                            </div>
+                            <div class="kehadiran-stats">
+                                <div class="stat-item stat-hadir">
+                                    <div class="stat-value">{{ $hadir }}</div>
+                                    <div class="stat-label">Hadir</div>
+                                </div>
+                                <div class="stat-item stat-izin">
+                                    <div class="stat-value">{{ $izin }}</div>
+                                    <div class="stat-label">Izin</div>
+                                </div>
+                                <div class="stat-item stat-sakit">
+                                    <div class="stat-value">{{ $sakit }}</div>
+                                    <div class="stat-label">Sakit</div>
+                                </div>
+                                <div class="stat-item stat-alpha">
+                                    <div class="stat-value">{{ $alpha }}</div>
+                                    <div class="stat-label">Alpha</div>
+                                </div>
+                            </div>
+                            <button class="btn-lihat" onclick="showDetailModal('{{ $praktikumNama }}')">
+                                <i class="fas fa-eye"></i> Lihat Detail
+                            </button>
                         </div>
                     </div>
-                    <div class="kehadiran-stats">
-                        <div class="stat-item stat-hadir">
-                            <div class="stat-value">{{ $hadir }}</div>
-                            <div class="stat-label">Hadir</div>
-                        </div>
-                        <div class="stat-item stat-izin">
-                            <div class="stat-value">{{ $izin }}</div>
-                            <div class="stat-label">Izin</div>
-                        </div>
-                        <div class="stat-item stat-sakit">
-                            <div class="stat-value">{{ $sakit }}</div>
-                            <div class="stat-label">Sakit</div>
-                        </div>
-                        <div class="stat-item stat-alpha">
-                            <div class="stat-value">{{ $alpha }}</div>
-                            <div class="stat-label">Alpha</div>
-                        </div>
-                    </div>
-                    <button class="btn-lihat" onclick="showDetailModal('{{ $praktikumNama }}')">
-                        <i class="fas fa-eye"></i> Lihat Detail
-                    </button>
-                </div>
+                @empty
+                    <div class="empty-state">Belum ada data presensi</div>
+                @endforelse
             </div>
-            @empty
-            <div class="empty-state">Belum ada data presensi</div>
-            @endforelse
+            {{-- akhir presensi-grid --}}
         </main>
     </div>
 
+    {{-- ✅ Modal Detail — di luar .dashboard-container --}}
     <div class="modal" id="detailModal">
         <div class="modal-content modal-large">
             <div class="modal-header">
@@ -634,76 +515,83 @@
                 <button class="modal-close" id="closeDetailModal">&times;</button>
             </div>
             <div class="modal-body" id="detailModalBody">
-                {{-- Detail akan di-load dari server --}}
-                @forelse($presensiPerPraktikum as $praktikumNama => $presensiList)
-                <div id="detail-{{ Str::slug($praktikumNama) }}" style="display:none;">
-                    <div class="detail-header">
-                        <h2>{{ $praktikumNama }}</h2>
-                        <p>Rekap Kehadiran per Pertemuan</p>
-                    </div>
-                    <div class="detail-summary">
-                        @php
-                            $hadir = $presensiList->where('kehadiran', 'Hadir')->count();
-                            $izin = $presensiList->where('kehadiran', 'Izin')->count();
-                            $sakit = $presensiList->where('kehadiran', 'Sakit')->count();
-                            $alpha = $presensiList->where('kehadiran', 'Alpha')->count();
-                        @endphp
-                        <div class="summary-box hadir">
-                            <div class="summary-label">Hadir</div>
-                            <div class="summary-number">{{ $hadir }}</div>
+                @foreach($presensiPerPraktikum as $praktikumNama => $presensiList)
+                    @php
+                        $hadir = $presensiList->where('kehadiran', 'Hadir')->count();
+                        $izin  = $presensiList->where('kehadiran', 'Izin')->count();
+                        $sakit = $presensiList->where('kehadiran', 'Sakit')->count();
+                        $alpha = $presensiList->where('kehadiran', 'Alpha')->count();
+                    @endphp
+                    <div id="detail-{{ Str::slug($praktikumNama) }}" style="display:none;">
+                        <div class="detail-header">
+                            <h2>{{ $praktikumNama }}</h2>
+                            <p>Rekap Kehadiran per Pertemuan</p>
                         </div>
-                        <div class="summary-box izin">
-                            <div class="summary-label">Izin</div>
-                            <div class="summary-number">{{ $izin }}</div>
-                        </div>
-                        <div class="summary-box sakit">
-                            <div class="summary-label">Sakit</div>
-                            <div class="summary-number">{{ $sakit }}</div>
-                        </div>
-                        <div class="summary-box alpha">
-                            <div class="summary-label">Alpha</div>
-                            <div class="summary-number">{{ $alpha }}</div>
-                        </div>
-                    </div>
-                    <div class="pertemuan-list">
-                        @foreach($presensiList as $presensi)
-                        <div class="pertemuan-item">
-                            <div class="pertemuan-info">
-                                <div class="pertemuan-title">{{ $presensi->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</div>
-                                <div class="pertemuan-date">{{ $presensi->created_at->format('d M Y') }}</div>
+                        <div class="detail-summary">
+                            <div class="summary-box hadir">
+                                <div class="summary-label">Hadir</div>
+                                <div class="summary-number">{{ $hadir }}</div>
                             </div>
-                            <span class="status-badge status-{{ strtolower($presensi->kehadiran) }}">
-                                {{ $presensi->kehadiran }}
-                            </span>
+                            <div class="summary-box izin">
+                                <div class="summary-label">Izin</div>
+                                <div class="summary-number">{{ $izin }}</div>
+                            </div>
+                            <div class="summary-box sakit">
+                                <div class="summary-label">Sakit</div>
+                                <div class="summary-number">{{ $sakit }}</div>
+                            </div>
+                            <div class="summary-box alpha">
+                                <div class="summary-label">Alpha</div>
+                                <div class="summary-number">{{ $alpha }}</div>
+                            </div>
                         </div>
-                        @endforeach
+                        <div class="pertemuan-list">
+                            @foreach($presensiList as $presensi)
+                                <div class="pertemuan-item">
+                                    <div class="pertemuan-info">
+                                        <div class="pertemuan-title">
+                                            {{ $presensi->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}
+                                        </div>
+                                        <div class="pertemuan-date">
+                                            {{ $presensi->created_at->format('d M Y') }}
+                                        </div>
+                                    </div>
+                                    <span class="status-badge status-{{ strtolower($presensi->kehadiran) }}">
+                                        {{ $presensi->kehadiran }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-                @endforelse
+                @endforeach
+                {{-- ✅ @foreach tidak butuh @empty, jadi tidak pakai @forelse di sini --}}
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" id="closeDetailModalBtn">Tutup</button>
             </div>
         </div>
     </div>
+
     <script>
-        (function() {
-            // Data dari server (Blade)
-            const presensiData = @json($presensiPerPraktikum->toArray());
-            
+        (function () {
             function showDetailModal(praktikumNama) {
-                // Hide all detail sections first
+                // Sembunyikan semua panel detail
                 document.querySelectorAll('[id^="detail-"]').forEach(el => {
                     el.style.display = 'none';
                 });
-                
-                // Show selected praktikum detail
-                const slug = praktikumNama.toLowerCase().replace(/\s+/g, '-');
+
+                // Buat slug yang sama persis dengan Blade Str::slug
+                const slug = praktikumNama
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-');
+
                 const detailEl = document.getElementById('detail-' + slug);
                 if (detailEl) {
                     detailEl.style.display = 'block';
                 }
-                
+
                 document.getElementById('detailModal').classList.add('active');
             }
 
@@ -717,23 +605,19 @@
                 if (e.target.classList.contains('modal')) closeModal();
             });
 
-            // Filter functionality
-            document.getElementById('applyFilter').addEventListener('click', function() {
+            // Filter kartu
+            document.getElementById('applyFilter').addEventListener('click', function () {
                 const selected = document.getElementById('filterMatkul').value;
-                const cards = document.querySelectorAll('.presensi-card[data-praktikum]');
-                
-                cards.forEach(card => {
-                    if (selected === 'all' || card.dataset.praktikum === selected) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                document.querySelectorAll('.presensi-card[data-praktikum]').forEach(card => {
+                    card.style.display =
+                        (selected === 'all' || card.dataset.praktikum === selected)
+                            ? 'block' : 'none';
                 });
             });
 
             // Mobile menu toggle
             const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
+            const sidebarNav   = document.getElementById('sidebarNav');
             if (mobileToggle && sidebarNav) {
                 mobileToggle.addEventListener('click', () => {
                     sidebarNav.classList.toggle('active');
@@ -743,21 +627,8 @@
                 });
             }
 
-            document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const sub = trigger.parentElement.querySelector('.submenu');
-                    if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
-                });
-            });
-        })();
-    </script>
-
-            document.querySelectorAll('.submenu li').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Presensi')) return;
-                });
-            });
+            // Expose ke global agar onclick inline bisa memanggil
+            window.showDetailModal = showDetailModal;
         })();
     </script>
 </body>

@@ -234,6 +234,7 @@ class PraktikumController extends Controller
             'completedPraktikums'
         ));
     }
+    
     function monitoringPraktikum()
     {
         return view('dosen/monitoring');

@@ -522,75 +522,78 @@
             </div>
         </main>
     </div>
-    <script>
-        (function() {
-            const nilaiData = @json($nilais->groupBy(function($nilai) {
-                return $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum';
-            })->map(function($nilaisPerPraktikum, $praktikumName) {
+    {{-- ✅ Siapkan data di PHP block, BUKAN di dalam @json() --}}
+@php
+    $nilaiDataForJs = $nilais->groupBy(function($nilai) {
+        return $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum';
+    })->map(function($nilaisPerPraktikum) {
+        return [
+            'pretest' => $nilaisPerPraktikum->map(function($nilai) {
                 return [
-                    'pretest' => $nilaisPerPraktikum->map(function($nilai) {
-                        return [
-                            'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
-                            'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
-                            'nilai' => $nilai->nilai_pretest ?? 0
-                        ];
-                    })->toArray(),
-                    'laporan' => $nilaisPerPraktikum->map(function($nilai) {
-                        return [
-                            'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
-                            'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
-                            'nilai' => $nilai->nilai_laporan ?? 0
-                        ];
-                    })->toArray()
+                    'modul'  => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+                    'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
+                    'nilai'  => $nilai->nilai_pretest ?? 0,
                 ];
-            }));
+            })->values()->toArray(),
+            'laporan' => $nilaisPerPraktikum->map(function($nilai) {
+                return [
+                    'modul'  => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+                    'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
+                    'nilai'  => $nilai->nilai_laporan ?? 0,
+                ];
+            })->values()->toArray(),
+        ];
+    });
+@endphp
 
-            function hitungNilaiAkhir(matkul) {
+<script>
+    (function () {
+        const nilaiData = @json($nilaiDataForJs);
+
+        function hitungNilaiAkhir(matkul) {
+            const pretests = nilaiData[matkul]?.pretest || [];
+            const laporans = nilaiData[matkul]?.laporan || [];
+            let totalPretest = 0, totalLaporan = 0;
+            pretests.forEach(p => totalPretest += p.nilai);
+            laporans.forEach(l => totalLaporan += l.nilai);
+            const avgPretest = pretests.length ? totalPretest / pretests.length : 0;
+            const avgLaporan = laporans.length ? totalLaporan / laporans.length : 0;
+            return Math.round((avgPretest + avgLaporan) / 2);
+        }
+
+        function updateDropdowns() {
+            const matkuls = Object.keys(nilaiData);
+            const options = '<option value="all">Semua Mata Kuliah</option>' +
+                matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('filterPretestMatkul').innerHTML = options;
+            document.getElementById('filterLaporanMatkul').innerHTML = options;
+            document.getElementById('filterAkhirMatkul').innerHTML = options;
+        }
+
+        function renderPretest() {
+            const selectedMatkul = document.getElementById('filterPretestMatkul').value;
+            const container = document.getElementById('pretestGrid');
+            const filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
+
+            if (!filteredMatkuls.some(m => nilaiData[m]?.pretest?.length)) {
+                container.innerHTML = '<div class="empty-state">Belum ada nilai pretest</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            filteredMatkuls.forEach(matkul => {
                 const pretests = nilaiData[matkul]?.pretest || [];
-                const laporans = nilaiData[matkul]?.laporan || [];
-                let totalPretest = 0,
-                    totalLaporan = 0;
-                pretests.forEach(p => totalPretest += p.nilai);
-                laporans.forEach(l => totalLaporan += l.nilai);
-                const avgPretest = pretests.length ? totalPretest / pretests.length : 0;
-                const avgLaporan = laporans.length ? totalLaporan / laporans.length : 0;
-                return Math.round((avgPretest + avgLaporan) / 2);
-            }
+                if (!pretests.length) return;
 
-            function updateDropdowns() {
-                const matkuls = Object.keys(nilaiData);
-                const options = '<option value="all">Semua Mata Kuliah</option>' + matkuls.map(m =>
-                    `<option value="${m}">${m}</option>`).join('');
-                document.getElementById('filterPretestMatkul').innerHTML = options;
-                document.getElementById('filterLaporanMatkul').innerHTML = options;
-                document.getElementById('filterAkhirMatkul').innerHTML = options;
-            }
-
-            function renderPretest() {
-                const selectedMatkul = document.getElementById('filterPretestMatkul').value;
-                const container = document.getElementById('pretestGrid');
-
-                let filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
-
-                if (filteredMatkuls.length === 0 || !filteredMatkuls.some(m => nilaiData[m]?.pretest?.length)) {
-                    container.innerHTML = '<div class="empty-state">Belum ada nilai pretest</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                filteredMatkuls.forEach(matkul => {
-                    const pretests = nilaiData[matkul]?.pretest || [];
-                    if (pretests.length === 0) return;
-
-                    const card = document.createElement('div');
-                    card.className = 'score-card';
-                    card.innerHTML = `
-                <div class="card-header">
-                    <h3>${matkul}</h3>
-                    <p>Nilai Pretest</p>
-                </div>
-                <div class="card-body">
-                    ${pretests.map(p => `
+                const card = document.createElement('div');
+                card.className = 'score-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${matkul}</h3>
+                        <p>Nilai Pretest</p>
+                    </div>
+                    <div class="card-body">
+                        ${pretests.map(p => `
                             <div class="score-item">
                                 <div class="score-info">
                                     <h4>${p.modul}</h4>
@@ -599,37 +602,36 @@
                                 <div class="score-value">${p.nilai}/100</div>
                             </div>
                         `).join('')}
-                </div>
-            `;
-                    container.appendChild(card);
-                });
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderLaporan() {
+            const selectedMatkul = document.getElementById('filterLaporanMatkul').value;
+            const container = document.getElementById('laporanGrid');
+            const filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
+
+            if (!filteredMatkuls.some(m => nilaiData[m]?.laporan?.length)) {
+                container.innerHTML = '<div class="empty-state">Belum ada nilai laporan</div>';
+                return;
             }
 
-            function renderLaporan() {
-                const selectedMatkul = document.getElementById('filterLaporanMatkul').value;
-                const container = document.getElementById('laporanGrid');
+            container.innerHTML = '';
+            filteredMatkuls.forEach(matkul => {
+                const laporans = nilaiData[matkul]?.laporan || [];
+                if (!laporans.length) return;
 
-                let filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
-
-                if (filteredMatkuls.length === 0 || !filteredMatkuls.some(m => nilaiData[m]?.laporan?.length)) {
-                    container.innerHTML = '<div class="empty-state">Belum ada nilai laporan</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                filteredMatkuls.forEach(matkul => {
-                    const laporans = nilaiData[matkul]?.laporan || [];
-                    if (laporans.length === 0) return;
-
-                    const card = document.createElement('div');
-                    card.className = 'score-card';
-                    card.innerHTML = `
-                <div class="card-header">
-                    <h3>${matkul}</h3>
-                    <p>Nilai Laporan</p>
-                </div>
-                <div class="card-body">
-                    ${laporans.map(l => `
+                const card = document.createElement('div');
+                card.className = 'score-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${matkul}</h3>
+                        <p>Nilai Laporan</p>
+                    </div>
+                    <div class="card-body">
+                        ${laporans.map(l => `
                             <div class="score-item">
                                 <div class="score-info">
                                     <h4>${l.modul}</h4>
@@ -638,141 +640,127 @@
                                 <div class="score-value">${l.nilai}/100</div>
                             </div>
                         `).join('')}
-                </div>
-            `;
-                    container.appendChild(card);
-                });
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderNilaiAkhir() {
+            const selectedMatkul = document.getElementById('filterAkhirMatkul').value;
+            const container = document.getElementById('akhirContainer');
+            const filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
+
+            if (!filteredMatkuls.length) {
+                container.innerHTML = '<div class="empty-state">Belum ada data nilai akhir</div>';
+                return;
             }
 
-            function renderNilaiAkhir() {
-                const selectedMatkul = document.getElementById('filterAkhirMatkul').value;
-                const container = document.getElementById('akhirContainer');
+            container.innerHTML = '';
+            filteredMatkuls.forEach(matkul => {
+                const pretests  = nilaiData[matkul]?.pretest  || [];
+                const laporans  = nilaiData[matkul]?.laporan  || [];
+                const nilaiAkhir = hitungNilaiAkhir(matkul);
+                const maxLength  = Math.max(pretests.length, laporans.length);
 
-                let filteredMatkuls = selectedMatkul === 'all' ? Object.keys(nilaiData) : [selectedMatkul];
-
-                if (filteredMatkuls.length === 0) {
-                    container.innerHTML = '<div class="empty-state">Belum ada data nilai akhir</div>';
-                    return;
+                const rows = [];
+                for (let i = 0; i < maxLength; i++) {
+                    rows.push({
+                        pretest: pretests[i] || { modul: '-', materi: '-', nilai: '-' },
+                        laporan: laporans[i] || { modul: '-', materi: '-', nilai: '-' },
+                    });
                 }
 
-                container.innerHTML = '';
-                filteredMatkuls.forEach(matkul => {
-                    const pretests = nilaiData[matkul]?.pretest || [];
-                    const laporans = nilaiData[matkul]?.laporan || [];
-                    const nilaiAkhir = hitungNilaiAkhir(matkul);
-
-                    const maxLength = Math.max(pretests.length, laporans.length);
-                    const rows = [];
-                    for (let i = 0; i < maxLength; i++) {
-                        const pretest = pretests[i] || {
-                            modul: '-',
-                            materi: '-',
-                            nilai: '-'
-                        };
-                        const laporan = laporans[i] || {
-                            modul: '-',
-                            materi: '-',
-                            nilai: '-'
-                        };
-                        rows.push({
-                            pretest,
-                            laporan
-                        });
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'final-card';
-                    card.innerHTML = `
-                <div class="final-header">
-                    <h3>${matkul}</h3>
-                    <p>Rekap Nilai Pretest & Laporan</p>
-                </div>
-                <div class="final-body">
-                    <table class="final-table">
-                        <thead>
-                            <tr><th>Pretest</th><th>Materi</th><th>Nilai</th><th>Laporan</th><th>Materi</th><th>Nilai</th></tr>
-                        </thead>
-                        <tbody>
-                            ${rows.map(row => `
+                const card = document.createElement('div');
+                card.className = 'final-card';
+                card.innerHTML = `
+                    <div class="final-header">
+                        <h3>${matkul}</h3>
+                        <p>Rekap Nilai Pretest &amp; Laporan</p>
+                    </div>
+                    <div class="final-body">
+                        <table class="final-table">
+                            <thead>
+                                <tr>
+                                    <th>Pertemuan (Pretest)</th><th>Materi</th><th>Nilai</th>
+                                    <th>Pertemuan (Laporan)</th><th>Materi</th><th>Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows.map(row => `
                                     <tr>
-                                        <td>${row.pretest.modul !== '-' ? row.pretest.modul : '-'}</td>
-                                        <td>${row.pretest.materi !== '-' ? row.pretest.materi : '-'}</td>
-                                        <td class="score-value" style="font-size:0.9rem">${row.pretest.nilai !== '-' ? row.pretest.nilai + '/100' : '-'}</td>
-                                        <td>${row.laporan.modul !== '-' ? row.laporan.modul : '-'}</td>
-                                        <td>${row.laporan.materi !== '-' ? row.laporan.materi : '-'}</td>
-                                        <td class="score-value" style="font-size:0.9rem">${row.laporan.nilai !== '-' ? row.laporan.nilai + '/100' : '-'}</td>
+                                        <td>${row.pretest.modul}</td>
+                                        <td>${row.pretest.materi}</td>
+                                        <td class="score-value" style="font-size:0.9rem">
+                                            ${row.pretest.nilai !== '-' ? row.pretest.nilai + '/100' : '-'}
+                                        </td>
+                                        <td>${row.laporan.modul}</td>
+                                        <td>${row.laporan.materi}</td>
+                                        <td class="score-value" style="font-size:0.9rem">
+                                            ${row.laporan.nilai !== '-' ? row.laporan.nilai + '/100' : '-'}
+                                        </td>
                                     </tr>
                                 `).join('')}
-                        </tbody>
-                    </table>
-                    <div class="total-score">
-                        <span class="total-label">Nilai Akhir (Pretest + Laporan)</span>
-                        <span class="total-value">${nilaiAkhir}/100</span>
+                            </tbody>
+                        </table>
+                        <div class="total-score">
+                            <span class="total-label">Nilai Akhir (Pretest + Laporan)</span>
+                            <span class="total-value">${nilaiAkhir}/100</span>
+                        </div>
                     </div>
-                </div>
-            `;
-                    container.appendChild(card);
-                });
-            }
-
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = {
-                pretest: document.getElementById('tab-pretest'),
-                laporan: document.getElementById('tab-laporan'),
-                akhir: document.getElementById('tab-akhir')
-            };
-
-            function switchTab(tabId) {
-                Object.values(tabContents).forEach(content => content.classList.remove('active'));
-                tabContents[tabId].classList.add('active');
-                tabBtns.forEach(btn => {
-                    if (btn.dataset.tab === tabId) btn.classList.add('active');
-                    else btn.classList.remove('active');
-                });
-
-                if (tabId === 'pretest') renderPretest();
-                else if (tabId === 'laporan') renderLaporan();
-                else if (tabId === 'akhir') renderNilaiAkhir();
-            }
-
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+                `;
+                container.appendChild(card);
             });
+        }
 
-            document.getElementById('applyPretestFilter').addEventListener('click', renderPretest);
-            document.getElementById('applyLaporanFilter').addEventListener('click', renderLaporan);
-            document.getElementById('applyAkhirFilter').addEventListener('click', renderNilaiAkhir);
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            pretest: document.getElementById('tab-pretest'),
+            laporan: document.getElementById('tab-laporan'),
+            akhir:   document.getElementById('tab-akhir'),
+        };
 
-            updateDropdowns();
-            renderPretest();
+        function switchTab(tabId) {
+            Object.values(tabContents).forEach(c => c.classList.remove('active'));
+            tabContents[tabId].classList.add('active');
+            tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+            if (tabId === 'pretest')      renderPretest();
+            else if (tabId === 'laporan') renderLaporan();
+            else if (tabId === 'akhir')   renderNilaiAkhir();
+        }
 
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
-            if (mobileToggle && sidebarNav) {
-                mobileToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('active');
-                    const icon = mobileToggle.querySelector('i');
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-times');
-                });
-            }
+        tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-            document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const sub = trigger.parentElement.querySelector('.submenu');
-                    if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
-                });
+        document.getElementById('applyPretestFilter').addEventListener('click', renderPretest);
+        document.getElementById('applyLaporanFilter').addEventListener('click', renderLaporan);
+        document.getElementById('applyAkhirFilter').addEventListener('click', renderNilaiAkhir);
+
+        // Init
+        updateDropdowns();
+        renderPretest();
+
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const sidebarNav   = document.getElementById('sidebarNav');
+        if (mobileToggle && sidebarNav) {
+            mobileToggle.addEventListener('click', () => {
+                sidebarNav.classList.toggle('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
             });
+        }
 
-
-            document.querySelectorAll('.submenu li').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Nilai')) return;
-                });
+        document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sub = trigger.parentElement.querySelector('.submenu');
+                if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
             });
-        })();
-    </script>
+        });
+    })();
+</script>
 </body>
 
 </html>

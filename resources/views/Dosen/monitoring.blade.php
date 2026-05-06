@@ -550,243 +550,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         (function() {
-            const mahasiswaData = {
-                'Jaringan Komputer': {
-                    '2024A': [{
-                            nim: '22060001',
-                            nama: 'Ahmad Fauzi',
-                            hadir: true,
-                            nilai: 85,
-                            laporan: true
-                        },
-                        {
-                            nim: '22060002',
-                            nama: 'Siti Rahma',
-                            hadir: true,
-                            nilai: 78,
-                            laporan: true
-                        },
-                        {
-                            nim: '22060003',
-                            nama: 'Budi Wijaya',
-                            hadir: false,
-                            nilai: 65,
-                            laporan: false
-                        },
-                        {
-                            nim: '22060004',
-                            nama: 'Dewi Sartika',
-                            hadir: true,
-                            nilai: 92,
-                            laporan: true
-                        },
-                        {
-                            nim: '22060005',
-                            nama: 'Eko Prasetyo',
-                            hadir: true,
-                            nilai: 88,
-                            laporan: true
-                        }
-                    ],
-                    '2024B': [{
-                            nim: '22061001',
-                            nama: 'Rina Andriani',
-                            hadir: true,
-                            nilai: 82,
-                            laporan: true
-                        },
-                        {
-                            nim: '22061002',
-                            nama: 'Dian Permata',
-                            hadir: false,
-                            nilai: 70,
-                            laporan: false
-                        },
-                        {
-                            nim: '22061003',
-                            nama: 'Andi Saputra',
-                            hadir: true,
-                            nilai: 75,
-                            laporan: true
-                        },
-                        {
-                            nim: '22061004',
-                            nama: 'Lia Anggraini',
-                            hadir: true,
-                            nilai: 80,
-                            laporan: true
-                        },
-                        {
-                            nim: '22061005',
-                            nama: 'Rizky Febrian',
-                            hadir: true,
-                            nilai: 86,
-                            laporan: false
-                        }
-                    ],
-                    '2024C': [{
-                            nim: '22062001',
-                            nama: 'Nina Amelia',
-                            hadir: true,
-                            nilai: 70,
-                            laporan: false
-                        },
-                        {
-                            nim: '22062002',
-                            nama: 'Rudi Hartono',
-                            hadir: false,
-                            nilai: 60,
-                            laporan: false
-                        },
-                        {
-                            nim: '22062003',
-                            nama: 'Sari Puspita',
-                            hadir: true,
-                            nilai: 75,
-                            laporan: true
-                        },
-                        {
-                            nim: '22062004',
-                            nama: 'Tono Suprapto',
-                            hadir: true,
-                            nilai: 68,
-                            laporan: false
-                        },
-                        {
-                            nim: '22062005',
-                            nama: 'Umi Kalsum',
-                            hadir: false,
-                            nilai: 55,
-                            laporan: false
-                        }
-                    ]
-                },
-                'RPL': {
-                    '2024A': [{
-                            nim: '22063001',
-                            nama: 'Fajar Nugroho',
-                            hadir: true,
-                            nilai: 88,
-                            laporan: true
-                        },
-                        {
-                            nim: '22063002',
-                            nama: 'Gina Permata',
-                            hadir: true,
-                            nilai: 82,
-                            laporan: true
-                        },
-                        {
-                            nim: '22063003',
-                            nama: 'Hendra Gunawan',
-                            hadir: false,
-                            nilai: 70,
-                            laporan: false
-                        },
-                        {
-                            nim: '22063004',
-                            nama: 'Indah Lestari',
-                            hadir: true,
-                            nilai: 90,
-                            laporan: true
-                        },
-                        {
-                            nim: '22063005',
-                            nama: 'Joko Susilo',
-                            hadir: true,
-                            nilai: 85,
-                            laporan: true
-                        }
-                    ],
-                    '2024B': [{
-                            nim: '22064001',
-                            nama: 'Kartika Dewi',
-                            hadir: true,
-                            nilai: 78,
-                            laporan: true
-                        },
-                        {
-                            nim: '22064002',
-                            nama: 'Lutfi Hakim',
-                            hadir: true,
-                            nilai: 75,
-                            laporan: false
-                        },
-                        {
-                            nim: '22064003',
-                            nama: 'Maya Sari',
-                            hadir: false,
-                            nilai: 65,
-                            laporan: false
-                        },
-                        {
-                            nim: '22064004',
-                            nama: 'Nanda Pratama',
-                            hadir: true,
-                            nilai: 80,
-                            laporan: true
-                        },
-                        {
-                            nim: '22064005',
-                            nama: 'Oka Darmawan',
-                            hadir: true,
-                            nilai: 82,
-                            laporan: true
-                        }
-                    ],
-                    '2024C': [{
-                            nim: '22065001',
-                            nama: 'Putri Amelia',
-                            hadir: true,
-                            nilai: 72,
-                            laporan: false
-                        },
-                        {
-                            nim: '22065002',
-                            nama: 'Qori Fadillah',
-                            hadir: false,
-                            nilai: 60,
-                            laporan: false
-                        },
-                        {
-                            nim: '22065003',
-                            nama: 'Raka Putra',
-                            hadir: true,
-                            nilai: 68,
-                            laporan: true
-                        },
-                        {
-                            nim: '22065004',
-                            nama: 'Sinta Melati',
-                            hadir: true,
-                            nilai: 70,
-                            laporan: false
-                        },
-                        {
-                            nim: '22065005',
-                            nama: 'Teguh Wibowo',
-                            hadir: true,
-                            nilai: 75,
-                            laporan: true
-                        }
-                    ]
-                }
-            };
-
-            const grafikData = {
-                '2024A': {
-                    kehadiran: [85, 82, 88, 84, 86, 90],
-                    nilai: [78, 82, 79, 85, 83, 88]
-                },
-                '2024B': {
-                    kehadiran: [78, 80, 75, 82, 79, 85],
-                    nilai: [72, 75, 74, 78, 76, 80]
-                },
-                '2024C': {
-                    kehadiran: [70, 72, 68, 74, 71, 76],
-                    nilai: [68, 70, 72, 74, 73, 76]
-                }
-            };
+            const mahasiswaData = @json($presences);
+            const kehadiranChartData = @json($kehadiranChartData);
+            const nilaiChartData = @json($nilaiChartData);
 
             let kehadiranChart, nilaiChart;
             let currentPage = 1;
@@ -794,9 +560,10 @@
             let filteredData = [];
 
             function initCharts(kelas) {
-                // Jika kelas 'all', gunakan '2024A' sebagai default
-                const kelasKey = (kelas === 'all' || !kelas) ? '2024A' : kelas;
-                const data = grafikData[kelasKey];
+                // Jika kelas 'all', gunakan '2022' sebagai default
+                const kelasKey = (kelas === 'all' || !kelas) ? '2022' : kelas;
+                const kehadiranData = kehadiranChartData[kelasKey];
+                const nilaiData = nilaiChartData[kelasKey];
 
                 // Update label kelas di grafik
                 document.getElementById('kehadiranKelasLabel').innerText = `Kelas ${kelasKey}`;
@@ -811,9 +578,9 @@
                             'Pertemuan 6'
                         ],
                         datasets: [{
-                            label: `Kehadiran (%)`,
-                            data: data.kehadiran,
-                            backgroundColor: '#3b82f6',
+                            label: `Kehadiran`,
+                            data: [kehadiranData.hadir, kehadiranData.izin, kehadiranData.sakit, kehadiranData.alpha, 0, 0],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#64748b', '#64748b', '#64748b'],
                             borderRadius: 8
                         }]
                     },
@@ -828,10 +595,9 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 100,
                                 title: {
                                     display: true,
-                                    text: 'Persentase'
+                                    text: 'Jumlah'
                                 }
                             }
                         }
@@ -846,7 +612,7 @@
                         labels: ['Pretest 1', 'Pretest 2', 'Pretest 3', 'Pretest 4', 'Pretest 5', 'Pretest 6'],
                         datasets: [{
                             label: `Rata-rata Nilai`,
-                            data: data.nilai,
+                            data: nilaiData,
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245, 158, 11, 0.1)',
                             tension: 0.3,

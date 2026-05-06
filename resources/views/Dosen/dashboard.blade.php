@@ -956,13 +956,14 @@
                         </div>
                         <div class="filter-group">
                             <select id="presenceClassFilter">
-                                <option value="2024A">Kelas 2024A</option>
-                                <option value="2024B">Kelas 2024B</option>
-                                <option value="2024C">Kelas 2024C</option>
+                                <option value="2022">Kelas 2022</option>
+                                <option value="2023">Kelas 2023</option>
+                                <option value="2024">Kelas 2024</option>
                             </select>
                             <select id="presenceCourseFilter">
-                                <option value="Jaringan Komputer">Jaringan Komputer</option>
-                                <option value="RPL">RPL</option>
+                                @foreach($aktivePraktikums as $praktikum)
+                                <option value="{{ $praktikum['nama_praktikum'] }}">{{ $praktikum['nama_praktikum'] }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="attendance-stats" id="attendanceStats">
@@ -990,13 +991,14 @@
                         </div>
                         <div class="filter-group">
                             <select id="performanceClassFilter">
-                                <option value="2024A">Kelas 2024A</option>
-                                <option value="2024B">Kelas 2024B</option>
-                                <option value="2024C">Kelas 2024C</option>
+                                <option value="2022">Kelas 2022</option>
+                                <option value="2023">Kelas 2023</option>
+                                <option value="2024">Kelas 2024</option>
                             </select>
                             <select id="performanceCourseFilter">
-                                <option value="Jaringan Komputer">Jaringan Komputer</option>
-                                <option value="RPL">RPL</option>
+                                @foreach($aktivePraktikums as $praktikum)
+                                <option value="{{ $praktikum['nama_praktikum'] }}">{{ $praktikum['nama_praktikum'] }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <canvas id="performanceChart" width="400" height="200"
@@ -1030,62 +1032,7 @@
             const fullDateSpan = document.getElementById("fullDateDisplay");
             if (fullDateSpan) fullDateSpan.innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
 
-            const presenceData = {
-                '2024A': {
-                    'Jaringan Komputer': {
-                        hadir: 19,
-                        izin: 2,
-                        sakit: 1,
-                        alpha: 1,
-                        total: 23,
-                        percent: 83
-                    },
-                    'RPL': {
-                        hadir: 17,
-                        izin: 2,
-                        sakit: 1,
-                        alpha: 1,
-                        total: 21,
-                        percent: 81
-                    }
-                },
-                '2024B': {
-                    'Jaringan Komputer': {
-                        hadir: 18,
-                        izin: 1,
-                        sakit: 1,
-                        alpha: 2,
-                        total: 22,
-                        percent: 82
-                    },
-                    'RPL': {
-                        hadir: 16,
-                        izin: 2,
-                        sakit: 1,
-                        alpha: 1,
-                        total: 20,
-                        percent: 80
-                    }
-                },
-                '2024C': {
-                    'Jaringan Komputer': {
-                        hadir: 15,
-                        izin: 3,
-                        sakit: 2,
-                        alpha: 1,
-                        total: 21,
-                        percent: 71
-                    },
-                    'RPL': {
-                        hadir: 15,
-                        izin: 2,
-                        sakit: 1,
-                        alpha: 2,
-                        total: 20,
-                        percent: 75
-                    }
-                }
-            };
+            const presenceData = @json($presenceData);
 
             function updateAttendanceDisplay() {
                 const kelas = document.getElementById('presenceClassFilter').value;
@@ -1118,20 +1065,7 @@
 
             let performanceChart;
 
-            const pretestData = {
-                '2024A': {
-                    'Jaringan Komputer': [78, 82, 79, 85, 83, 88],
-                    'RPL': [75, 80, 78, 82, 81, 85]
-                },
-                '2024B': {
-                    'Jaringan Komputer': [72, 75, 74, 78, 76, 80],
-                    'RPL': [70, 74, 73, 76, 75, 78]
-                },
-                '2024C': {
-                    'Jaringan Komputer': [68, 70, 72, 74, 73, 76],
-                    'RPL': [65, 68, 70, 72, 71, 74]
-                }
-            };
+            const pretestData = @json($pretestData);
 
             const pretestLabels = ['Pretest 1', 'Pretest 2', 'Pretest 3', 'Pretest 4', 'Pretest 5', 'Pretest 6'];
 

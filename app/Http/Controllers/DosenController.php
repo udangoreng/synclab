@@ -104,7 +104,7 @@ class DosenController extends Controller
     private function getPresenceDataByClassAndCourse()
     {
         $data = [];
-        $classes = ['2024A', '2024B', '2024C'];
+        $classes = ['2022', '2023', '2024']; // Based on nomor_induk year
         
         foreach ($classes as $kelas) {
             $data[$kelas] = [];
@@ -113,8 +113,7 @@ class DosenController extends Controller
             foreach ($praktikums as $praktikum) {
                 // Get presences for this class and praktikum
                 $presences = Presensi::whereHas('user', function($q) use ($kelas) {
-                    // Assuming class is stored in user's profile or we need to get it from pendaftaran
-                    // For now, we'll get all presences
+                    $q->where('nomor_induk', 'like', $kelas . '%');
                 })
                 ->whereHas('pertemuan', function($q) use ($praktikum) {
                     $q->where('id_praktikum', $praktikum->id);
@@ -149,36 +148,33 @@ class DosenController extends Controller
     private function getPretestDataByClassAndCourse()
     {
         $data = [];
-        $classes = ['2024A', '2024B', '2024C'];
+        $classes = ['2022', '2023', '2024']; // Based on nomor_induk year
         
         foreach ($classes as $kelas) {
             $data[$kelas] = [];
             
             $praktikums = Praktikum::all();
             foreach ($praktikums as $praktikum) {
-                // Get nilai pretest (pertemuan 1) for this class and praktikum
+                // Get nilai pretest for this class and praktikum
                 $nilais = Nilai::whereHas('pertemuan', function($q) use ($praktikum) {
-                    $q->where('id_praktikum', $praktikum->id)
-                      ->where('pertemuan_ke', '<=', 6); // Get all pertemuan
+                    $q->where('id_praktikum', $praktikum->id);
                 })
-                ->orderBy('pertemuan_ke')
+                ->whereHas('user', function($q) use ($kelas) {
+                    $q->where('nomor_induk', 'like', $kelas . '%');
+                })
+                ->orderBy('pertemuan.pertemuan_ke')
                 ->get()
                 ->groupBy(function($item) {
                     return $item->pertemuan->pertemuan_ke;
                 });
                 
                 $pretestAverages = [];
-                foreach ($nilais as $pertemuanKe => $itemsByPertemuan) {
-                    $avg = $itemsByPertemuan->avg('nilai_pretest') ?? 0;
+                for ($i = 1; $i <= 6; $i++) {
+                    $avg = $nilais->get($i)?->avg('nilai_pretest') ?? 0;
                     $pretestAverages[] = round($avg);
                 }
                 
-                // Pad with empty values if less than 6
-                while (count($pretestAverages) < 6) {
-                    $pretestAverages[] = 0;
-                }
-                
-                $data[$kelas][$praktikum->nama_praktikum] = array_slice($pretestAverages, 0, 6);
+                $data[$kelas][$praktikum->nama_praktikum] = $pretestAverages;
             }
         }
         
@@ -265,8 +261,8 @@ class DosenController extends Controller
             })
             ->count();
         
-        // Get attendance chart data
-        $kehadiranChartData = $this->getAttendanceChartDataByClass($filterPraktikum, $filterPertemuan);
+        // Get nilai chart data
+        $nilaiChartData = $this->getNilaiChartDataByClass($filterPraktikum, $filterPertemuan);
         
         // Get all praktikums for filter
         $praktikums = Praktikum::all()->pluck('nama_praktikum')->unique();
@@ -277,6 +273,7 @@ class DosenController extends Controller
             'rataNilai',
             'laporanSelesai',
             'kehadiranChartData',
+            'nilaiChartData',
             'praktikums',
             'filterPraktikum',
             'filterKelas',
@@ -285,20 +282,64 @@ class DosenController extends Controller
     }
     
     /**
-     * Get attendance chart data by class
+     * Get nilai chart data by class
      */
-    private function getAttendanceChartDataByClass($filterPraktikum = 'all', $filterPertemuan = 'all')
+    private function getNilaiChartDataByClass($filterPraktikum = 'all', $filterPertemuan = 'all')
     {
-        $classes = ['2024A', '2024B', '2024C'];
+        $classes = ['2022', '2023', '2024'];
         $data = [];
         
         foreach ($classes as $kelas) {
-            $presences = Presensi::whereHas('user', function($q) use ($kelas) {
-                    // Get students from this class
+            $nilais = Nilai::whereHas('user', function($q) use ($kelas) {
+                    $q->where('nomor_induk', 'like', $kelas . '%');
                 })
                 ->when($filterPraktikum != 'all', function($q) use ($filterPraktikum) {
                     return $q->whereHas('pertemuan.praktikum', function($qp) use ($filterPraktikum) {
                         $qp->where('nama_praktikum', $filterPraktikum);
+                    });
+                })
+                ->when($filterPertemuan != 'all', function($q) use ($filterPertemuan) {
+                    return $q->whereHas('pertemuan', function($qp) use ($filterPertemuan) {
+                        $qp->where('pertemuan_ke', $filterPertemuan);
+                    });
+                })
+                ->get()
+                ->groupBy(function($item) {
+                    return $item->pertemuan->pertemuan_ke;
+                });
+            
+            $averages = [];
+            for ($i = 1; $i <= 6; $i++) {
+                $avg = $nilais->get($i)?->avg('nilai_pretest') ?? 0;
+                $averages[] = round($avg);
+            }
+            
+            $data[$kelas] = $averages;
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * Get attendance chart data by class
+     */
+    private function getAttendanceChartDataByClass($filterPraktikum = 'all', $filterPertemuan = 'all')
+    {
+        $classes = ['2022', '2023', '2024'];
+        $data = [];
+        
+        foreach ($classes as $kelas) {
+            $presences = Presensi::whereHas('user', function($q) use ($kelas) {
+                    $q->where('nomor_induk', 'like', $kelas . '%');
+                })
+                ->when($filterPraktikum != 'all', function($q) use ($filterPraktikum) {
+                    return $q->whereHas('pertemuan.praktikum', function($qp) use ($filterPraktikum) {
+                        $qp->where('nama_praktikum', $filterPraktikum);
+                    });
+                })
+                ->when($filterPertemuan != 'all', function($q) use ($filterPertemuan) {
+                    return $q->whereHas('pertemuan', function($qp) use ($filterPertemuan) {
+                        $qp->where('pertemuan_ke', $filterPertemuan);
                     });
                 })
                 ->get();

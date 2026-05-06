@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Validasi Nilai Dosen | Portal Akademik</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
@@ -776,170 +777,287 @@
     </div>
     <script>
         (function() {
-            let nilaiData = [{
-                    id: 1,
-                    nama: 'Ahmad Fauzi',
-                    nim: '22060001',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024A',
-                    pretest: 85,
-                    laporan: 80,
-                    validated: true
-                },
-                {
-                    id: 2,
-                    nama: 'Siti Rahma',
-                    nim: '22060002',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024A',
-                    pretest: 78,
-                    laporan: 82,
-                    validated: true
-                },
-                {
-                    id: 3,
-                    nama: 'Budi Wijaya',
-                    nim: '22060003',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024A',
-                    pretest: 65,
-                    laporan: 70,
-                    validated: false
-                },
-                {
-                    id: 4,
-                    nama: 'Dewi Sartika',
-                    nim: '22060004',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024A',
-                    pretest: 92,
-                    laporan: 88,
-                    validated: true
-                },
-                {
-                    id: 5,
-                    nama: 'Eko Prasetyo',
-                    nim: '22060005',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024A',
-                    pretest: 88,
-                    laporan: 85,
-                    validated: true
-                },
-                {
-                    id: 6,
-                    nama: 'Rina Andriani',
-                    nim: '22061001',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024B',
-                    pretest: 82,
-                    laporan: 78,
-                    validated: true
-                },
-                {
-                    id: 7,
-                    nama: 'Dian Permata',
-                    nim: '22061002',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024B',
-                    pretest: 70,
-                    laporan: 68,
-                    validated: false
-                },
-                {
-                    id: 8,
-                    nama: 'Andi Saputra',
-                    nim: '22061003',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024B',
-                    pretest: 75,
-                    laporan: 80,
-                    validated: true
-                },
-                {
-                    id: 9,
-                    nama: 'Nina Amelia',
-                    nim: '22062001',
-                    matkul: 'Jaringan Komputer',
-                    kelas: '2024C',
-                    pretest: 70,
-                    laporan: 65,
-                    validated: false
-                },
-                {
-                    id: 10,
-                    nama: 'Fajar Nugroho',
-                    nim: '22063001',
-                    matkul: 'RPL',
-                    kelas: '2024A',
-                    pretest: 88,
-                    laporan: 85,
-                    validated: true
-                },
-                {
-                    id: 11,
-                    nama: 'Gina Permata',
-                    nim: '22063002',
-                    matkul: 'RPL',
-                    kelas: '2024A',
-                    pretest: 82,
-                    laporan: 80,
-                    validated: true
-                },
-                {
-                    id: 12,
-                    nama: 'Hendra Gunawan',
-                    nim: '22063003',
-                    matkul: 'RPL',
-                    kelas: '2024A',
-                    pretest: 70,
-                    laporan: 68,
-                    validated: false
-                },
-                {
-                    id: 13,
-                    nama: 'Kartika Dewi',
-                    nim: '22064001',
-                    matkul: 'RPL',
-                    kelas: '2024B',
-                    pretest: 78,
-                    laporan: 75,
-                    validated: true
-                },
-                {
-                    id: 14,
-                    nama: 'Lutfi Hakim',
-                    nim: '22064002',
-                    matkul: 'RPL',
-                    kelas: '2024B',
-                    pretest: 75,
-                    laporan: 70,
-                    validated: false
-                },
-                {
-                    id: 15,
-                    nama: 'Putri Amelia',
-                    nim: '22065001',
-                    matkul: 'RPL',
-                    kelas: '2024C',
-                    pretest: 72,
-                    laporan: 68,
-                    validated: false
-                }
-            ];
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            let nilaiData = @json($nilais);
+            let currentPage = 1;
+            let rowsPerPage = 10;
+            let filteredData = [...nilaiData];
+            let currentEditId = null;
+
+            const filterMatkul = document.getElementById('filterMatkul');
+            const filterKelas = document.getElementById('filterKelas');
+            const filterStatus = document.getElementById('filterStatus');
+            const tableSearch = document.getElementById('tableSearch');
 
             function hitungNilaiAkhir(pretest, laporan) {
                 return ((pretest * 0.5) + (laporan * 0.5)).toFixed(1);
             }
 
-            let currentPage = 1;
-            let rowsPerPage = 8;
-            let filteredData = [];
+            function initializeFilters() {
+                const matkuls = [...new Set(nilaiData.map(item => item.matkul).filter(Boolean))].sort();
+                const kelasList = [...new Set(nilaiData.map(item => item.kelas).filter(k => k && k !== 'N/A'))].sort();
 
-            let currentEditId = null;
+                filterMatkul.innerHTML = '<option value="all">Semua Mata Kuliah</option>' + matkuls.map(matkul => `\n                        <option value="${matkul}">${matkul}</option>`).join('');
+                filterKelas.innerHTML = '<option value="all">Semua Kelas</option>' + kelasList.map(kelas => `\n                        <option value="${kelas}">${kelas}</option>`).join('');
+            }
 
             function renderTable() {
-                const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
+                const searchTerm = tableSearch.value.toLowerCase();
+                let filtered = filteredData.filter(item =>
+                    item.nama.toLowerCase().includes(searchTerm) ||
+                    String(item.nim).includes(searchTerm)
+                );
+
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                const pageData = filtered.slice(start, end);
+
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+
+                pageData.forEach(item => {
+                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
+                    const statusText = item.validated ? 'Tervalidasi' : 'Belum Validasi';
+                    const statusClass = item.validated ? 'status-validated' : 'status-pending';
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.nama}</td>
+                        <td>${item.nim}</td>
+                        <td>${item.matkul}</td>
+                        <td>${item.kelas ?? '-'}</td>
+                        <td>${item.pretest}</td>
+                        <td>${item.laporan}</td>
+                        <td>${nilaiAkhir}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td class="action-buttons">
+                            <button class="action-btn btn-edit" data-id="${item.id}"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn btn-delete" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
+                            <button class="action-btn btn-detail" data-id="${item.id}"><i class="fas fa-info-circle"></i> Detail</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.id)));
+                });
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', () => deleteData(parseInt(btn.dataset.id)));
+                });
+                document.querySelectorAll('.btn-detail').forEach(btn => {
+                    btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
+                });
+
+                const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
+                document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages}`;
+                document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data mahasiswa`;
+
+                updateSummary();
+            }
+
+            function filterData() {
+                const matkul = filterMatkul.value;
+                const kelas = filterKelas.value;
+                const status = filterStatus.value;
+
+                filteredData = nilaiData.filter(item => {
+                    if (matkul !== 'all' && item.matkul !== matkul) return false;
+                    if (kelas !== 'all' && item.kelas !== kelas) return false;
+                    if (status === 'validated' && !item.validated) return false;
+                    if (status === 'pending' && item.validated) return false;
+                    return true;
+                });
+
+                currentPage = 1;
+                renderTable();
+            }
+
+            function updateSummary() {
+                const total = filteredData.length;
+                const validated = filteredData.filter(item => item.validated).length;
+                const pending = total - validated;
+
+                document.getElementById('totalMahasiswa').innerText = total;
+                document.getElementById('totalValidated').innerText = validated;
+                document.getElementById('totalPending').innerText = pending;
+            }
+
+            function openEditModal(id) {
+                const item = nilaiData.find(d => d.id === id);
+                if (!item) return;
+
+                currentEditId = id;
+                document.getElementById('editNama').innerText = item.nama;
+                document.getElementById('editNim').innerText = item.nim;
+                document.getElementById('editMatkul').innerText = item.matkul;
+                document.getElementById('editPretest').value = item.pretest;
+                document.getElementById('editLaporan').value = item.laporan;
+                document.getElementById('editNilaiAkhir').value = hitungNilaiAkhir(item.pretest, item.laporan);
+                document.getElementById('editModal').classList.add('active');
+            }
+
+            function updateNilaiAkhirOtomatis() {
+                const pretest = parseFloat(document.getElementById('editPretest').value) || 0;
+                const laporan = parseFloat(document.getElementById('editLaporan').value) || 0;
+                document.getElementById('editNilaiAkhir').value = hitungNilaiAkhir(pretest, laporan);
+            }
+
+            async function saveEdit() {
+                const pretest = parseInt(document.getElementById('editPretest').value);
+                const laporan = parseInt(document.getElementById('editLaporan').value);
+                const nilaiAkhir = parseFloat(hitungNilaiAkhir(pretest, laporan));
+
+                if (Number.isNaN(pretest) || Number.isNaN(laporan)) {
+                    alert('Nilai Pretest dan Nilai Laporan harus berupa angka valid.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/nilai/${currentEditId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            nilai_pretest: pretest,
+                            nilai_laporan: laporan,
+                            nilai_akhir: nilaiAkhir,
+                            status: 'Terkonfirmasi',
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        alert(error.message || 'Gagal menyimpan nilai.');
+                        return;
+                    }
+
+                    const result = await response.json();
+                    const index = nilaiData.findIndex(d => d.id === currentEditId);
+                    if (index !== -1) {
+                        nilaiData[index].pretest = pretest;
+                        nilaiData[index].laporan = laporan;
+                        nilaiData[index].validated = true;
+                    }
+                    filterData();
+                    closeModal();
+                } catch (error) {
+                    console.error(error);
+                    alert('Terjadi kesalahan saat menyimpan perubahan.');
+                }
+            }
+
+            async function deleteData(id) {
+                if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/nilai/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        alert(error.message || 'Gagal menghapus data.');
+                        return;
+                    }
+
+                    nilaiData = nilaiData.filter(d => d.id !== id);
+                    filterData();
+                } catch (error) {
+                    console.error(error);
+                    alert('Terjadi kesalahan saat menghapus data.');
+                }
+            }
+
+            function openDetailModal(id) {
+                const item = nilaiData.find(d => d.id === id);
+                if (!item) return;
+
+                document.getElementById('detailNama').innerText = item.nama;
+                document.getElementById('detailNim').innerText = item.nim;
+                document.getElementById('detailMatkul').innerText = item.matkul;
+                document.getElementById('detailKelas').innerText = item.kelas ?? '-';
+                document.getElementById('detailPretest').innerText = item.pretest;
+                document.getElementById('detailLaporan').innerText = item.laporan;
+                document.getElementById('detailNilaiAkhir').innerText = hitungNilaiAkhir(item.pretest, item.laporan);
+                document.getElementById('detailStatus').innerHTML = item.validated ?
+                    '<span class="status-badge status-validated">Tervalidasi</span>' :
+                    '<span class="status-badge status-pending">Belum Tervalidasi</span>';
+
+                document.getElementById('detailModal').classList.add('active');
+            }
+
+            function closeModal() {
+                document.getElementById('editModal').classList.remove('active');
+                document.getElementById('detailModal').classList.remove('active');
+                currentEditId = null;
+            }
+
+            function exportData() {
+                let csvContent = 'Nama,NIM,Mata Kuliah,Kelas,Pretest,Laporan,Nilai Akhir,Status\n';
+                filteredData.forEach(item => {
+                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
+                    const status = item.validated ? 'Tervalidasi' : 'Belum Validasi';
+                    csvContent += `${item.nama},${item.nim},${item.matkul},${item.kelas ?? '-'},${item.pretest},${item.laporan},${nilaiAkhir},${status}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data_nilai_mahasiswa.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function bindEvents() {
+                document.getElementById('applyFilter').addEventListener('click', filterData);
+                tableSearch.addEventListener('input', () => {
+                    currentPage = 1;
+                    renderTable();
+                });
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderTable();
+                    }
+                });
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderTable();
+                    }
+                });
+                document.getElementById('exportBtn').addEventListener('click', exportData);
+                document.getElementById('closeModal').addEventListener('click', closeModal);
+                document.getElementById('cancelModal').addEventListener('click', closeModal);
+                document.getElementById('saveModal').addEventListener('click', saveEdit);
+                document.getElementById('closeDetailModal').addEventListener('click', closeModal);
+                document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
+                document.getElementById('editPretest').addEventListener('input', updateNilaiAkhirOtomatis);
+                document.getElementById('editLaporan').addEventListener('input', updateNilaiAkhirOtomatis);
+
+                window.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        closeModal();
+                    }
+                });
+            }
+
+            initializeFilters();
+            bindEvents();
+            filterData();
+        })();
+    </script>                const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
                 let filtered = filteredData.filter(item =>
                     item.nama.toLowerCase().includes(searchTerm) ||
                     item.nim.includes(searchTerm)

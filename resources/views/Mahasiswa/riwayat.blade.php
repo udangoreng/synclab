@@ -454,11 +454,14 @@
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                     <select id="filterMatkul">
-                        <option value="all">Semua Mata Kuliah</option>
-                        @foreach($nilais as $nilai)
-                        <option value="{{ $nilai->praktikum->nama_praktikum }}">{{ $nilai->praktikum->nama_praktikum }}</option>
-                        @endforeach
-                    </select>
+                    <option value="all">Semua Mata Kuliah</option>
+                    @foreach($nilais as $nilai)
+                        {{-- ✅ was: $nilai->praktikum->nama_praktikum (relasi tidak ada) --}}
+                        <option value="{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}">
+                            {{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}
+                        </option>
+                    @endforeach
+                </select>
                 </div>
                 <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
             </div>
@@ -468,7 +471,7 @@
                 <div class="riwayat-card">
                     <div class="card-header">
                         <div>
-                            <h3>{{ $nilai->praktikum->nama_praktikum ?? '-' }}</h3>
+                            <h3>{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</h3>
                             <p>{{ $nilai->created_at->format('d M Y') }}</p>
                         </div>
                         <span class="status-badge status-completed">{{ $nilai->status ?? 'Pending' }}</span>
@@ -514,189 +517,191 @@
             </div>
         </div>
     </div>
-    <script>
-        (function() {
-            const riwayatData = @json($nilais->map(function($nilai) {
-                return [
-                    'id' => $nilai->id,
-                    'matkul' => $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum',
-                    'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
-                    'pretest' => $nilai->nilai_pretest ?? 0,
-                    'laporan' => $nilai->nilai_laporan ?? 0,
-                    'nilaiAkhir' => $nilai->nilai_akhir ?? 0,
-                    'tanggalSelesai' => $nilai->created_at?->format('d M Y') ?? '-',
-                    'status' => $nilai->status ?? 'Pending'
-                ];
-            }));
+@php
+    $riwayatDataForJs = $nilais->map(function($nilai) {
+        return [
+            'id'             => $nilai->id,
+            'matkul'         => $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum',
+            'modul'          => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+            'pretest'        => $nilai->nilai_pretest ?? 0,
+            'laporan'        => $nilai->nilai_laporan ?? 0,
+            'nilaiAkhir'     => $nilai->nilai_akhir ?? 0,
+            'tanggalSelesai' => $nilai->created_at?->format('d M Y') ?? '-',
+            'status'         => $nilai->status ?? 'Pending',
+        ];
+    })->values();
+@endphp
 
-            let filteredData = [];
+<script>
+    (function () {
+        const riwayatData = @json($riwayatDataForJs);
 
-            function updateDropdown() {
-                const matkuls = [...new Set(riwayatData.map(item => item.matkul))];
-                const select = document.getElementById('filterMatkul');
-                select.innerHTML = '<option value="all">Semua Mata Kuliah</option>' +
-                    matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
+        let filteredData = [...riwayatData];
+
+        function updateDropdown() {
+            const matkuls = [...new Set(riwayatData.map(item => item.matkul))];
+            const select = document.getElementById('filterMatkul');
+            select.innerHTML = '<option value="all">Semua Mata Kuliah</option>' +
+                matkuls.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+
+        function renderRiwayat() {
+            const selectedMatkul = document.getElementById('filterMatkul').value;
+
+            filteredData = riwayatData.filter(item => {
+                return selectedMatkul === 'all' || item.matkul === selectedMatkul;
+            });
+
+            const container = document.getElementById('riwayatGrid');
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada riwayat praktikum</div>';
+                return;
             }
 
-            function renderRiwayat() {
-                const selectedMatkul = document.getElementById('filterMatkul').value;
-
-                filteredData = riwayatData.filter(item => {
-                    if (selectedMatkul !== 'all' && item.matkul !== selectedMatkul) return false;
-                    return true;
-                });
-
-                const container = document.getElementById('riwayatGrid');
-
-                if (filteredData.length === 0) {
-                    container.innerHTML = '<div class="empty-state">Belum ada riwayat praktikum</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-
-                filteredData.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'riwayat-card';
-                    card.innerHTML = `
-                <div class="card-header">
-                    <div>
-                        <h3>${item.matkul}</h3>
-                        <p>${item.modul}</p>
+            container.innerHTML = '';
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'riwayat-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <h3>${item.matkul}</h3>
+                            <p>${item.modul}</p>
+                        </div>
+                        <span class="status-badge status-completed">${item.status}</span>
                     </div>
-                    <span class="status-badge status-completed">${item.status}</span>
+                    <div class="card-body">
+                        <table class="riwayat-table">
+                            <tr>
+                                <td>Pretest</td>
+                                <td>${item.pretest}/100</td>
+                            </tr>
+                            <tr>
+                                <td>Laporan</td>
+                                <td>${item.laporan}/100</td>
+                            </tr>
+                        </table>
+                        <div class="nilai-akhir">
+                            <span>Nilai Akhir</span>
+                            <span>${item.nilaiAkhir}/100</span>
+                        </div>
+                        <button class="btn-detail" data-id="${item.id}">
+                            <i class="fas fa-info-circle"></i> Detail
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.btn-detail').forEach(btn => {
+                btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
+            });
+        }
+
+        function openDetailModal(id) {
+            const item = riwayatData.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('detailModalBody').innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Mata Kuliah</span>
+                    <span class="detail-value">${item.matkul}</span>
                 </div>
-                <div class="card-body">
-                    <table class="riwayat-table">
-                        <tr>
-                            <td>Pretest</td>
-                            <td>${item.pretest}/100</td>
-                        </tr>
-                        <tr>
-                            <td>Laporan</td>
-                            <td>${item.laporan}/100</td>
-                        </tr>
-                    </table>
-                    <div class="nilai-akhir">
-                        <span>Nilai Akhir</span>
-                        <span>${item.nilaiAkhir}/100</span>
-                    </div>
-                    <button class="btn-detail" data-id="${item.id}">
-                        <i class="fas fa-info-circle"></i> Detail
-                    </button>
+                <div class="detail-row">
+                    <span class="detail-label">Modul</span>
+                    <span class="detail-value">${item.modul}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Pretest</span>
+                    <span class="detail-value">${item.pretest}/100</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Laporan</span>
+                    <span class="detail-value">${item.laporan}/100</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Nilai Akhir</span>
+                    <span class="detail-value"><strong>${item.nilaiAkhir}/100</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tanggal</span>
+                    <span class="detail-value">${item.tanggalSelesai}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        <span class="status-badge status-completed" style="display:inline-block;">
+                            ${item.status}
+                        </span>
+                    </span>
                 </div>
             `;
-                    container.appendChild(card);
-                });
 
-                document.querySelectorAll('.btn-detail').forEach(btn => {
-                    btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
-                });
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function exportData() {
+            if (filteredData.length === 0) {
+                alert('Tidak ada data untuk diekspor.');
+                return;
             }
-
-            function openDetailModal(id) {
-                const item = riwayatData.find(i => i.id === id);
-                if (!item) return;
-
-                const modalBody = document.getElementById('detailModalBody');
-                modalBody.innerHTML = `
-            <div class="detail-row">
-                <span class="detail-label">Mata Kuliah</span>
-                <span class="detail-value">${item.matkul}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Modul</span>
-                <span class="detail-value">${item.modul}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Pretest</span>
-                <span class="detail-value">${item.pretest}/100</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Laporan</span>
-                <span class="detail-value">${item.laporan}/100</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Nilai Akhir</span>
-                <span class="detail-value"><strong>${item.nilaiAkhir}/100</strong></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Tanggal Selesai </span>
-                <span class="detail-value">${item.tanggalSelesai}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Status</span>
-                <span class="detail-value"><span class="status-badge status-completed" style="display:inline-block;">${item.status}</span></span>
-            </div>
-        `;
-
-                document.getElementById('detailModal').classList.add('active');
-            }
-
-            function closeModal() {
-                document.getElementById('detailModal').classList.remove('active');
-            }
-
-            function exportData() {
-                let csvContent = "Mata Kuliah,Modul,Pretest,Laporan,Nilai Akhir,Tanggal Selesai ,Semester,Status\n";
-                filteredData.forEach(item => {
-                    const semesterText = item.semester === '2025' ? 'Semester Genap 2024/2025' : (item
-                        .semester === '2026' ? 'Semester Genap 2025/2026' : 'Semester Ganjil 2025/2026');
-                    csvContent +=
-                        `"${item.matkul}","${item.modul}",${item.pretest},${item.laporan},${item.nilaiAkhir},"${item.tanggalSelesai}","${semesterText}","${item.status}"\n`;
-                });
-
-                const blob = new Blob([csvContent], {
-                    type: 'text/csv'
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'riwayat_praktikum.csv';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('📥 Data berhasil diekspor!');
-            }
-
-            document.getElementById('applyFilter').addEventListener('click', renderRiwayat);
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            document.getElementById('closeDetailModal').addEventListener('click', closeModal);
-            document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) closeModal();
+            let csvContent = "Mata Kuliah,Modul,Pretest,Laporan,Nilai Akhir,Tanggal Selesai,Status\n";
+            filteredData.forEach(item => {
+                csvContent += `"${item.matkul}","${item.modul}",${item.pretest},${item.laporan},${item.nilaiAkhir},"${item.tanggalSelesai}","${item.status}"\n`;
             });
 
-            updateDropdown();
-            renderRiwayat();
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'riwayat_praktikum.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('📥 Data berhasil diekspor!');
+        }
 
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
-            if (mobileToggle && sidebarNav) {
-                mobileToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('active');
-                    const icon = mobileToggle.querySelector('i');
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-times');
-                });
-            }
+        document.getElementById('applyFilter').addEventListener('click', renderRiwayat);
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+        document.getElementById('closeDetailModal').addEventListener('click', closeModal);
+        document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
+        window.addEventListener('click', e => {
+            if (e.target.classList.contains('modal')) closeModal();
+        });
 
-            document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const sub = trigger.parentElement.querySelector('.submenu');
-                    if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
-                });
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const sidebarNav   = document.getElementById('sidebarNav');
+        if (mobileToggle && sidebarNav) {
+            mobileToggle.addEventListener('click', () => {
+                sidebarNav.classList.toggle('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
             });
+        }
 
-            document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
-
-            document.querySelectorAll('.submenu li').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Riwayat')) return;
-                });
+        document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
+            trigger.addEventListener('click', e => {
+                e.stopPropagation();
+                const sub = trigger.parentElement.querySelector('.submenu');
+                if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
             });
-        })();
-    </script>
+        });
+
+        // ✅ logout-btn — gunakan optional chaining agar tidak crash jika elemen tidak ada
+        document.querySelector('.logout-btn')?.addEventListener('click', () => {
+            alert('Anda telah logout.');
+        });
+
+        updateDropdown();
+        renderRiwayat();
+    })();
+</script>
 </body>
 
 </html>
