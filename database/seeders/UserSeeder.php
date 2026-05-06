@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@univ.ac.id',
             'password' => Hash::make('admin123'),
             'nomor_induk' => '199001011990',
+            'nohp' => '08123456789',
             'role' => 'Admin',
         ]);
             
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
             'email' => 'admin.lab.a@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198801011988',
+            'nohp' => '08234567890',
             'role' => 'Admin',
         ]);
 
@@ -35,6 +37,7 @@ class UserSeeder extends Seeder
             'email' => 'admin.lab.b@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198902011989',
+            'nohp' => '08345678901',
             'role' => 'Admin',
         ]);
 
@@ -43,6 +46,7 @@ class UserSeeder extends Seeder
             'email' => 'admin.lab.jaringan@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '199003011990',
+            'nohp' => '08456789012',
             'role' => 'Admin',
         ]);
 
@@ -51,6 +55,7 @@ class UserSeeder extends Seeder
             'email' => 'admin.lab.multimedia@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198703011987',
+            'nohp' => '08567890123',
             'role' => 'Admin',
         ]);
 
@@ -59,6 +64,7 @@ class UserSeeder extends Seeder
             'email' => 'admin.lab.database@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198804011988',
+            'nohp' => '08678901234',
             'role' => 'Admin',
         ]);
 
@@ -68,6 +74,7 @@ class UserSeeder extends Seeder
             'email' => 'alek.skom@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198501011985',
+            'nohp' => '08789012345',
             'role' => 'Dosen',
         ]);
                 
@@ -76,6 +83,7 @@ class UserSeeder extends Seeder
             'email' => 'budi.santoso@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198102011981',
+            'nohp' => '08890123456',
             'role' => 'Dosen',
         ]);
 
@@ -84,6 +92,7 @@ class UserSeeder extends Seeder
             'email' => 'siti.nurhaliza@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198703011110',
+            'nohp' => '08901234567',
             'role' => 'Dosen',
         ]);
 
@@ -92,6 +101,7 @@ class UserSeeder extends Seeder
             'email' => 'ahmad.wijaya@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198604011986',
+            'nohp' => '08112233445',
             'role' => 'Dosen',
         ]);
 
@@ -100,6 +110,7 @@ class UserSeeder extends Seeder
             'email' => 'rini.handayani@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198805011988',
+            'nohp' => '08223344556',
             'role' => 'Dosen',
         ]);
 
@@ -108,6 +119,7 @@ class UserSeeder extends Seeder
             'email' => 'hendra.wijaya@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '199002011990',
+            'nohp' => '08334455667',
             'role' => 'Dosen',
         ]);
 
@@ -116,6 +128,7 @@ class UserSeeder extends Seeder
             'email' => 'rina.setiawati@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '199103011991',
+            'nohp' => '08445566778',
             'role' => 'Dosen',
         ]);
 
@@ -124,6 +137,7 @@ class UserSeeder extends Seeder
             'email' => 'bambang.sutrisno@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '198702011987',
+            'nohp' => '08556677889',
             'role' => 'Dosen',
         ]);
 
@@ -133,6 +147,7 @@ class UserSeeder extends Seeder
             'email' => 'andi.imphnen@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2021001001',
+            'nohp' => '08667788990',
             'role' => 'Asisten',
         ]);
 
@@ -141,6 +156,7 @@ class UserSeeder extends Seeder
             'email' => 'reza.pratama@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2021001002',
+            'nohp' => '08778899001',
             'role' => 'Asisten',
         ]);
 
@@ -149,6 +165,7 @@ class UserSeeder extends Seeder
             'email' => 'siti.mardhiah@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2021001003',
+            'nohp' => '08889900112',
             'role' => 'Asisten',
         ]);
 
@@ -157,6 +174,7 @@ class UserSeeder extends Seeder
             'email' => 'fauzan.akbar@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2021001004',
+            'nohp' => '08990011223',
             'role' => 'Asisten',
         ]);
 
@@ -165,6 +183,7 @@ class UserSeeder extends Seeder
             'email' => 'nur.aini@univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2021001005',
+            'nohp' => '08101122334',
             'role' => 'Asisten',
         ]);
 
@@ -174,6 +193,7 @@ class UserSeeder extends Seeder
             'email' => 'eri.sepuh@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001001',
+            'nohp' => '08212233445',
             'role' => 'Praktikan',
         ]);
 
@@ -182,6 +202,7 @@ class UserSeeder extends Seeder
             'email' => 'rizka.aulia@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001002',
+            'nohp' => '08323344556',
             'role' => 'Praktikan',
         ]);
 
@@ -190,6 +211,7 @@ class UserSeeder extends Seeder
             'email' => 'doni.setiawan@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001003',
+            'nohp' => '08434455667',
             'role' => 'Praktikan',
         ]);
 
@@ -198,6 +220,7 @@ class UserSeeder extends Seeder
             'email' => 'lina.kusuma@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001004',
+            'nohp' => '08545566778',
             'role' => 'Praktikan',
         ]);
 
@@ -206,6 +229,7 @@ class UserSeeder extends Seeder
             'email' => 'arif.hidayatullah@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001005',
+            'nohp' => '08656677889',
             'role' => 'Praktikan',
         ]);
 
@@ -214,6 +238,7 @@ class UserSeeder extends Seeder
             'email' => 'nurul.azizah@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001006',
+            'nohp' => '08767788990',
             'role' => 'Praktikan',
         ]);
 
@@ -222,6 +247,7 @@ class UserSeeder extends Seeder
             'email' => 'maudy.kristian@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001007',
+            'nohp' => '08878899001',
             'role' => 'Praktikan',
         ]);
 
@@ -230,6 +256,7 @@ class UserSeeder extends Seeder
             'email' => 'faiqah.zahra@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001008',
+            'nohp' => '08989900112',
             'role' => 'Praktikan',
         ]);
 
@@ -238,6 +265,7 @@ class UserSeeder extends Seeder
             'email' => 'hendra.setiawan@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001009',
+            'nohp' => '08190011223',
             'role' => 'Praktikan',
         ]);
 
@@ -246,6 +274,7 @@ class UserSeeder extends Seeder
             'email' => 'intan.permatasari@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2022001010',
+            'nohp' => '08201122334',
             'role' => 'Praktikan',
         ]);
 
@@ -254,6 +283,7 @@ class UserSeeder extends Seeder
             'email' => 'rizki.santoso@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2023001001',
+            'nohp' => '08312233445',
             'role' => 'Praktikan',
         ]);
 
@@ -262,6 +292,7 @@ class UserSeeder extends Seeder
             'email' => 'sinta.rahayu@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2023001002',
+            'nohp' => '08423344556',
             'role' => 'Praktikan',
         ]);
 
@@ -270,6 +301,7 @@ class UserSeeder extends Seeder
             'email' => 'wiranto.kusuma@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2023001003',
+            'nohp' => '08534455667',
             'role' => 'Praktikan',
         ]);
 
@@ -278,6 +310,7 @@ class UserSeeder extends Seeder
             'email' => 'eka.sulistyo@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2023001004',
+            'nohp' => '08645566778',
             'role' => 'Praktikan',
         ]);
 
@@ -286,6 +319,7 @@ class UserSeeder extends Seeder
             'email' => 'gunawan.hermawan@student.univ.ac.id',
             'password' => Hash::make('password123'),
             'nomor_induk' => '2023001005',
+            'nohp' => '08756677889',
             'role' => 'Praktikan',
         ]);
     }

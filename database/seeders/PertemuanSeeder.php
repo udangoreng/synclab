@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Pertemuan;
 use App\Models\Praktikum;
+use App\Models\Jadwal;
 use Illuminate\Database\Seeder;
 
 class PertemuanSeeder extends Seeder
@@ -256,7 +257,13 @@ class PertemuanSeeder extends Seeder
         ];
 
         foreach ($pertemuans as $pertemuan) {
-            Pertemuan::create($pertemuan);
+            // Get the jadwal ID based on kode_praktikum
+            $jadwal = Jadwal::where('kode_praktikum', $pertemuan['kode_praktikum'])->first();
+            
+            if ($jadwal) {
+                $pertemuan['id_jadwal'] = $jadwal->id;
+                Pertemuan::create($pertemuan);
+            }
         }
     }
 }

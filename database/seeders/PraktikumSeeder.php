@@ -80,7 +80,7 @@ class PraktikumSeeder extends Seeder
             [
                 'kode_praktikum' => 'WEB2401',
                 'nama_praktikum' => 'Pemrograman Web',
-                'id_dosen' => $dosens[8]->nomor_induk,
+                'id_dosen' => $dosens[7]->nomor_induk,
                 'angkatan' => 2024,
                 'semester' => 2,
             ],

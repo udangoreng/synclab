@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('pertemuans', function (Blueprint $table) {
             $table->id();
-<<<<<<<< HEAD:database/migrations/2026_04_12_124845_create_pertemuans_table.php
             $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_modul')->nullable()->constrained('moduls')->onDelete('set null');
-========
             $table->string('kode_praktikum');
-            $table->foreign('kode_praktikum')->nullable()->references('kode_praktikum')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
->>>>>>>> origin/integrasi-mahasiswa:database/migrations/2026_04_10_134846_create_pertemuans_table.php
+            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_pertemuan');
             $table->integer('pertemuan_ke');
             $table->longText('deskripsi_pertemuan');

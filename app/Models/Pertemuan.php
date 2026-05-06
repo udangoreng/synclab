@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Jadwal;
 use App\Models\Modul;
 use App\Models\Presensi;
+use App\Models\Laporan;
 use App\Models\Nilai;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -16,6 +17,7 @@ class Pertemuan extends Model
     protected $fillable = [
         'id_jadwal',
         'id_modul',
+        'kode_praktikum',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',

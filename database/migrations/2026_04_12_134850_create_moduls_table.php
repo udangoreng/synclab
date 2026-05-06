@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('moduls', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
             $table->string('judul_modul');
             $table->string('filepath');
             $table->longText('deskripsi');
