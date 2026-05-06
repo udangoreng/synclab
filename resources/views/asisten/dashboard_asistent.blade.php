@@ -83,7 +83,7 @@
                         </p>
 
                         <div class="btn-group">
-                            <form action="{{ route('presensi.record') }}" method="GET" style="display: inline;">
+                            <form action="{{ route('konfirmasiPresensi') }}" method="GET" style="display: inline;">
                                 <input type="hidden" name="praktikum_id" value="{{ $praktikum['id'] }}">
                                 <button type="submit" class="presensi-btn">Presensi</button>
                             </form>
@@ -202,7 +202,7 @@
                             <div class="detail-item"><b>Hari/Tgl:</b> {{ $firstPraktikum['hari'] }}</div>
                             <div class="detail-item"><b>Jam:</b> {{ $firstPraktikum['jam_mulai'] }} - {{ $firstPraktikum['jam_selesai'] }}</div>
                             <div class="detail-item"><b>Jumlah:</b> {{ $firstPraktikum['total_mahasiswa'] }} mhs</div>
-                            <form action="{{ route('presensi.record') }}" method="GET">
+                            <form action="{{ route('konfirmasiPresensi') }}" method="GET">
                                 <input type="hidden" name="praktikum_id" value="{{ $firstPraktikum['id'] }}">
                                 <button type="submit" class="input-btn">Input</button>
                             </form>
@@ -282,7 +282,7 @@
                 <div class="detail-item"><b>Hari/Tgl:</b> ${escapeHtml(praktikum.hari)}</div>
                 <div class="detail-item"><b>Jam:</b> ${escapeHtml(praktikum.jam_mulai)} - ${escapeHtml(praktikum.jam_selesai)}</div>
                 <div class="detail-item"><b>Jumlah:</b> ${praktikum.total_mahasiswa} mhs</div>
-                <form action="{{ route('presensi.record') }}" method="GET">
+                <form action="{{ route('konfirmasiPresensi') }}" method="GET">
                     <input type="hidden" name="praktikum_id" value="${praktikum.id}">
                     <button type="submit" class="input-btn">Input</button>
                 </form>

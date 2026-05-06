@@ -25,7 +25,7 @@ class PresensiController extends Controller
                 // Get presensi with pertemuan -> jadwal -> praktikum
                 $presensis = Presensi::where('id_user', $user->id)
                     ->with(['pertemuan.jadwal.praktikum', 'user'])
-                    ->get();
+                    ->paginate(25)->get();
 
                 // Group by praktikum for summary
                 $presensiPerPraktikum = $presensis->groupBy(function ($presensi) {
@@ -44,8 +44,7 @@ class PresensiController extends Controller
                     $praktikumIds = DB::table('pendaftaran_praktikum')
                         ->where('id_user', $user->id)
                         ->where('role', 'Asisten')
-                        ->whereIn('status', ['Dikonfirmasi', 'Pending'])
-                        ->pluck('id_praktikum')
+                        ->pluck('id_jadwal')
                         ->toArray();
 
                     $praktikums = Praktikum::whereIn('id', $praktikumIds)
@@ -86,11 +85,17 @@ class PresensiController extends Controller
             } elseif ($user->role === 'Asisten') {
                 $user = Auth::user();
 
-                $praktikumIds = DB::table('pendaftaran_praktikum')
+                $jadwalIds = DB::table('pendaftaran_praktikum')
                     ->where('id_user', $user->id)
                     ->where('role', 'Asisten')
                     ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+                    ->pluck('id_jadwal')
+                    ->toArray();
+
+                $praktikumIds = DB::table('jadwals')
+                    ->whereIn('id', $jadwalIds)
                     ->pluck('id_praktikum')
+                    ->unique()
                     ->toArray();
 
                 $praktikums = Praktikum::whereIn('id', $praktikumIds)
@@ -105,17 +110,17 @@ class PresensiController extends Controller
                         if ($jadwal->pertemuan && $jadwal->pertemuan->isNotEmpty()) {
                             foreach ($jadwal->pertemuan as $pertemuan) {
                                 $praktikumList[] = [
-                                    'no'              => $counter++,
-                                    'id'              => $praktikum->id,
-                                    'kode_praktikum'  => $praktikum->kode_praktikum,
-                                    'nama_praktikum'  => $praktikum->nama_praktikum,
-                                    'pertemuan_id'    => $pertemuan->id,
-                                    'pertemuan_ke'    => $pertemuan->pertemuan_ke,
-                                    'nama_pertemuan'  => $pertemuan->nama_pertemuan,
-                                    'jadwal_id'       => $jadwal->id,
-                                    'hari'            => $jadwal->hari,
-                                    'jam_mulai'       => $jadwal->jam_mulai,
-                                    'jam_selesai'     => $jadwal->jam_selesai,
+                                    'no'             => $counter++,
+                                    'id'             => $praktikum->id,
+                                    'kode_praktikum' => $praktikum->kode_praktikum,
+                                    'nama_praktikum' => $praktikum->nama_praktikum,
+                                    'pertemuan_id'   => $pertemuan->id,
+                                    'pertemuan_ke'   => $pertemuan->pertemuan_ke,
+                                    'nama_pertemuan' => $pertemuan->nama_pertemuan,
+                                    'jadwal_id'      => $jadwal->id,
+                                    'hari'           => $jadwal->hari,
+                                    'jam_mulai'      => $jadwal->jam_mulai,
+                                    'jam_selesai'    => $jadwal->jam_selesai,
                                 ];
                             }
                         }
@@ -162,7 +167,6 @@ class PresensiController extends Controller
         $praktikanIds = DB::table('pendaftaran_praktikum')
             ->where('id_praktikum', $praktikumId)
             ->where('role', 'Praktikan')
-            ->where('status', 'Dikonfirmasi')
             ->pluck('id_user')
             ->toArray();
 
@@ -244,11 +248,18 @@ class PresensiController extends Controller
     {
         $user = Auth::user();
 
-        $praktikumIds = DB::table('pendaftaran_praktikum')
+        // STEP 1: jadwal ids milik asisten ini
+        $jadwalIds = DB::table('pendaftaran_praktikum')
             ->where('id_user', $user->id)
             ->where('role', 'Asisten')
-            ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+            ->pluck('id_jadwal')
+            ->toArray();
+
+        // STEP 2: praktikum ids via jadwals (untuk whereHas di bawah)
+        $praktikumIds = DB::table('jadwals')
+            ->whereIn('id', $jadwalIds)
             ->pluck('id_praktikum')
+            ->unique()
             ->toArray();
 
         $pertemuans = Pertemuan::with(['jadwal.praktikum', 'presensi'])
@@ -262,36 +273,30 @@ class PresensiController extends Controller
         foreach ($pertemuans as $pertemuan) {
             $praktikumName = $pertemuan->jadwal->praktikum->nama_praktikum;
             $praktikumCode = $pertemuan->jadwal->praktikum->kode_praktikum;
-            $praktikumId = $pertemuan->jadwal->praktikum->id;
+            $praktikumId   = $pertemuan->jadwal->praktikum->id;
 
             if (!isset($groupedPertemuans[$praktikumName])) {
                 $groupedPertemuans[$praktikumName] = [
-                    'id_praktikum' => $praktikumId,
+                    'id_praktikum'   => $praktikumId,
                     'kode_praktikum' => $praktikumCode,
                     'nama_praktikum' => $praktikumName,
-                    'pertemuans' => []
+                    'pertemuans'     => [],
                 ];
             }
 
-            $totalPresensi = $pertemuan->presensi->count() ?? 0;
-            $hadirCount = $pertemuan->presensi->where('kehadiran', 'Hadir')->count();
-            $izinCount = $pertemuan->presensi->where('kehadiran', 'Izin')->count();
-            $sakitCount = $pertemuan->presensi->where('kehadiran', 'Sakit')->count();
-            $alphaCount = $pertemuan->presensi->where('kehadiran', 'Alpha')->count();
-
             $groupedPertemuans[$praktikumName]['pertemuans'][] = [
-                'id' => $pertemuan->id,
-                'pertemuan_ke' => $pertemuan->pertemuan_ke,
+                'id'             => $pertemuan->id,
+                'pertemuan_ke'   => $pertemuan->pertemuan_ke,
                 'nama_pertemuan' => $pertemuan->nama_pertemuan,
-                'hari' => $pertemuan->jadwal->hari,
-                'jam_mulai' => $pertemuan->jadwal->jam_mulai,
-                'jam_selesai' => $pertemuan->jadwal->jam_selesai,
-                'tanggal' => $pertemuan->created_at,
-                'total_presensi' => $totalPresensi,
-                'hadir' => $hadirCount,
-                'izin' => $izinCount,
-                'sakit' => $sakitCount,
-                'alpha' => $alphaCount,
+                'hari'           => $pertemuan->jadwal->hari,
+                'jam_mulai'      => $pertemuan->jadwal->jam_mulai,
+                'jam_selesai'    => $pertemuan->jadwal->jam_selesai,
+                'tanggal'        => $pertemuan->created_at,
+                'total_presensi' => $pertemuan->presensi->count(),
+                'hadir'          => $pertemuan->presensi->where('kehadiran', 'Hadir')->count(),
+                'izin'           => $pertemuan->presensi->where('kehadiran', 'Izin')->count(),
+                'sakit'          => $pertemuan->presensi->where('kehadiran', 'Sakit')->count(),
+                'alpha'          => $pertemuan->presensi->where('kehadiran', 'Alpha')->count(),
             ];
         }
 
@@ -322,7 +327,6 @@ class PresensiController extends Controller
         $praktikanIds = DB::table('pendaftaran_praktikum')
             ->where('id_praktikum', $praktikumId)
             ->where('role', 'Praktikan')
-            ->where('status', 'Dikonfirmasi')
             ->pluck('id_user')
             ->toArray();
 

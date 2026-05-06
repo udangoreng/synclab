@@ -5,28 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Jadwal;
 use App\Models\Modul;
-use App\Models\Presensi;
-use App\Models\PengumpulanLaporan;
 use App\Models\Laporan;
+use App\Models\Presensi;
 use App\Models\Nilai;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\PengumpulanLaporan;
 
 class Pertemuan extends Model
 {
     protected $fillable = [
         'id_jadwal',
-        'id_praktikum',
+        'kode_praktikum',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',
+        'id_modul',
     ];
 
     /**
-     * Pertemuan dimiliki oleh satu Praktikum
+     * Pertemuan dimiliki oleh satu Jadwal
      */
-    public function praktikum(): BelongsTo
+    public function jadwal(): BelongsTo
     {
         return $this->belongsTo(Jadwal::class, 'id_jadwal');
     }
@@ -48,14 +49,6 @@ class Pertemuan extends Model
     }
 
     /**
-     * Pertemuan memiliki banyak Jadwal
-     */
-    public function jadwals(): HasMany
-    {
-        return $this->hasMany(Jadwal::class, 'id_pertemuan');
-    }
-
-    /**
      * Pertemuan memiliki banyak Presensi
      */
     public function presensis(): HasMany
@@ -63,10 +56,22 @@ class Pertemuan extends Model
         return $this->hasMany(Presensi::class, 'id_pertemuan');
     }
 
+    // Alias singular untuk backward compat di controller/blade yang pakai ->presensi
+    public function presensi(): HasMany
+    {
+        return $this->hasMany(Presensi::class, 'id_pertemuan');
+    }
+
     /**
-     * Pertemuan memiliki banyak Nilai (satu per praktikan)
+     * Pertemuan memiliki banyak Nilai
      */
     public function nilais(): HasMany
+    {
+        return $this->hasMany(Nilai::class, 'id_pertemuan');
+    }
+
+    // Alias singular
+    public function nilai(): HasMany
     {
         return $this->hasMany(Nilai::class, 'id_pertemuan');
     }
@@ -77,15 +82,5 @@ class Pertemuan extends Model
     public function pengumpulanLaporans(): HasMany
     {
         return $this->hasMany(PengumpulanLaporan::class, 'id_pertemuan');
-    }
-
-    public function presensi(): HasMany
-    {
-        return $this->hasMany(Presensi::class, 'id_pertemuan');
-    }
-
-    public function nilai(): HasMany
-    {
-        return $this->hasMany(Nilai::class, 'id_pertemuan');
     }
 }
