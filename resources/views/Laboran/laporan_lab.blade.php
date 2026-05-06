@@ -15,7 +15,7 @@
     <main class="main-content">
 
         <div class="header">
-            <h2> Reports </h2>
+            <h2> Rekapitulasi Praktikum </h2>
 
             <div class="actions">
                 <select id="filterPertemuan">
@@ -171,8 +171,8 @@
                             </td>
                             <td>
                                 <span
-                                    class="status-laporan {{ $nilai_akhir >= 75 ? 'lulus' : ($nilai_akhir >= 60 ? 'revisi' : 'tidak-lulus') }}">
-                                    {{ $nilai_akhir >= 75 ? 'Lulus' : ($nilai_akhir >= 60 ? 'Revisi' : 'Tidak Lulus') }}
+                                    class="status-laporan {{ $n->nilai_akhir >= 75 ? 'lulus' : ($n->nilai_akhir >= 60 ? 'revisi' : 'tidak-lulus') }}">
+                                    {{ $n->nilai_akhir >= 75 ? 'Lulus' : ($n->nilai_akhir >= 60 ? 'Revisi' : 'Tidak Lulus') }}
                                 </span>
                             </td>
                         </tr>

@@ -114,7 +114,210 @@ class AuthController extends Controller
 
     function asisten()
     {
-        return view('asisten.dashboard_asistent');
+        $user = Auth::user();
+
+        $hour = Carbon::now()->hour;
+        if ($hour < 12) {
+            $greeting = 'Pagi';
+        } elseif ($hour < 18) {
+            $greeting = 'Siang';
+        } else {
+            $greeting = 'Malam';
+        }
+
+        $jadwalIds = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('role', 'Asisten')
+            ->pluck('id_jadwal')
+            ->toArray();
+
+        $praktikumIds = DB::table('jadwals')
+            ->whereIn('id', $jadwalIds)
+            ->pluck('id_praktikum')
+            ->unique()
+            ->toArray();
+
+        $praktikums = Praktikum::whereIn('id', $praktikumIds)
+            ->with(['jadwals.laboratorium', 'jadwals.pertemuan'])
+            ->get();
+
+        $processedPraktikums = [];
+
+        foreach ($praktikums as $praktikum) {
+            $pendingLaporan = 0;
+            $presensiPercent = 0;
+            $nilaiPercent = 0;
+            $presensiHadir = 0;
+            $nilaiLengkap = 0;
+            $totalPresensi = 0;
+            $praktikumJadwalIds = DB::table('jadwals')
+                ->where('id_praktikum', $praktikum->id)
+                ->pluck('id')
+                ->toArray();
+
+            $totalMahasiswa = DB::table('pendaftaran_praktikum')
+                ->whereIn('id_jadwal', $praktikumJadwalIds)
+                ->where('role', 'Praktikan')
+                ->count();
+
+            // Get first pertemuan if exists
+            $firstPertemuan = null;
+            foreach ($praktikum->jadwals as $jadwal) {
+                if ($jadwal->pertemuan) {
+                    $firstPertemuan = $jadwal->pertemuan;
+                    break;
+                }
+            }
+
+            if ($firstPertemuan) {
+                $pendingLaporan = DB::table('pengumpulan_laporan')
+                    ->where('id_pertemuan', $firstPertemuan->first()->id)
+                    ->whereIn('status', ['Disubmit', 'Dalam Review'])
+                    ->count();
+
+                $presensiHadir = Presensi::where('id_pertemuan', $firstPertemuan->first()->id)
+                    ->where('kehadiran', 'Hadir')
+                    ->count();
+
+                $totalPresensi = Presensi::where('id_pertemuan', $firstPertemuan->first()->id)->count();
+                $presensiPercent = $totalPresensi > 0 ? round(($presensiHadir / $totalPresensi) * 100) : 0;
+
+                $nilaiLengkap = DB::table('nilais')
+                    ->where('id_pertemuan', $firstPertemuan->first()->id)
+                    ->whereNotNull('nilai_akhir')
+                    ->count();
+                $nilaiPercent = $totalMahasiswa > 0 ? round(($nilaiLengkap / $totalMahasiswa) * 100) : 0;
+            }
+
+            $processedPraktikums[] = [
+                'id' => $praktikum->id,
+                'nama_praktikum' => $praktikum->nama_praktikum,
+                'kode_praktikum' => $praktikum->kode_praktikum,
+                'angkatan' => $praktikum->angkatan,
+                'semester' => $praktikum->semester,
+                'hari' => $praktikum->jadwals->first()?->hari ?? 'N/A',
+                'jam_mulai' => $praktikum->jadwals->first()?->jam_mulai ?? 'N/A',
+                'jam_selesai' => $praktikum->jadwals->first()?->jam_selesai ?? 'N/A',
+                'laboratorium_nama' => $praktikum->jadwals->first()?->laboratorium?->nama_laboratorium ?? 'N/A',
+                'total_mahasiswa' => $totalMahasiswa,
+                'pending_laporan' => $pendingLaporan,
+                'presensi_hadir' => $presensiHadir,
+                'presensi_percent' => $presensiPercent,
+                'nilai_lengkap' => $nilaiLengkap,
+                'nilai_percent' => $nilaiPercent,
+                'total_presensi' => $totalPresensi,
+                'has_active_jadwal' => $praktikum->jadwals->where('status', 'Dibuka')->count() > 0,
+                'jadwals' => $praktikum->jadwals,
+            ];
+        }
+
+        $today = Carbon::now()->locale('id')->dayName;
+
+        $dayMapping = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+
+        $todayIndo = $dayMapping[$today] ?? $today;
+
+        $todayJadwals = Jadwal::with(['praktikum', 'laboratorium', 'pertemuan'])
+            ->whereIn('id_praktikum', $praktikumIds)
+            ->where('hari', $todayIndo)
+            ->orderBy('jam_mulai')
+            ->get();
+
+        if ($todayJadwals->isEmpty()) {
+            $todayJadwals = Jadwal::with(['praktikum', 'laboratorium', 'pertemuan'])
+                ->whereIn('id_praktikum', $praktikumIds)
+                ->where('hari', $today)
+                ->orderBy('jam_mulai')
+                ->get();
+        }
+
+        $processedJadwals = [];
+
+        foreach ($todayJadwals as $jadwal) {
+            $pendingLaporan = 0;
+            $presensiHadir = 0;
+            $totalPresensi = 0;
+            $presensiPercent = 0;
+
+            if ($jadwal->pertemuan) {
+                $pendingLaporan = DB::table('pengumpulan_laporan')
+                    ->where('id_pertemuan', $jadwal->pertemuan->first()->id)
+                    ->whereIn('status', ['Disubmit', 'Dalam Review'])
+                    ->count();
+
+                $presensiHadir = Presensi::where('id_pertemuan', $jadwal->pertemuan->first()->id)
+                    ->where('kehadiran', 'Hadir')
+                    ->count();
+
+                $totalPresensi = Presensi::where('id_pertemuan', $jadwal->pertemuan->first()->id)->count();
+                $presensiPercent = $totalPresensi > 0 ? round(($presensiHadir / $totalPresensi) * 100) : 0;
+            }
+
+            $totalMahasiswa = DB::table('pendaftaran_praktikum')
+                ->where('id_jadwal', $jadwal->id)
+                ->where('role', 'Praktikan')
+                ->count();
+
+            $processedJadwals[] = [
+                'id' => $jadwal->id,
+                'jam_mulai' => $jadwal->jam_mulai,
+                'jam_selesai' => $jadwal->jam_selesai,
+                'status' => $jadwal->status,
+                'praktikum' => $jadwal->praktikum,
+                'laboratorium' => $jadwal->laboratorium,
+                'pertemuan' => $jadwal->pertemuan,
+                'pending_laporan' => $pendingLaporan,
+                'presensi_hadir' => $presensiHadir,
+                'total_presensi' => $totalPresensi,
+                'presensi_percent' => $presensiPercent,
+                'total_mahasiswa' => $totalMahasiswa,
+            ];
+        }
+
+        $stats = [
+            'total_praktikum' => count($processedPraktikums),
+            'ongoing_jadwal' => collect($processedJadwals)->where('status', 'Dibuka')->count(),
+            'upcoming_jadwal' => count($processedJadwals),
+        ];
+
+        // Get notifications
+        $notifications = [];
+
+        $totalPendingLaporan = collect($processedPraktikums)->sum('pending_laporan');
+
+        if ($totalPendingLaporan > 0) {
+            $notifications[] = [
+                'type' => 'yellow',
+                'icon' => 'fas fa-file-alt',
+                'message' => "Ada {$totalPendingLaporan} laporan yang perlu direview"
+            ];
+        }
+
+        $todayJadwalCount = count($processedJadwals);
+        if ($todayJadwalCount > 0) {
+            $notifications[] = [
+                'type' => 'blue',
+                'icon' => 'fas fa-calendar-day',
+                'message' => "Hari ini ada {$todayJadwalCount} jadwal praktikum"
+            ];
+        }
+
+        return view('asisten.dashboard_asistent', compact(
+            'user',
+            'greeting',
+            'processedPraktikums',
+            'processedJadwals',
+            'stats',
+            'notifications'
+        ));
     }
 
     function admin(Request $request)

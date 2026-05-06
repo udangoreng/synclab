@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('moduls', function (Blueprint $table) {
+        Schema::create('pertemuans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('judul_modul');
-            $table->string('filepath');
-            $table->longText('deskripsi');
+            $table->foreignId('id_jadwal')->references('id')->on('jadwals')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('nama_pertemuan');
+            $table->integer('pertemuan_ke');
+            $table->longText('deskripsi_pertemuan');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('moduls');
+        Schema::dropIfExists('pertemuans');
     }
 };

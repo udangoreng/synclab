@@ -121,7 +121,8 @@ body {
 }
 
 .main-content {
-  padding: 30px 40px;
+  padding: 30px;
+  margin-right: 2rem;
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
   flex: 1;

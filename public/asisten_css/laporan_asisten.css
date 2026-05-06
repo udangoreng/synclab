@@ -118,7 +118,6 @@ body {
 }
 
 .main-content {
-  margin-left: 275px;
   padding: 30px;
   width: calc(100% - 250px); 
 }
@@ -650,7 +649,6 @@ textarea, input, select {
 }
 
 .main-content {
-  margin-left: 275px;
   padding: 30px;
   width: calc(100% - 250px);
   max-width: 100%;

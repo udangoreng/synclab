@@ -77,21 +77,26 @@ function openDetailModal(id) {
                 </div>
             `;
 
-  const jadwalList = item.jadwals|| [];
+  const jadwalList = item.jadwals || [];
   const asistenList = item.asisten || [];
-  const mahasiswaList =item.mahasiswa || [];
+  const mahasiswaList = item.mahasiswa || [];
+
+  console.log('Item:', item);
+  console.log('Jadwal:', jadwalList);
+  console.log('Asisten:', asistenList);
+  console.log('Mahasiswa:', mahasiswaList);
 
   document.getElementById('detailStats').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-number">1</div>
+                    <div class="stat-number">${jadwalList.length}</div>
                     <div class="stat-label">Total Jadwal</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">2</div>
+                    <div class="stat-number">${asistenList.length}</div>
                     <div class="stat-label">Total Asisten</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">3</div>
+                    <div class="stat-number">${mahasiswaList.length}</div>
                     <div class="stat-label">Total Mahasiswa</div>
                 </div>
             `;
@@ -102,35 +107,35 @@ function openDetailModal(id) {
                         <td>${escapeHtml(j.hari || '-')}</td>
                         <td>${escapeHtml(j.jam_mulai || '-')}</td>
                         <td>${escapeHtml(j.jam_selesai || '-')}</td>
-                        <td>${escapeHtml(j.laboratorium.nama_laboratorium || '-')}</td>
-                        <td><span class="status-badge ${j.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(j.status || 'Active')}</span></td>
+                        <td>${escapeHtml((j.laboratorium && j.laboratorium.nama_laboratorium) || '-')}</td>
+                        <td><span class="status-badge ${j.status === 'Dibuka' || j.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(j.status || 'Active')}</span></td>
                     </tr>
                 `).join('');
   } else {
-    document.getElementById('jadwalBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Belum ada jadwal</td></tr>';
+    document.getElementById('jadwalBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada jadwal</td></tr>';
   }
 
   if (asistenList.length > 0) {
     document.getElementById('asistenBody').innerHTML = asistenList.map(a => `
                     <tr>
-                        <td>${escapeHtml(a.nim || '-')}</td>
+                        <td>${escapeHtml(a.nomor_induk || a.nim || '-')}</td>
                         <td>${escapeHtml(a.nama || a.name || '-')}</td>
-                        <td><span class="status-badge ${a.status === 'active' ? 'status-active' : 'status-inactive'}">${escapeHtml(a.status || 'Active')}</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
                     </tr>
                 `).join('');
   } else {
-    document.getElementById('asistenBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada asisten</td></tr>';
+    document.getElementById('asistenBody').innerHTML = '<tr><td colspan="3" style="text-align: center;">Belum ada asisten</td></tr>';
   }
 
   if (mahasiswaList.length > 0) {
     document.getElementById('mahasiswaBody').innerHTML = mahasiswaList.map(m => `
                     <tr>
-                        <td>${escapeHtml(m.nim || '-')}</td>
+                        <td>${escapeHtml(m.nomor_induk || m.nim || '-')}</td>
                         <td>${escapeHtml(m.nama || m.name || '-')}</td>
                     </tr>
                 `).join('');
   } else {
-    document.getElementById('mahasiswaBody').innerHTML = '<tr><td colspan="5" style="text-align: center;">Belum ada mahasiswa</td></tr>';
+    document.getElementById('mahasiswaBody').innerHTML = '<tr><td colspan="2" style="text-align: center;">Belum ada mahasiswa</td></tr>';
   }
 
   document.getElementById('kelolaJadwalBtn').href = "/admin/jadwal?praktikum_id=" + id;

@@ -400,12 +400,35 @@
                         <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                         <select id="filterPretestMatkul">
                             <option value="all">Semua Mata Kuliah</option>
+                            @foreach($nilais as $nilai)
+                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <button class="apply-filter-btn" id="applyPretestFilter"><i class="fas fa-search"></i>
                         Terapkan</button>
                 </div>
-                <div class="scores-grid" id="pretestGrid"></div>
+                <div class="scores-grid" id="pretestGrid">
+                    @forelse($nilais as $nilai)
+                    <div class="score-card">
+                        <div class="card-header">
+                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="score-item">
+                                <div class="score-info">
+                                    <h4>Nilai Pretest</h4>
+                                    <p>Total nilai pretest</p>
+                                </div>
+                                <div class="score-value">{{ $nilai->nilai_pretest ?? '-' }}/100</div>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="empty-state">Belum ada nilai pretest</div>
+                    @endforelse
+                </div>
             </div>
 
             <div id="tab-laporan" class="tab-content">
@@ -414,12 +437,35 @@
                         <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                         <select id="filterLaporanMatkul">
                             <option value="all">Semua Mata Kuliah</option>
+                            @foreach($nilais as $nilai)
+                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <button class="apply-filter-btn" id="applyLaporanFilter"><i class="fas fa-search"></i>
                         Terapkan</button>
                 </div>
-                <div class="scores-grid" id="laporanGrid"></div>
+                <div class="scores-grid" id="laporanGrid">
+                    @forelse($nilais as $nilai)
+                    <div class="score-card">
+                        <div class="card-header">
+                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="score-item">
+                                <div class="score-info">
+                                    <h4>Nilai Laporan</h4>
+                                    <p>Total nilai laporan</p>
+                                </div>
+                                <div class="score-value">{{ $nilai->nilai_laporan ?? '-' }}/100</div>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="empty-state">Belum ada nilai laporan</div>
+                    @endforelse
+                </div>
             </div>
 
             <div id="tab-akhir" class="tab-content">
@@ -428,12 +474,51 @@
                         <label><i class="fas fa-flask"></i> Mata Kuliah</label>
                         <select id="filterAkhirMatkul">
                             <option value="all">Semua Mata Kuliah</option>
+                            @foreach($nilais as $nilai)
+                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <button class="apply-filter-btn" id="applyAkhirFilter"><i class="fas fa-search"></i>
                         Terapkan</button>
                 </div>
-                <div class="final-scores-container" id="akhirContainer"></div>
+                <div class="final-scores-container" id="akhirContainer">
+                    @forelse($nilais as $nilai)
+                    <div class="final-card">
+                        <div class="final-header">
+                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
+                        </div>
+                        <div class="final-body">
+                            <table class="final-table">
+                                <thead>
+                                    <tr><th>Komponen</th><th>Nilai</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Nilai Pretest</td>
+                                        <td class="score-value" style="font-size:0.9rem">{{ $nilai->nilai_pretest ?? '-' }}/100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nilai Laporan</td>
+                                        <td class="score-value" style="font-size:0.9rem">{{ $nilai->nilai_laporan ?? '-' }}/100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nilai Total</td>
+                                        <td class="score-value" style="font-size:0.9rem">{{ $nilai->nilai_total ?? '-' }}/100</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="total-score">
+                                <span class="total-label">Nilai Akhir</span>
+                                <span class="total-value">{{ $nilai->nilai_akhir ?? '-' }}/100</span>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="empty-state">Belum ada data nilai akhir</div>
+                    @endforelse
+                </div>
             </div>
         </main>
     </div>

@@ -10,68 +10,75 @@ class PendaftaranCOntroller extends Controller
 {
     public function masterPendaftaran(Request $request)
     {
-        $search = $request->get('search');
+       $search = $request->get('search');
         $status = $request->get('status');
-        $role = $request->get('role');
-        
-        // Query using DB Builder for pendaftaran_praktikum
-        // Join with praktikums and users tables (both have models)
+        $role   = $request->get('role');
+
+        // pendaftaran_praktikum -> jadwals -> praktikums
         $query = DB::table('pendaftaran_praktikum')
-            ->leftJoin('praktikums', 'pendaftaran_praktikum.id_praktikum', '=', 'praktikums.id')
-            ->leftJoin('users', 'pendaftaran_praktikum.id_user', '=', 'users.id')
+            ->leftJoin('jadwals',    'pendaftaran_praktikum.id_jadwal', '=', 'jadwals.id')
+            ->leftJoin('praktikums', 'jadwals.id_praktikum',            '=', 'praktikums.id')
+            ->leftJoin('users',      'pendaftaran_praktikum.id_user',   '=', 'users.id')
             ->select(
-                'pendaftaran_praktikum.*',
+                'pendaftaran_praktikum.id',
+                'pendaftaran_praktikum.id_jadwal',
+                'pendaftaran_praktikum.id_user',
+                'pendaftaran_praktikum.role',
+                'pendaftaran_praktikum.created_at',
+                'pendaftaran_praktikum.updated_at',
+
+                // dari jadwals
+                'jadwals.hari',
+                'jadwals.jam_mulai',
+                'jadwals.jam_selesai',
+
+                // dari praktikums (via jadwals)
+                'praktikums.id        as id_praktikum',
                 'praktikums.kode_praktikum',
                 'praktikums.nama_praktikum',
                 'praktikums.angkatan',
                 'praktikums.semester',
-                'users.nomor_induk as user_nomor_induk',
-                'users.nama as user_nama',
-                'users.email as user_email',
-                'users.nohp as user_nohp'
+
+                // dari users
+                'users.nomor_induk    as user_nomor_induk',
+                'users.nama           as user_nama',
+                'users.email          as user_email',
+                'users.nohp           as user_nohp'
             );
-        
-        // Apply search filter
+
+        // Filter pencarian
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('users.nama', 'like', "%{$search}%")
-                  ->orWhere('users.nomor_induk', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('users.nama',                  'like', "%{$search}%")
+                  ->orWhere('users.nomor_induk',         'like', "%{$search}%")
                   ->orWhere('praktikums.nama_praktikum', 'like', "%{$search}%")
                   ->orWhere('praktikums.kode_praktikum', 'like', "%{$search}%");
             });
         }
-        
-        // Apply status filter
-        if ($status && in_array($status, ['Dikonfirmasi', 'Ditolak', 'Pending'])) {
-            $query->where('pendaftaran_praktikum.status', $status);
-        }
-        
-        // Apply role filter
+
+        // Filter role
         if ($role && in_array($role, ['Praktikan', 'Asisten', 'Dosen'])) {
             $query->where('pendaftaran_praktikum.role', $role);
         }
-        
-        // Order by latest
-        $pendaftarans = $query->orderBy('pendaftaran_praktikum.created_at', 'desc')
+
+        $pendaftarans = $query
+            ->orderBy('pendaftaran_praktikum.created_at', 'desc')
             ->paginate(10)
             ->through(function ($item) {
-                // Convert to object with proper casting
-                $item->id = (int) $item->id;
+                $item->id           = (int) $item->id;
+                $item->id_jadwal    = (int) $item->id_jadwal;
+                $item->id_user      = (int) $item->id_user;
                 $item->id_praktikum = (int) $item->id_praktikum;
-                $item->id_user = (int) $item->id_user;
                 return $item;
             });
-        
-        // Calculate statistics
+
+        // Statistik — scope tetap ke seluruh tabel, bukan hanya halaman ini
         $statistics = [
-            'total_pendaftaran' => DB::table('pendaftaran_praktikum')->count(),
-            'total_dikonfirmasi' => DB::table('pendaftaran_praktikum')->where('status', 'Dikonfirmasi')->count(),
-            'total_ditolak' => DB::table('pendaftaran_praktikum')->where('status', 'Ditolak')->count(),
-            'total_pending' => DB::table('pendaftaran_praktikum')->where('status', 'Pending')->count(),
-            'total_praktikan' => DB::table('pendaftaran_praktikum')->where('role', 'Praktikan')->count(),
+            'total_pendaftaran'   => DB::table('pendaftaran_praktikum')->count(),
+            'total_praktikan'     => DB::table('pendaftaran_praktikum')->where('role', 'Praktikan')->count(),
             'total_asisten_dosen' => DB::table('pendaftaran_praktikum')->whereIn('role', ['Asisten', 'Dosen'])->count(),
         ];
-        
+
         return view('laboran.kelolaPendaftaran', compact('pendaftarans', 'statistics'));
     }
 }

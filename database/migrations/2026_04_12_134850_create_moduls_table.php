@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('presensis', function (Blueprint $table) {
+        Schema::create('moduls', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
-            $table->enum('kehadiran', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
-            $table->enum('status', ['Dikonfirmasi', 'Pending', 'Ditolak']);
+            $table->string('judul_modul');
+            $table->string('filepath');
+            $table->longText('deskripsi');
             $table->timestamps();
-            
-            // Unique constraint: 1 user hanya bisa punya 1 presensi per pertemuan
-            $table->unique(['id_pertemuan', 'id_user']);
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('presensis');
+        Schema::dropIfExists('moduls');
     }
 };

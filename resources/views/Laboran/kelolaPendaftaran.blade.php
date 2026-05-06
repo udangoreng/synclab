@@ -290,13 +290,6 @@
             <h2><i class="fas fa-clipboard-list"></i> Manajemen Pendaftaran Praktikum</h2>
             <div class="actions">
                 <div class="filter-group">
-                    <select id="statusFilter" class="filter-select" onchange="applyFilters()">
-                        <option value="">Semua Status</option>
-                        <option value="Dikonfirmasi" {{ request('status') == 'Dikonfirmasi' ? 'selected' : '' }}>
-                            Dikonfirmasi</option>
-                        <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                        <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                    </select>
 
                     <select id="roleFilter" class="filter-select" onchange="applyFilters()">
                         <option value="">Semua Role</option>
@@ -334,22 +327,6 @@
                 <h3 style="margin-bottom: 15px;"><i class="fas fa-chart-bar"></i> Ringkasan Statistik</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 24px; color: #007bff;">{{ $statistics['total_pendaftaran'] }}</div>
-                        <div style="color: #666;">Total Pendaftaran</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 24px; color: #28a745;">{{ $statistics['total_dikonfirmasi'] }}</div>
-                        <div style="color: #666;">Dikonfirmasi</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 24px; color: #dc3545;">{{ $statistics['total_ditolak'] }}</div>
-                        <div style="color: #666;">Ditolak</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 24px; color: #ffc107;">{{ $statistics['total_pending'] }}</div>
-                        <div style="color: #666;">Pending</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
                         <div style="font-size: 24px; color: #17a2b8;">{{ $statistics['total_praktikan'] }}</div>
                         <div style="color: #666;">Praktikan</div>
                     </div>
@@ -370,7 +347,6 @@
                         <th>Pendaftar</th>
                         <th>NIM/NIDN</th>
                         <th>Role</th>
-                        <th>Status</th>
                         <th>Tanggal Daftar</th>
                         <th>Aksi</th>
                     </tr>
@@ -400,15 +376,7 @@
                                     {{ $pendaftaran->role }}
                                 </span>
                             </td>
-                            <td>
-                                <span
-                                    class="badge badge-{{ strtolower($pendaftaran->status) === 'dikonfirmasi' ? 'success' : (strtolower($pendaftaran->status) === 'ditolak' ? 'danger' : 'pending') }}">
-                                    <i
-                                        class="fas {{ $pendaftaran->status === 'Dikonfirmasi' ? 'fa-check-circle' : ($pendaftaran->status === 'Ditolak' ? 'fa-times-circle' : 'fa-clock') }}"></i>
-                                    {{ $pendaftaran->status }}
-                                </span>
-                            </td>
-                            <td>{{ $pendaftaran->created_at ? $pendaftaran->created_at->format('d/m/Y H:i') : '-' }}
+                            <td>{{ $pendaftaran->created_at ? \Carbon\Carbon::parse($pendaftaran->created_at)->format('d/m/Y H:i')  : '-' }}
                             </td>
                             <td>
                                 <button class="detail" onclick="openDetailModal({{ $pendaftaran->id }})">
@@ -432,7 +400,6 @@
         </div>
     </main>
 
-    <!-- Modal Detail Pendaftaran -->
     <div class="modal" id="detailModal">
         <div class="modal-content large">
             <div class="modal-header">

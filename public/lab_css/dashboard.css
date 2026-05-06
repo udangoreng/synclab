@@ -125,7 +125,6 @@ body{
 .main{
   flex:1;
   padding:20px;
-  margin-left: 250px;
   min-height: 100vh;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -714,7 +713,7 @@ body{
   }
 
   .sidebar{
-    position:fixed;
+    position:fixed !important;
     left:-250px;
     top:0;
     z-index: 1000;
@@ -884,10 +883,6 @@ body{
     left: 0;
     top: 0;
     z-index: 100;
-  }
-
-  .main {
-    margin-left: 250px;
   }
 
   .toggle {

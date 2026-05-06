@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Praktikum;
 use App\Models\Laboratorium;
 use App\Models\Pertemuan;
+use App\Models\PendaftaranPraktikum;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Jadwal extends Model
 {
@@ -18,15 +19,18 @@ class Jadwal extends Model
         'jam_mulai',
         'jam_selesai',
         'jumlah_max_peserta',
-        'status'
+        'status',
     ];
 
     public function praktikum()
     {
         return $this->belongsTo(Praktikum::class, 'id_praktikum');
     }
-    
-    public function laboratorium()
+
+    /**
+     * Jadwal memiliki satu Laboratorium
+     */
+    public function laboratorium(): BelongsTo
     {
         return $this->belongsTo(Laboratorium::class, 'id_laboratorium');
     }
@@ -39,5 +43,12 @@ class Jadwal extends Model
     public function dosen()
     {
         return $this->belongsTo(User::class, 'id_dosen');
+    }
+    /**
+     * Jadwal memiliki banyak Pendaftaran
+     */
+    public function pendaftarans(): HasMany
+    {
+        return $this->hasMany(PendaftaranPraktikum::class, 'id_jadwal');
     }
 }

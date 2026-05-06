@@ -697,19 +697,24 @@
                             </div>
                         </div>
                         <div class="notif-list">
+                            @forelse($nilais->take(3) as $nilai)
+                            <div class="notif-card info">
+                                <div class="notif-icon">📚</div>
+                                <div class="notif-text">
+                                    <b>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? 'Praktikum' }}</b> - 
+                                    {{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}<br>
+                                    <span style="font-size: 0.75rem; color: #64748b;">Nilai Pretest: {{ $nilai->nilai_pretest }} | Laporan: {{ $nilai->nilai_laporan }}</span>
+                                </div>
+                            </div>
+                            @empty
                             <div class="notif-card info">
                                 <div class="notif-icon">📅</div>
-                                <div class="notif-text"><b>Praktikum Jaringan Komputer</b> hari ini pukul 13:00 WIB (Lab
-                                    Jaringan)</div>
+                                <div class="notif-text"><b>Belum ada data nilai</b> - Silakan daftar praktikum terlebih dahulu</div>
                             </div>
-                            <div class="notif-card warning">
-                                <div class="notif-icon">⚠️</div>
-                                <div class="notif-text"><b>RPL - Pretest</b> deadline besok, 14:00 WIB!</div>
-                            </div>
+                            @endforelse
                             <div class="notif-card success">
                                 <div class="notif-icon">✅</div>
-                                <div class="notif-text">Jangan lupa isi presensi setelah praktikum & upload laporan.
-                                </div>
+                                <div class="notif-text">Jangan lupa isi presensi setelah praktikum & upload laporan.</div>
                             </div>
                         </div>
                     </div>
@@ -719,56 +724,21 @@
                             <i class="fas fa-microscope"></i> All Praktikum
                         </div>
                         <div class="praktikum-grid">
+                            @forelse($nilais as $nilai)
                             <div class="course-card">
                                 <div class="course-img" style="background: linear-gradient(145deg, #3b82f6, #1e40af);">
-                                    <i class="fas fa-code fa-3x"></i>
+                                    <i class="fas fa-star fa-3x"></i>
                                 </div>
-                                <p>Pemrograman Dasar</p>
+                                <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
                             </div>
+                            @empty
                             <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #14b8a6, #0f766e);">
-                                    <i class="fas fa-layer-group fa-3x"></i>
+                                <div class="course-img" style="background: linear-gradient(145deg, #9ca3af, #6b7280);">
+                                    <i class="fas fa-book fa-3x"></i>
                                 </div>
-                                <p>Struktur Data</p>
+                                <p>Belum Ada Nilai</p>
                             </div>
-                            <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #3b82f6, #1e40af);">
-                                    <i class="fas fa-database fa-3x"></i>
-                                </div>
-                                <p>Basis Data</p>
-                            </div>
-                            <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #10b981, #047857);">
-                                    <i class="fas fa-network-wired fa-3x"></i>
-                                </div>
-                                <p>Jaringan Komputer</p>
-                            </div>
-                            <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #ef4444, #b91c1c);">
-                                    <i class="fas fa-desktop fa-3x"></i>
-                                </div>
-                                <p>Sistem Operasi</p>
-                            </div>
-                            <div class="course-card">
-                                <div class="course-img" style="background: linear-gradient(145deg, #8b5cf6, #5b21b6);">
-                                    <i class="fas fa-image fa-3x"></i>
-                                </div>
-                                <p>Pengolahan Citra Digital</p>
-                            </div>
-                            <div class="course-card">
-                                <div class="course-img"
-                                    style="background: linear-gradient(145deg, #ec489a, #be185d);">
-                                    <i class="fas fa-microchip fa-3x"></i>
-                                </div>
-                                <p>Internet of Things (IoT)</p>
-                            </div>
-                            <div class="course-card">
-                                <div class="course-img"
-                                    style="background: linear-gradient(145deg, #f59e0b, #b45309);">
-                                    <i class="fas fa-code-branch fa-3x"></i>
-                                </div>
-                                <p>Rekayasa Perangkat Lunak (RPL)</p>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -777,17 +747,57 @@
                     <!-- REMINDER -->
                     <div class="glass-card">
                         <div class="card-header">
-                            <h3><i class="fas fa-clock"></i> Reminder</h3>
+                            <h3><i class="fas fa-clock"></i> Reminder Nilai</h3>
                             <a href="#" class="see-all-link" id="seeAllReminder">See All <i
                                     class="fas fa-arrow-right"></i></a>
                         </div>
-                        <div class="reminder-list" id="reminderContainer"></div>
+                        <div class="reminder-list" id="reminderContainer">
+                            @forelse($reminders as $reminder)
+                            <div class="reminder-card">
+                                <div class="reminder-icon">📝</div>
+                                <div class="reminder-detail">
+                                    <div class="reminder-title">{{ $reminder['praktikum'] }}</div>
+                                    <div class="reminder-time"><i class="far fa-hourglass-half"></i> {{ $reminder['pertemuan'] }} - {{ $reminder['modul'] }}</div>
+                                    <span style="font-size: 0.65rem; background:#eef2ff; padding:2px 8px; border-radius:20px; display:inline-block; margin-top:4px;">
+                                        Nilai: {{ $reminder['nilai'] }} | {{ $reminder['status'] }}
+                                    </span>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="reminder-card">
+                                <div class="reminder-icon">📝</div>
+                                <div class="reminder-detail">
+                                    <div class="reminder-title">Belum Ada Reminder</div>
+                                    <div class="reminder-time"><i class="far fa-hourglass-half"></i> Silakan daftar praktikum terlebih dahulu</div>
+                                </div>
+                            </div>
+                            @endforelse
+                        </div>
                     </div>
 
                     <div class="glass-card">
-                        <h3><i class="fas fa-tasks"></i> Assignments</h3>
-                        <div id="assignmentsList" class="task-list"></div>
-                        <div class="progress-footer" id="progressHint">✔️ Selesaikan tugas sebelum deadline</div>
+                        <h3><i class="fas fa-tasks"></i> Presensi</h3>
+                        <div id="assignmentsList" class="task-list">
+                            @forelse($presensis as $presensi)
+                            <div class="task-item {{ $presensi->kehadiran == 'Hadir' ? 'done' : '' }}">
+                                <span class="task-text">
+                                    {{ $presensi->pertemuan?->nama_pertemuan ?? 'Presensi' }} - 
+                                    {{ $presensi->pertemuan?->jadwals?->praktikum?->nama_praktikum ?? '' }}
+                                </span>
+                                <span class="task-badge {{ $presensi->kehadiran == 'Hadir' ? 'done-badge' : 'not-done' }}">
+                                    {{ $presensi->kehadiran }}
+                                </span>
+                            </div>
+                            @empty
+                            <div class="task-item">
+                                <span class="task-text">Belum ada presensi</span>
+                                <span class="task-badge not-done">Kosong</span>
+                            </div>
+                            @endforelse
+                        </div>
+                        <div class="progress-footer" id="progressHint">
+                            📊 Kehadiran: {{ $attendanceRate }}% • Rata-rata Nilai: {{ round($avgNilai) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -824,101 +834,10 @@
             const todayChip = document.getElementById("todayDateChip");
             if (todayChip) todayChip.innerText = formattedDate;
 
-            const remindersData = [{
-                    icon: "⏰",
-                    title: "Jarkom - Praktikum",
-                    time: "Hari ini, 13:00 WIB",
-                    badge: "Lab Jaringan"
-                },
-                {
-                    icon: "📌",
-                    title: "RPL - Pretest",
-                    time: "Besok, 14:00 WIB",
-                    badge: "Prioritas"
-                },
-                {
-                    icon: "📝",
-                    title: "Pretest PCD",
-                    time: "Mulai 7 April 2026",
-                    badge: "Segera"
-                },
-                {
-                    icon: "📊",
-                    title: "Laporan Basis Data",
-                    time: "Deadline 10 April",
-                    badge: "Belum"
-                }
-            ];
-
             const reminderContainer = document.getElementById("reminderContainer");
-
-            function renderReminders() {
-                if (!reminderContainer) return;
-                reminderContainer.innerHTML = "";
-                remindersData.forEach(rem => {
-                    const remDiv = document.createElement("div");
-                    remDiv.className = "reminder-card";
-                    remDiv.innerHTML = `
-                        <div class="reminder-icon">${rem.icon}</div>
-                        <div class="reminder-detail">
-                            <div class="reminder-title">${rem.title}</div>
-                            <div class="reminder-time"><i class="far fa-hourglass-half"></i> ${rem.time}</div>
-                            <span style="font-size: 0.65rem; background:#eef2ff; padding:2px 8px; border-radius:20px; display:inline-block; margin-top:4px;">${rem.badge}</span>
-                        </div>
-                    `;
-                    reminderContainer.appendChild(remDiv);
-                });
-            }
-
-            let assignments = [{
-                    name: "Laporan Jaringan Komputer",
-                    status: "Not Yet"
-                },
-                {
-                    name: "Tugas RPL (Analisis Kebutuhan)",
-                    status: "Not Yet"
-                },
-                {
-                    name: "Laporan Basis Data",
-                    status: "Done"
-                },
-                {
-                    name: "Pretest PCD - Modul 1",
-                    status: "Not Yet"
-                }
-            ];
 
             const assignmentsContainer = document.getElementById("assignmentsList");
             const progressHint = document.getElementById("progressHint");
-
-            function renderAssignments() {
-                if (!assignmentsContainer) return;
-                assignmentsContainer.innerHTML = "";
-                let completedCount = 0;
-                assignments.forEach((task, idx) => {
-                    const isDone = task.status === "Done";
-                    const taskItem = document.createElement("label");
-                    taskItem.className = `task-item ${isDone ? "done" : ""}`;
-                    taskItem.innerHTML = `
-                        <input type="checkbox" ${isDone ? "checked" : ""} data-index="${idx}">
-                        <span class="task-text">${task.name}</span>
-                        <span class="task-badge ${isDone ? 'done-badge' : 'not-done'}">${isDone ? "✓ Done" : "○ Not Yet"}</span>
-                    `;
-                    assignmentsContainer.appendChild(taskItem);
-                    if (isDone) completedCount++;
-                });
-
-                if (progressHint) {
-                    const total = assignments.length;
-                    progressHint.innerHTML =
-                        `📋 Progres: ${completedCount}/${total} selesai • ${completedCount === total ? "✨ Selamat semua tugas selesai!" : "Tetap semangat, kerjakan tugas tepat waktu!"}`;
-                }
-
-                document.querySelectorAll("#assignmentsList input[type='checkbox']").forEach(cb => {
-                    cb.removeEventListener("change", handleTaskToggle);
-                    cb.addEventListener("change", handleTaskToggle);
-                });
-            }
 
             function handleTaskToggle(e) {
                 const checkbox = e.target;

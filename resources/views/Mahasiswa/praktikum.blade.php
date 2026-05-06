@@ -535,278 +535,79 @@
 
             <div id="tab-all" class="tab-content active">
                 <div class="courses-grid">
-                    <div class="course-card" data-course="pemrograman-dasar">
+                    @forelse($myPraktikums as $praktikum)
+                    <div class="course-card" data-course="{{ Str::slug($praktikum->nama_praktikum) }}">
                         <div class="course-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"><i
                                 class="fas fa-code"></i></div>
                         <div class="course-info">
-                            <h3>Pemrograman Dasar</h3>
-                            <p>Kode: PD2401 | SKS: 2 | Dosen: Dr. Anita Wijaya, M.Kom.</p>
+                            <h3>{{ $praktikum->nama_praktikum }}</h3>
+                            <p>Kode: {{ $praktikum->kode_praktikum }} | Semester: {{ $praktikum->semester }}</p>
                         </div>
-                        <button class="btn-more" data-course="pemrograman-dasar" data-type="all">More <i
+                        <button class="btn-more" data-course="{{ Str::slug($praktikum->nama_praktikum) }}" data-type="all">More <i
                                 class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="struktur-data">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #14b8a6, #0f766e);"><i
-                                class="fas fa-layer-group"></i></div>
+                    @empty
+                    <div class="course-card">
+                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
+                                class="fas fa-book"></i></div>
                         <div class="course-info">
-                            <h3>Struktur Data</h3>
-                            <p>Kode: SD2402 | SKS: 3 | Dosen: Dr. Bambang Prasetyo, M.T.</p>
+                            <h3>Belum Ada Praktikum</h3>
+                            <p>Silakan daftar praktikum terlebih dahulu</p>
                         </div>
-                        <button class="btn-more" data-course="struktur-data" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="basis-data">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"><i
-                                class="fas fa-database"></i></div>
-                        <div class="course-info">
-                            <h3>Basis Data</h3>
-                            <p>Kode: BD2403 | SKS: 3 | Dosen: Dr. Citra Dewi, S.Si., M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="basis-data" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="jarkom">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #10b981, #047857);"><i
-                                class="fas fa-network-wired"></i></div>
-                        <div class="course-info">
-                            <h3>Jaringan Komputer</h3>
-                            <p>Kode: JARKOM2404 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="jarkom" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="sistem-operasi">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #ef4444, #b91c1c);"><i
-                                class="fas fa-desktop"></i></div>
-                        <div class="course-info">
-                            <h3>Sistem Operasi</h3>
-                            <p>Kode: SO2405 | SKS: 3 | Dosen: Dr. Deni Setiawan, M.Cs.</p>
-                        </div>
-                        <button class="btn-more" data-course="sistem-operasi" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="pcd">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #8b5cf6, #5b21b6);"><i
-                                class="fas fa-image"></i></div>
-                        <div class="course-info">
-                            <h3>Pengolahan Citra Digital</h3>
-                            <p>Kode: PCD2406 | SKS: 2 | Dosen: Dr. Eka Permata, M.T.</p>
-                        </div>
-                        <button class="btn-more" data-course="pcd" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="iot">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #ec489a, #be185d);"><i
-                                class="fas fa-microchip"></i></div>
-                        <div class="course-info">
-                            <h3>Internet of Things (IoT)</h3>
-                            <p>Kode: IOT2407 | SKS: 2 | Dosen: Dr. Fajar Nugroho, S.T., M.Eng.</p>
-                        </div>
-                        <button class="btn-more" data-course="iot" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="rpl">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #f59e0b, #b45309);"><i
-                                class="fas fa-code-branch"></i></div>
-                        <div class="course-info">
-                            <h3>Rekayasa Perangkat Lunak (RPL)</h3>
-                            <p>Kode: RPL2408 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="rpl" data-type="all">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 
             <div id="tab-upcoming" class="tab-content">
                 <div class="courses-grid">
-                    <!-- Sama seperti all tapi dengan data-type="upcoming" -->
-                    <div class="course-card" data-course="pemrograman-dasar-upcoming">
+                    @forelse($allPraktikums as $praktikum)
+                    <div class="course-card" data-course="{{ Str::slug($praktikum->nama_praktikum) }}-upcoming">
                         <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
                                 class="fas fa-code"></i></div>
                         <div class="course-info">
-                            <h3>Pemrograman Dasar</h3>
-                            <p>Kode: PD2401 | SKS: 2 | Dosen: Dr. Anita Wijaya, M.Kom.</p>
+                            <h3>{{ $praktikum->nama_praktikum }}</h3>
+                            <p>Kode: {{ $praktikum->kode_praktikum }} | Semester: {{ $praktikum->semester }}</p>
                         </div>
-                        <button class="btn-more" data-course="pemrograman-dasar" data-type="upcoming">More <i
+                        <button class="btn-more" data-course="{{ Str::slug($praktikum->nama_praktikum) }}" data-type="upcoming">More <i
                                 class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="struktur-data-upcoming">
+                    @empty
+                    <div class="course-card">
                         <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-layer-group"></i></div>
+                                class="fas fa-book"></i></div>
                         <div class="course-info">
-                            <h3>Struktur Data</h3>
-                            <p>Kode: SD2402 | SKS: 3 | Dosen: Dr. Bambang Prasetyo, M.T.</p>
+                            <h3>Tidak Ada Praktikum</h3>
+                            <p>Belum ada praktikum yang tersedia</p>
                         </div>
-                        <button class="btn-more" data-course="struktur-data" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="basis-data-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-database"></i></div>
-                        <div class="course-info">
-                            <h3>Basis Data</h3>
-                            <p>Kode: BD2403 | SKS: 3 | Dosen: Dr. Citra Dewi, S.Si., M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="basis-data" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="jarkom-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-network-wired"></i></div>
-                        <div class="course-info">
-                            <h3>Jaringan Komputer</h3>
-                            <p>Kode: JARKOM2404 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="jarkom" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="sistem-operasi-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-desktop"></i></div>
-                        <div class="course-info">
-                            <h3>Sistem Operasi</h3>
-                            <p>Kode: SO2405 | SKS: 3 | Dosen: Dr. Deni Setiawan, M.Cs.</p>
-                        </div>
-                        <button class="btn-more" data-course="sistem-operasi" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="pcd-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-image"></i></div>
-                        <div class="course-info">
-                            <h3>Pengolahan Citra Digital</h3>
-                            <p>Kode: PCD2406 | SKS: 2 | Dosen: Dr. Eka Permata, M.T.</p>
-                        </div>
-                        <button class="btn-more" data-course="pcd" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="iot-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-microchip"></i></div>
-                        <div class="course-info">
-                            <h3>Internet of Things (IoT)</h3>
-                            <p>Kode: IOT2407 | SKS: 2 | Dosen: Dr. Fajar Nugroho, S.T., M.Eng.</p>
-                        </div>
-                        <button class="btn-more" data-course="iot" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="rpl-upcoming">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #9ca3af, #6b7280);"><i
-                                class="fas fa-code-branch"></i></div>
-                        <div class="course-info">
-                            <h3>Rekayasa Perangkat Lunak (RPL)</h3>
-                            <p>Kode: RPL2408 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="rpl" data-type="upcoming">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 
             <div id="tab-completed" class="tab-content">
                 <div class="courses-grid">
-                    <div class="course-card" data-course="pemrograman-dasar-completed">
+                    @forelse($myPraktikums as $praktikum)
+                    <div class="course-card" data-course="{{ Str::slug($praktikum->nama_praktikum) }}-completed">
                         <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
                                 class="fas fa-code"></i></div>
                         <div class="course-info">
-                            <h3>Pemrograman Dasar</h3>
-                            <p>Kode: PD2401 | SKS: 2 | Dosen: Dr. Anita Wijaya, M.Kom.</p>
+                            <h3>{{ $praktikum->nama_praktikum }}</h3>
+                            <p>Kode: {{ $praktikum->kode_praktikum }} | Semester: {{ $praktikum->semester }}</p>
                         </div>
-                        <button class="btn-more" data-course="pemrograman-dasar" data-type="completed">More <i
+                        <button class="btn-more" data-course="{{ Str::slug($praktikum->nama_praktikum) }}" data-type="completed">More <i
                                 class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="struktur-data-completed">
+                    @empty
+                    <div class="course-card">
                         <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-layer-group"></i></div>
+                                class="fas fa-book"></i></div>
                         <div class="course-info">
-                            <h3>Struktur Data</h3>
-                            <p>Kode: SD2402 | SKS: 3 | Dosen: Dr. Bambang Prasetyo, M.T.</p>
+                            <h3>Belum Ada Praktikum</h3>
+                            <p>Silakan daftar praktikum terlebih dahulu</p>
                         </div>
-                        <button class="btn-more" data-course="struktur-data" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
                     </div>
-
-                    <div class="course-card" data-course="basis-data-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-database"></i></div>
-                        <div class="course-info">
-                            <h3>Basis Data</h3>
-                            <p>Kode: BD2403 | SKS: 3 | Dosen: Dr. Citra Dewi, S.Si., M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="basis-data" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="jarkom-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-network-wired"></i></div>
-                        <div class="course-info">
-                            <h3>Jaringan Komputer</h3>
-                            <p>Kode: JARKOM2404 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="jarkom" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="sistem-operasi-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-desktop"></i></div>
-                        <div class="course-info">
-                            <h3>Sistem Operasi</h3>
-                            <p>Kode: SO2405 | SKS: 3 | Dosen: Dr. Deni Setiawan, M.Cs.</p>
-                        </div>
-                        <button class="btn-more" data-course="sistem-operasi" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="pcd-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-image"></i></div>
-                        <div class="course-info">
-                            <h3>Pengolahan Citra Digital</h3>
-                            <p>Kode: PCD2406 | SKS: 2 | Dosen: Dr. Eka Permata, M.T.</p>
-                        </div>
-                        <button class="btn-more" data-course="pcd" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="iot-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-microchip"></i></div>
-                        <div class="course-info">
-                            <h3>Internet of Things (IoT)</h3>
-                            <p>Kode: IOT2407 | SKS: 2 | Dosen: Dr. Fajar Nugroho, S.T., M.Eng.</p>
-                        </div>
-                        <button class="btn-more" data-course="iot" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
-
-                    <div class="course-card" data-course="rpl-completed">
-                        <div class="course-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);"><i
-                                class="fas fa-code-branch"></i></div>
-                        <div class="course-info">
-                            <h3>Rekayasa Perangkat Lunak (RPL)</h3>
-                            <p>Kode: RPL2408 | SKS: 3 | Dosen: Dr. Budi Santoso, M.Kom.</p>
-                        </div>
-                        <button class="btn-more" data-course="rpl" data-type="completed">More <i
-                                class="fas fa-arrow-right"></i></button>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </main>
@@ -830,11 +631,11 @@
             </div>
             <div class="modal-body">
                 <div class="form-group"><label>Nama Lengkap</label><input type="text" id="formNama"
-                        value="Caca Mahasiswa"></div>
-                <div class="form-group"><label>NIM</label><input type="text" id="formNim" value="24051204194">
+                        value="{{ Auth::user()->nama }}"></div>
+                <div class="form-group"><label>NIM</label><input type="text" id="formNim" value="{{ Auth::user()->nomor_induk }}">
                 </div>
                 <div class="form-group"><label>Email</label><input type="email" id="formEmail"
-                        value="caca@student.ac.id"></div>
+                        value="{{ Auth::user()->email }}"></div>
                 <div class="form-group"><label>Kelas</label><select id="formKelas">
                         <option>2024A</option>
                         <option>2024B</option>

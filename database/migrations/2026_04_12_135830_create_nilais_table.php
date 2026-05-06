@@ -19,9 +19,12 @@ return new class extends Migration
             $table->integer('nilai_laporan');
             $table->integer('nilai_total');
             $table->integer('nilai_akhir');
-            $table->longText('komentar');
+            $table->longText('komentar')->nullable();
             $table->enum('status', ['Pending', 'Terkonfirmasi']);
             $table->timestamps();
+            
+            // Unique constraint: 1 user hanya bisa punya 1 nilai per pertemuan
+            $table->unique(['id_pertemuan', 'id_user']);
         });
     }
 
