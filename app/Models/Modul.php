@@ -21,4 +21,16 @@ class Modul extends Model
     {
         return $this->belongsTo(Pertemuan::class, 'id_pertemuan');
     }
+
+    public function praktikum()
+    {
+        return $this->hasOneThrough(
+            Praktikum::class,
+            Pertemuan::class,
+            'id',         // FK di Pertemuan yang menunjuk ke Modul (sesuaikan)
+            'id',         // FK di Praktikum
+            'id_pertemuan', // local key di Modul
+            'id_praktikum'  // local key di Pertemuan
+        );
+    }
 }

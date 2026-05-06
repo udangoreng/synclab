@@ -401,7 +401,7 @@
                         <select id="filterPretestMatkul">
                             <option value="all">Semua Mata Kuliah</option>
                             @foreach($nilais as $nilai)
-                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            <option value="{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -412,7 +412,7 @@
                     @forelse($nilais as $nilai)
                     <div class="score-card">
                         <div class="card-header">
-                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <h3>{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</h3>
                             <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
                         </div>
                         <div class="card-body">
@@ -438,7 +438,7 @@
                         <select id="filterLaporanMatkul">
                             <option value="all">Semua Mata Kuliah</option>
                             @foreach($nilais as $nilai)
-                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            <option value="{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -449,7 +449,7 @@
                     @forelse($nilais as $nilai)
                     <div class="score-card">
                         <div class="card-header">
-                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <h3>{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</h3>
                             <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
                         </div>
                         <div class="card-body">
@@ -475,7 +475,7 @@
                         <select id="filterAkhirMatkul">
                             <option value="all">Semua Mata Kuliah</option>
                             @foreach($nilais as $nilai)
-                            <option value="{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</option>
+                            <option value="{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}">{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -486,7 +486,7 @@
                     @forelse($nilais as $nilai)
                     <div class="final-card">
                         <div class="final-header">
-                            <h3>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? '-' }}</h3>
+                            <h3>{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? '-' }}</h3>
                             <p>{{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}</p>
                         </div>
                         <div class="final-body">
@@ -524,184 +524,26 @@
     </div>
     <script>
         (function() {
-            const nilaiData = {
-                "Jaringan Komputer": {
-                    pretest: [{
-                            modul: "Modul 1: Pengenalan Jaringan & OSI Layer",
-                            materi: "Manajemen Server",
-                            nilai: 90
-                        },
-                        {
-                            modul: "Modul 2: Subnetting & VLSM",
-                            materi: "Konfigurasi IP Address",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 3: Routing Statis & Dinamis",
-                            materi: "Konfigurasi Routing",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 4: VLAN & Inter-VLAN Routing",
-                            materi: "Konfigurasi VLAN",
-                            nilai: 92
-                        }
-                    ],
-                    laporan: [{
-                            modul: "Modul 1: Pengenalan Jaringan & OSI Layer",
-                            materi: "Manajemen Server",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 2: Subnetting & VLSM",
-                            materi: "Konfigurasi IP Address",
-                            nilai: 82
-                        },
-                        {
-                            modul: "Modul 3: Routing Statis & Dinamis",
-                            materi: "Konfigurasi Routing",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 4: VLAN & Inter-VLAN Routing",
-                            materi: "Konfigurasi VLAN",
-                            nilai: 90
-                        }
-                    ]
-                },
-                "Rekayasa Perangkat Lunak (RPL)": {
-                    pretest: [{
-                            modul: "Modul 1: Pengenalan RPL & Tools",
-                            materi: "Pengenalan Tools",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 2: Analisis Kebutuhan",
-                            materi: "Use Case Diagram",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 3: Perancangan Sistem (UML)",
-                            materi: "Class Diagram",
-                            nilai: 90
-                        },
-                        {
-                            modul: "Modul 4: Implementasi & Pengujian",
-                            materi: "Unit Testing",
-                            nilai: 87
-                        }
-                    ],
-                    laporan: [{
-                            modul: "Modul 1: Pengenalan RPL & Tools",
-                            materi: "Pengenalan Tools",
-                            nilai: 82
-                        },
-                        {
-                            modul: "Modul 2: Analisis Kebutuhan",
-                            materi: "Use Case Diagram",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 3: Perancangan Sistem (UML)",
-                            materi: "Class Diagram",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 4: Implementasi & Pengujian",
-                            materi: "Unit Testing",
-                            nilai: 84
-                        }
-                    ]
-                },
-                "Pengolahan Citra Digital": {
-                    pretest: [{
-                            modul: "Modul 1: Sampling & Kuantisasi",
-                            materi: "Sampling Citra",
-                            nilai: 92
-                        },
-                        {
-                            modul: "Modul 2: Operasi Aritmatika Citra",
-                            materi: "Operasi Pixel",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 3: Filtering & Edge Detection",
-                            materi: "Edge Detection",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 4: Segmentasi Citra",
-                            materi: "Thresholding",
-                            nilai: 90
-                        }
-                    ],
-                    laporan: [{
-                            modul: "Modul 1: Sampling & Kuantisasi",
-                            materi: "Sampling Citra",
-                            nilai: 90
-                        },
-                        {
-                            modul: "Modul 2: Operasi Aritmatika Citra",
-                            materi: "Operasi Pixel",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 3: Filtering & Edge Detection",
-                            materi: "Edge Detection",
-                            nilai: 82
-                        },
-                        {
-                            modul: "Modul 4: Segmentasi Citra",
-                            materi: "Thresholding",
-                            nilai: 88
-                        }
-                    ]
-                },
-                "Basis Data": {
-                    pretest: [{
-                            modul: "Modul 1: Pengenalan Basis Data & SQL",
-                            materi: "SQL Dasar",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 2: Normalisasi & ERD",
-                            materi: "Normalisasi",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 3: Join & Subquery",
-                            materi: "SQL Join",
-                            nilai: 90
-                        },
-                        {
-                            modul: "Modul 4: Transaction & Stored Procedure",
-                            materi: "Stored Procedure",
-                            nilai: 87
-                        }
-                    ],
-                    laporan: [{
-                            modul: "Modul 1: Pengenalan Basis Data & SQL",
-                            materi: "SQL Dasar",
-                            nilai: 85
-                        },
-                        {
-                            modul: "Modul 2: Normalisasi & ERD",
-                            materi: "Normalisasi",
-                            nilai: 82
-                        },
-                        {
-                            modul: "Modul 3: Join & Subquery",
-                            materi: "SQL Join",
-                            nilai: 88
-                        },
-                        {
-                            modul: "Modul 4: Transaction & Stored Procedure",
-                            materi: "Stored Procedure",
-                            nilai: 84
-                        }
-                    ]
-                }
-            };
+            const nilaiData = @json($nilais->groupBy(function($nilai) {
+                return $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum';
+            })->map(function($nilaisPerPraktikum, $praktikumName) {
+                return [
+                    'pretest' => $nilaisPerPraktikum->map(function($nilai) {
+                        return [
+                            'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+                            'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
+                            'nilai' => $nilai->nilai_pretest ?? 0
+                        ];
+                    })->toArray(),
+                    'laporan' => $nilaisPerPraktikum->map(function($nilai) {
+                        return [
+                            'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+                            'materi' => $nilai->pertemuan?->modul?->judul_modul ?? 'Materi',
+                            'nilai' => $nilai->nilai_laporan ?? 0
+                        ];
+                    })->toArray()
+                ];
+            }));
 
             function hitungNilaiAkhir(matkul) {
                 const pretests = nilaiData[matkul]?.pretest || [];

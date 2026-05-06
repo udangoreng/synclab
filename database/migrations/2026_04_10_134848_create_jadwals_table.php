@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_praktikum');
-            $table->foreign('kode_praktikum')->references('kode_praktikum')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_dosen')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_dosen')->references('nomor_induk')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_pertemuan')->references('id')->on('pertemuans')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_laboratorium')->references('id')->on('laboratoriums')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('hari');
+            $table->date('tanggal');
             $table->time('jam_mulai');
             $table->time('jam_selesai');
             $table->integer('jumlah_max_peserta');

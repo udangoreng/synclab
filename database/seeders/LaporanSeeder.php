@@ -19,10 +19,13 @@ class LaporanSeeder extends Seeder
             return;
         }
 
-        // Helper untuk mencari pertemuan
+        $pertemuans = Pertemuan::with('praktikum')->get(); // Eager load relasi
+
         $getPertemuan = function($kodePraktikum, $pertemuanKe) use ($pertemuans) {
-            return $pertemuans->firstWhere(function($item) use ($kodePraktikum, $pertemuanKe) {
-                return $item->kode_praktikum === $kodePraktikum && $item->pertemuan_ke === $pertemuanKe;
+            return $pertemuans->first(function($item) use ($kodePraktikum, $pertemuanKe) {
+                // Akses kode_praktikum melalui relasi model Praktikum
+                return $item->praktikum->kode_praktikum === $kodePraktikum && 
+                    $item->pertemuan_ke === $pertemuanKe;
             });
         };
 
@@ -55,15 +58,6 @@ class LaporanSeeder extends Seeder
                 'close_time' => '17:00:00',
                 'deskripsi' => 'Laporan hasil praktikum tentang pembuatan dan penggunaan fungsi untuk program modular.',
             ],
-            [
-                'id_pertemuan' => $getPertemuan('PD2401', 4)?->id,
-                'judul_laporan' => 'Laporan Praktikum Pertemuan 4: Array & String',
-                'open_date' => date('Y-m-d', strtotime('+22 days')),
-                'close_date' => date('Y-m-d', strtotime('+29 days')),
-                'open_time' => '08:00:00',
-                'close_time' => '17:00:00',
-                'deskripsi' => 'Laporan hasil praktikum tentang penggunaan array 1D, 2D, dan manipulasi string dalam C++.',
-            ],
 
             // Struktur Data
             [
@@ -92,15 +86,6 @@ class LaporanSeeder extends Seeder
                 'open_time' => '08:00:00',
                 'close_time' => '17:00:00',
                 'deskripsi' => 'Laporan hasil praktikum tentang implementasi binary search tree dan tree traversal.',
-            ],
-            [
-                'id_pertemuan' => $getPertemuan('SD2402', 4)?->id,
-                'judul_laporan' => 'Laporan Praktikum Pertemuan 4: Graph & Searching',
-                'open_date' => date('Y-m-d', strtotime('+22 days')),
-                'close_date' => date('Y-m-d', strtotime('+29 days')),
-                'open_time' => '08:00:00',
-                'close_time' => '17:00:00',
-                'deskripsi' => 'Laporan hasil praktikum tentang implementasi graph dan algoritma BFS/DFS.',
             ],
 
             // Basis Data
@@ -131,15 +116,6 @@ class LaporanSeeder extends Seeder
                 'close_time' => '17:00:00',
                 'deskripsi' => 'Laporan hasil praktikum tentang INSERT, UPDATE, DELETE, dan manipulasi struktur tabel.',
             ],
-            [
-                'id_pertemuan' => $getPertemuan('BD2403', 4)?->id,
-                'judul_laporan' => 'Laporan Praktikum Pertemuan 4: Indexing & Performance',
-                'open_date' => date('Y-m-d', strtotime('+22 days')),
-                'close_date' => date('Y-m-d', strtotime('+29 days')),
-                'open_time' => '08:00:00',
-                'close_time' => '17:00:00',
-                'deskripsi' => 'Laporan hasil praktikum tentang penggunaan index dan optimasi query.',
-            ],
 
             // Jaringan Komputer
             [
@@ -168,15 +144,6 @@ class LaporanSeeder extends Seeder
                 'open_time' => '08:00:00',
                 'close_time' => '17:00:00',
                 'deskripsi' => 'Laporan hasil praktikum tentang konfigurasi routing dinamis menggunakan OSPF.',
-            ],
-            [
-                'id_pertemuan' => $getPertemuan('JARKOM2404', 4)?->id,
-                'judul_laporan' => 'Laporan Praktikum Pertemuan 4: ACL & Security',
-                'open_date' => date('Y-m-d', strtotime('+22 days')),
-                'close_date' => date('Y-m-d', strtotime('+29 days')),
-                'open_time' => '08:00:00',
-                'close_time' => '17:00:00',
-                'deskripsi' => 'Laporan hasil praktikum tentang konfigurasi ACL untuk keamanan jaringan.',
             ],
         ];
 

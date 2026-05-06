@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Praktikum extends Model
 {
@@ -32,8 +33,13 @@ class Praktikum extends Model
         return $this->hasMany(Pertemuan::class, 'id_praktikum');
     }
 
+    public function moduls(): HasManyThrough
+    {
+        return $this->hasManyThrough(Modul::class, Pertemuan::class, 'id_praktikum', 'id_pertemuan');
+    }
+
     public function jadwals(): HasMany
     {
-        return $this->hasMany(Jadwal::class, 'kode_praktikum', 'kode_praktikum');
+        return $this->hasMany(Jadwal::class, 'id_praktikum', 'id');
     }
-}
+} 

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Pertemuan extends Model
 {
     protected $fillable = [
-        'kode_praktikum',
+        'id_praktikum',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',

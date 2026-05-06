@@ -480,13 +480,12 @@
             <div class="filter-section">
                 <div class="filter-group">
                     <label><i class="fas fa-flask"></i> Mata Kuliah</label>
-                    <select id="filterMatkul">
-                        <option value="all">Semua Mata Kuliah</option>
-                        <option value="Jaringan Komputer">Jaringan Komputer</option>
-                        <option value="Rekayasa Perangkat Lunak (RPL)">Rekayasa Perangkat Lunak (RPL)</option>
-                        <option value="Pengolahan Citra Digital">Pengolahan Citra Digital</option>
-                        <option value="Basis Data">Basis Data</option>
-                    </select>
+                  <select id="filterMatkul">
+                    <option value="all">Semua Mata Kuliah</option>
+                    @foreach($matkulList as $matkul)
+                        <option value="{{ $matkul }}">{{ $matkul }}</option>
+                    @endforeach
+                </select>
                 </div>
                 <div class="filter-group">
                     <label><i class="fas fa-tag"></i> Modul</label>
@@ -548,126 +547,65 @@
         </div>
     </div>
     <script>
-        (function() {
-            let pretestData = [{
-                    id: 1,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 1: Pengenalan Jaringan & OSI Layer",
-                    kode: "JARKOM-M1",
-                    statusAbsen: false,
-                    statusPretest: false,
-                    statusLaporan: false,
-                    fileLaporan: null
-                },
-                {
-                    id: 2,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 2: Subnetting & VLSM",
-                    kode: "JARKOM-M2",
-                    statusAbsen: false,
-                    statusPretest: false,
-                    statusLaporan: false,
-                    fileLaporan: null
-                },
-                {
-                    id: 3,
-                    matkul: "Rekayasa Perangkat Lunak (RPL)",
-                    modul: "Modul 1: Pengenalan RPL & Tools",
-                    kode: "RPL-M1",
-                    statusAbsen: false,
-                    statusPretest: false,
-                    statusLaporan: false,
-                    fileLaporan: null
-                },
-                {
-                    id: 4,
-                    matkul: "Rekayasa Perangkat Lunak (RPL)",
-                    modul: "Modul 2: Analisis Kebutuhan",
-                    kode: "RPL-M2",
-                    statusAbsen: false,
-                    statusPretest: false,
-                    statusLaporan: false,
-                    fileLaporan: null
-                },
-                {
-                    id: 5,
-                    matkul: "Pengolahan Citra Digital",
-                    modul: "Modul 1: Sampling & Kuantisasi",
-                    kode: "PCD-M1",
-                    statusAbsen: true,
-                    statusPretest: true,
-                    statusLaporan: true,
-                    fileLaporan: "laporan_pcd_modul1.pdf"
-                },
-                {
-                    id: 6,
-                    matkul: "Pengolahan Citra Digital",
-                    modul: "Modul 2: Operasi Aritmatika Citra",
-                    kode: "PCD-M2",
-                    statusAbsen: false,
-                    statusPretest: false,
-                    statusLaporan: false,
-                    fileLaporan: null
-                }
-            ];
+(function () {
+    // ✅ Bersih: tidak ada sisa kode PHP closure
+    let pretestData = @json($pretestData);
 
-            let filteredData = [];
-            let currentUploadItem = null;
+    const csrfToken = '{{ csrf_token() }}';
 
-            const pretestGrid = document.getElementById('pretestGrid');
-            const filterMatkul = document.getElementById('filterMatkul');
-            const filterModul = document.getElementById('filterModul');
-            const applyFilterBtn = document.getElementById('applyFilter');
+    let filteredData = [];
+    let currentUploadItem = null;
 
-            const uploadModal = document.getElementById('uploadModal');
-            const confirmModal = document.getElementById('confirmModal');
-            const uploadMatkulSpan = document.getElementById('uploadMatkul');
-            const uploadModulSpan = document.getElementById('uploadModul');
-            const fileInput = document.getElementById('fileInput');
-            const fileInfo = document.getElementById('fileInfo');
-            const uploadArea = document.getElementById('uploadArea');
-            const uploadKeterangan = document.getElementById('uploadKeterangan');
-            let selectedFile = null;
+    const pretestGrid       = document.getElementById('pretestGrid');
+    const filterMatkul      = document.getElementById('filterMatkul');
+    const filterModul       = document.getElementById('filterModul');
+    const applyFilterBtn    = document.getElementById('applyFilter');
+    const uploadModal       = document.getElementById('uploadModal');
+    const confirmModal      = document.getElementById('confirmModal');
+    const uploadMatkulSpan  = document.getElementById('uploadMatkul');
+    const uploadModulSpan   = document.getElementById('uploadModul');
+    const fileInput         = document.getElementById('fileInput');
+    const fileInfo          = document.getElementById('fileInfo');
+    const uploadArea        = document.getElementById('uploadArea');
+    const uploadKeterangan  = document.getElementById('uploadKeterangan');
+    let selectedFile = null;
 
-            function updateModulFilter() {
-                const selectedMatkul = filterMatkul.value;
-                let moduls = [];
+    // ─── Filter ─────────────────────────────────────────────────────────────
 
-                if (selectedMatkul === 'all') {
-                    moduls = [...new Set(pretestData.map(item => item.modul))];
-                } else {
-                    moduls = pretestData.filter(item => item.matkul === selectedMatkul).map(item => item.modul);
-                    moduls = [...new Set(moduls)];
-                }
+    function updateModulFilter() {
+        const selectedMatkul = filterMatkul.value;
+        let moduls = pretestData
+            .filter(item => selectedMatkul === 'all' || item.matkul === selectedMatkul)
+            .map(item => item.modul);
+        moduls = [...new Set(moduls)];
 
-                filterModul.innerHTML = '<option value="all">Semua Modul</option>';
-                moduls.forEach(modul => {
-                    filterModul.innerHTML += `<option value="${modul}">${modul}</option>`;
-                });
-            }
+        filterModul.innerHTML = '<option value="all">Semua Modul</option>';
+        moduls.forEach(m => {
+            filterModul.innerHTML += `<option value="${m}">${m}</option>`;
+        });
+    }
 
-            function renderPretest() {
-                const matkul = filterMatkul.value;
-                const modul = filterModul.value;
+    function renderPretest() {
+        const matkul = filterMatkul.value;
+        const modul  = filterModul.value;
 
-                filteredData = pretestData.filter(item => {
-                    if (matkul !== 'all' && item.matkul !== matkul) return false;
-                    if (modul !== 'all' && item.modul !== modul) return false;
-                    return true;
-                });
+        filteredData = pretestData.filter(item => {
+            if (matkul !== 'all' && item.matkul !== matkul) return false;
+            if (modul  !== 'all' && item.modul  !== modul)  return false;
+            return true;
+        });
 
-                if (filteredData.length === 0) {
-                    pretestGrid.innerHTML =
-                        '<div class="empty-state" style="grid-column:1/-1; text-align:center; padding:40px;">Belum ada pretest yang tersedia</div>';
-                    return;
-                }
+        if (filteredData.length === 0) {
+            pretestGrid.innerHTML =
+                '<div style="grid-column:1/-1;text-align:center;padding:40px;">Belum ada pretest yang tersedia</div>';
+            return;
+        }
 
-                pretestGrid.innerHTML = '';
-
-                filteredData.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'pretest-card';
-                    card.innerHTML = `
+        pretestGrid.innerHTML = '';
+        filteredData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'pretest-card';
+            card.innerHTML = `
                 <div class="card-header">
                     <h3>${item.matkul}</h3>
                     <p>Kode: ${item.kode}</p>
@@ -675,230 +613,257 @@
                 <div class="card-body">
                     <div class="modul-title">${item.modul}</div>
                     <div class="action-buttons">
-                        <button class="action-btn btn-absen ${item.statusAbsen ? 'disabled' : ''}" data-id="${item.id}" data-action="absen">
-                            <i class="fas fa-fingerprint"></i> ${item.statusAbsen ? 'Sudah Absen' : 'Presensi'}
+                        <button class="action-btn btn-absen ${item.statusAbsen ? 'disabled' : ''}"
+                            data-id="${item.id}" ${item.statusAbsen ? 'disabled' : ''}>
+                            <i class="fas fa-fingerprint"></i>
+                            ${item.statusAbsen ? 'Sudah Absen' : 'Presensi'}
                         </button>
-                        <button class="action-btn btn-start ${item.statusPretest ? 'disabled' : ''}" data-id="${item.id}" data-action="pretest">
-                            <i class="fas fa-play"></i> ${item.statusPretest ? 'Sudah Start' : 'Pretest Start'}
+                        <button class="action-btn btn-start ${item.statusPretest ? 'disabled' : ''}"
+                            data-id="${item.id}" ${item.statusPretest ? 'disabled' : ''}>
+                            <i class="fas fa-play"></i>
+                            ${item.statusPretest ? 'Sudah Start' : 'Pretest Start'}
                         </button>
-                        <button class="action-btn btn-upload ${item.statusLaporan ? 'disabled' : ''}" data-id="${item.id}" data-action="upload">
-                            <i class="fas fa-upload"></i> ${item.statusLaporan ? 'Sudah Upload' : 'Upload Laporan'}
+                        <button class="action-btn btn-upload ${item.statusLaporan ? 'disabled' : ''}"
+                            data-id="${item.id}" ${item.statusLaporan ? 'disabled' : ''}>
+                            <i class="fas fa-upload"></i>
+                            ${item.statusLaporan ? 'Sudah Upload' : 'Upload Laporan'}
                         </button>
                     </div>
                     <span class="status-badge status-active">Active</span>
-                </div>
-            `;
-                    pretestGrid.appendChild(card);
-                });
+                </div>`;
+            pretestGrid.appendChild(card);
+        });
 
-                document.querySelectorAll('.btn-absen').forEach(btn => {
-                    if (!btn.classList.contains('disabled')) {
-                        btn.addEventListener('click', () => handleAbsen(parseInt(btn.dataset.id)));
-                    }
-                });
-                document.querySelectorAll('.btn-start').forEach(btn => {
-                    if (!btn.classList.contains('disabled')) {
-                        btn.addEventListener('click', () => handlePretestStart(parseInt(btn.dataset.id)));
-                    }
-                });
-                document.querySelectorAll('.btn-upload').forEach(btn => {
-                    if (!btn.classList.contains('disabled')) {
-                        btn.addEventListener('click', () => openUploadModal(parseInt(btn.dataset.id)));
-                    }
-                });
-            }
+        // Event listener untuk tombol yang aktif saja
+        pretestGrid.querySelectorAll('.btn-absen:not(.disabled)').forEach(btn =>
+            btn.addEventListener('click', () => handleAbsen(parseInt(btn.dataset.id))));
+        pretestGrid.querySelectorAll('.btn-start:not(.disabled)').forEach(btn =>
+            btn.addEventListener('click', () => handlePretestStart(parseInt(btn.dataset.id))));
+        pretestGrid.querySelectorAll('.btn-upload:not(.disabled)').forEach(btn =>
+            btn.addEventListener('click', () => openUploadModal(parseInt(btn.dataset.id))));
+    }
 
-            function handleAbsen(id) {
-                showConfirm('Konfirmasi Presensi', 'Apakah Anda sudah hadir dalam praktikum ini?', () => {
+    // ─── Handler dengan fetch() nyata ────────────────────────────────────────
+
+    async function handleAbsen(id) {
+        showConfirm('Konfirmasi Presensi', 'Apakah Anda sudah hadir dalam praktikum ini?', async () => {
+            try {
+                const res = await fetch(`/mahasiswa/pretest/absen/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await res.json();
+
+                if (data.success) {
                     const item = pretestData.find(i => i.id === id);
-                    if (item) {
-                        item.statusAbsen = true;
-                        renderPretest();
-                        showAlert('✅ Presensi berhasil dicatat!', 'success');
+                    if (item) item.statusAbsen = true;
+                    renderPretest();
+                    showToast('✅ ' + data.message, 'success');
+                } else {
+                    showToast('⚠️ ' + data.message, 'warning');
+                }
+            } catch (err) {
+                showToast('❌ Gagal menghubungi server.', 'error');
+            }
+        });
+    }
+
+    async function handlePretestStart(id) {
+        showConfirm('Mulai Pretest', 'Apakah Anda siap memulai pretest? Waktu akan berjalan.', async () => {
+            try {
+                const res = await fetch(`/mahasiswa/pretest/start/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
                     }
                 });
-            }
+                const data = await res.json();
 
-            function handlePretestStart(id) {
-                showConfirm('Mulai Pretest', 'Apakah Anda siap untuk memulai pretest? Waktu akan berjalan 60 menit.',
-                () => {
-                        const item = pretestData.find(i => i.id === id);
+                if (data.success) {
+                    const item = pretestData.find(i => i.id === id);
+                    if (item) item.statusPretest = true;
+                    renderPretest();
+                    showToast('📝 ' + data.message, 'success');
+                    // Redirect ke halaman soal jika ada:
+                    // if (data.redirect) window.location.href = data.redirect;
+                } else {
+                    showToast('⚠️ ' + data.message, 'warning');
+                }
+            } catch (err) {
+                showToast('❌ Gagal menghubungi server.', 'error');
+            }
+        });
+    }
+
+    // ─── Upload Modal ─────────────────────────────────────────────────────────
+
+    function openUploadModal(id) {
+        currentUploadItem = pretestData.find(i => i.id === id);
+        if (!currentUploadItem) return;
+        uploadMatkulSpan.innerText = currentUploadItem.matkul;
+        uploadModulSpan.innerText  = currentUploadItem.modul;
+        selectedFile = null;
+        fileInfo.innerText  = 'Belum ada file dipilih';
+        fileInput.value     = '';
+        uploadKeterangan.value = '';
+        uploadModal.classList.add('active');
+    }
+
+    async function submitUpload() {
+        if (!selectedFile) {
+            showToast('⚠️ Silakan pilih file laporan terlebih dahulu!', 'warning');
+            return;
+        }
+
+        showConfirm('Konfirmasi Upload',
+            `Upload laporan "${selectedFile.name}" untuk ${currentUploadItem.modul}?`,
+            async () => {
+                const btnSubmit = document.getElementById('submitUpload');
+                btnSubmit.disabled  = true;
+                btnSubmit.innerText = 'Mengupload...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    formData.append('keterangan', uploadKeterangan.value);
+                    formData.append('_token', csrfToken);
+
+                    const res  = await fetch(`/mahasiswa/pretest/upload/${currentUploadItem.id}`, {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json' },
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        const item = pretestData.find(i => i.id === currentUploadItem.id);
                         if (item) {
-                            item.statusPretest = true;
-                            renderPretest();
-                            showAlert('📝 Pretest dimulai! Selamat mengerjakan.', 'success');
-                            // Bisa redirect ke halaman pretest atau open modal soal
+                            item.statusLaporan = true;
+                            item.fileLaporan   = data.file_name;
                         }
-                    });
-            }
-
-            function openUploadModal(id) {
-                currentUploadItem = pretestData.find(i => i.id === id);
-                if (!currentUploadItem) return;
-
-                uploadMatkulSpan.innerText = currentUploadItem.matkul;
-                uploadModulSpan.innerText = currentUploadItem.modul;
-                selectedFile = null;
-                fileInfo.innerText = 'Belum ada file dipilih';
-                fileInput.value = '';
-                uploadKeterangan.value = '';
-
-                uploadModal.classList.add('active');
-            }
-
-            function setupFileUpload() {
-                uploadArea.addEventListener('click', () => fileInput.click());
-
-                fileInput.addEventListener('change', (e) => {
-                    if (e.target.files.length > 0) {
-                        selectedFile = e.target.files[0];
-                        fileInfo.innerText =
-                            `📄 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)`;
+                        renderPretest();
+                        closeUploadModal();
+                        showToast('✅ ' + data.message, 'success');
                     } else {
-                        selectedFile = null;
-                        fileInfo.innerText = 'Belum ada file dipilih';
+                        showToast('⚠️ ' + data.message, 'warning');
                     }
-                });
-
-                uploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    uploadArea.style.borderColor = '#3b82f6';
-                    uploadArea.style.background = '#eff6ff';
-                });
-
-                uploadArea.addEventListener('dragleave', (e) => {
-                    e.preventDefault();
-                    uploadArea.style.borderColor = '#cbd5e1';
-                    uploadArea.style.background = 'transparent';
-                });
-
-                uploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    uploadArea.style.borderColor = '#cbd5e1';
-                    uploadArea.style.background = 'transparent';
-                    if (e.dataTransfer.files.length > 0) {
-                        selectedFile = e.dataTransfer.files[0];
-                        fileInfo.innerText =
-                            `📄 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)`;
-                        fileInput.files = e.dataTransfer.files;
-                    }
-                });
-            }
-
-            function submitUpload() {
-                if (!selectedFile) {
-                    showAlert('⚠️ Silakan pilih file laporan terlebih dahulu!', 'warning');
-                    return;
+                } catch (err) {
+                    showToast('❌ Gagal mengupload laporan.', 'error');
+                } finally {
+                    btnSubmit.disabled  = false;
+                    btnSubmit.innerText = 'Upload Laporan';
                 }
-
-                showConfirm('Konfirmasi Upload',
-                    `Apakah Anda yakin ingin mengupload laporan "${selectedFile.name}" untuk ${currentUploadItem.modul}?`,
-                    () => {
-                        // Simulate upload delay
-                        const btnSubmit = document.getElementById('submitUpload');
-                        btnSubmit.disabled = true;
-                        btnSubmit.innerText = 'Mengupload...';
-
-                        setTimeout(() => {
-                            currentUploadItem.statusLaporan = true;
-                            currentUploadItem.fileLaporan = selectedFile.name;
-                            renderPretest();
-                            closeUploadModal();
-                            showAlert('✅ Laporan berhasil diupload!', 'success');
-                            btnSubmit.disabled = false;
-                            btnSubmit.innerText = 'Upload Laporan';
-                        }, 1500);
-                    });
             }
+        );
+    }
 
-            function closeUploadModal() {
-                uploadModal.classList.remove('active');
-                currentUploadItem = null;
-                selectedFile = null;
+    function setupFileUpload() {
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => {
+            selectedFile = e.target.files[0] ?? null;
+            fileInfo.innerText = selectedFile
+                ? `📄 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)`
+                : 'Belum ada file dipilih';
+        });
+        uploadArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#3b82f6';
+            uploadArea.style.background  = '#eff6ff';
+        });
+        uploadArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#cbd5e1';
+            uploadArea.style.background  = 'transparent';
+        });
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#cbd5e1';
+            uploadArea.style.background  = 'transparent';
+            if (e.dataTransfer.files.length > 0) {
+                selectedFile = e.dataTransfer.files[0];
+                fileInfo.innerText = `📄 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)`;
+                fileInput.files    = e.dataTransfer.files;
             }
+        });
+    }
 
-            function closeConfirmModal() {
-                confirmModal.classList.remove('active');
-            }
+    // ─── Modal helpers ────────────────────────────────────────────────────────
 
-            let confirmCallback = null;
+    function closeUploadModal()  { uploadModal.classList.remove('active');  currentUploadItem = null; selectedFile = null; }
+    function closeConfirmModal() { confirmModal.classList.remove('active'); }
 
-            function showConfirm(title, message, callback) {
-                document.querySelector('#confirmModal .modal-header h3').innerHTML =
-                    `<i class="fas fa-question-circle"></i> ${title}`;
-                document.getElementById('confirmMessage').innerText = message;
-                confirmCallback = callback;
-                confirmModal.classList.add('active');
-            }
+    let confirmCallback = null;
+    function showConfirm(title, message, callback) {
+        document.querySelector('#confirmModal .modal-header h3').innerHTML =
+            `<i class="fas fa-question-circle"></i> ${title}`;
+        document.getElementById('confirmMessage').innerText = message;
+        confirmCallback = callback;
+        confirmModal.classList.add('active');
+    }
 
-            function showAlert(message, type = 'info') {
-                // Simple alert (bisa diganti dengan toast notification)
-                alert(message);
-            }
+    // ─── Toast sederhana (mengganti alert) ────────────────────────────────────
+    function showToast(message, type = 'info') {
+        // Fallback ke alert — ganti dengan library toast jika ada (SweetAlert2, Toastify, dll)
+        alert(message);
+    }
 
-            function applyFilter() {
-                renderPretest();
-            }
+    // ─── Event Listeners ──────────────────────────────────────────────────────
 
-            applyFilterBtn.addEventListener('click', applyFilter);
-            filterMatkul.addEventListener('change', () => {
-                updateModulFilter();
-                renderPretest();
-            });
+    applyFilterBtn.addEventListener('click', renderPretest);
+    filterMatkul.addEventListener('change', () => { updateModulFilter(); renderPretest(); });
 
-            document.getElementById('closeUploadModal').addEventListener('click', closeUploadModal);
-            document.getElementById('cancelUploadModal').addEventListener('click', closeUploadModal);
-            document.getElementById('submitUpload').addEventListener('click', submitUpload);
+    document.getElementById('closeUploadModal').addEventListener('click', closeUploadModal);
+    document.getElementById('cancelUploadModal').addEventListener('click', closeUploadModal);
+    document.getElementById('submitUpload').addEventListener('click', submitUpload);
 
-            document.getElementById('closeConfirmModal').addEventListener('click', closeConfirmModal);
-            document.getElementById('cancelConfirmModal').addEventListener('click', closeConfirmModal);
-            document.getElementById('submitConfirm').addEventListener('click', () => {
-                if (confirmCallback) {
-                    confirmCallback();
-                }
-                closeConfirmModal();
-            });
+    document.getElementById('closeConfirmModal').addEventListener('click', closeConfirmModal);
+    document.getElementById('cancelConfirmModal').addEventListener('click', closeConfirmModal);
+    document.getElementById('submitConfirm').addEventListener('click', () => {
+        if (confirmCallback) confirmCallback();
+        closeConfirmModal();
+    });
 
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    closeUploadModal();
-                    closeConfirmModal();
-                }
-            });
+    window.addEventListener('click', e => {
+        if (e.target.classList.contains('modal')) { closeUploadModal(); closeConfirmModal(); }
+    });
 
-            updateModulFilter();
-            renderPretest();
-            setupFileUpload();
+    // ─── Sidebar ──────────────────────────────────────────────────────────────
 
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
-            if (mobileToggle && sidebarNav) {
-                mobileToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('active');
-                    const icon = mobileToggle.querySelector('i');
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-times');
-                });
-            }
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const sidebarNav   = document.getElementById('sidebarNav');
+    if (mobileToggle && sidebarNav) {
+        mobileToggle.addEventListener('click', () => {
+            sidebarNav.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    }
 
-            document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const sub = trigger.parentElement.querySelector('.submenu');
-                    if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
-                });
-            });
+    document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
+        trigger.addEventListener('click', e => {
+            e.stopPropagation();
+            const sub = trigger.parentElement.querySelector('.submenu');
+            if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
+        });
+    });
 
-            document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
+    // ✅ Guard null untuk logout-btn
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => alert('Anda telah logout.'));
+    }
 
-            document.querySelectorAll('.submenu li').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Pretest')) return;
-                    alert(`🔍 Membuka halaman: ${item.innerText.trim()}`);
-                });
-            });
-        })();
-    </script>
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    updateModulFilter();
+    renderPretest();
+    setupFileUpload();
+})();
+</script>
 </body>
 
 </html>

@@ -20,9 +20,13 @@ class ModulSeeder extends Seeder
         }
 
         // Helper untuk mencari pertemuan
+        $pertemuans = Pertemuan::with('praktikum')->get(); // Eager load relasi
+
         $getPertemuan = function($kodePraktikum, $pertemuanKe) use ($pertemuans) {
-            return $pertemuans->firstWhere(function($item) use ($kodePraktikum, $pertemuanKe) {
-                return $item->kode_praktikum === $kodePraktikum && $item->pertemuan_ke === $pertemuanKe;
+            return $pertemuans->first(function($item) use ($kodePraktikum, $pertemuanKe) {
+                // Akses kode_praktikum melalui relasi model Praktikum
+                return $item->praktikum->kode_praktikum === $kodePraktikum && 
+                    $item->pertemuan_ke === $pertemuanKe;
             });
         };
 

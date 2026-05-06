@@ -1,871 +1,829 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Pendaftaran Saya | Mahasiswa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-
-<body>
     <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --blue: #3b82f6;
+            --blue-dark: #2563eb;
+            --blue-light: #eff6ff;
+            --green: #10b981;
+            --green-light: #dcfce7;
+            --green-text: #15803d;
+            --amber: #f59e0b;
+            --amber-light: #fef3c7;
+            --amber-text: #b45309;
+            --slate: #64748b;
+            --slate-light: #f1f5f9;
+            --red: #ef4444;
+            --red-light: #fee2e2;
+            --red-text: #dc2626;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 32px rgba(0,0,0,0.1);
         }
 
         body {
-            background: #f0f4f8;
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
+            background: var(--bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 28px 32px;
-            overflow-x: auto;
-        }
+        .dashboard-container { display: flex; min-height: 100vh; }
+        .main-content { flex: 1; padding: 32px 36px; min-width: 0; overflow-x: hidden; }
 
+        /* ── Page Header ── */
         .page-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
+            align-items: flex-start;
+            margin-bottom: 28px;
             gap: 16px;
+            flex-wrap: wrap;
         }
-
+        .page-title-wrap {}
         .page-title {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #1e293b;
+        }
+        .page-title .title-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+        }
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            margin-left: 56px;
         }
 
-        .export-btn {
-            padding: 10px 20px;
+        .btn-export {
+            padding: 10px 22px;
             background: linear-gradient(135deg, #10b981, #047857);
             border: none;
-            border-radius: 40px;
+            border-radius: var(--radius-full);
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.25);
+            white-space: nowrap;
         }
-
-        .export-btn:hover {
+        .btn-export:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 6px 16px rgba(16,185,129,0.35);
         }
 
-        .filter-section {
-            background: white;
-            border-radius: 24px;
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            display: flex;
+        /* ── Summary Cards ── */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
         }
-
-        .filter-group {
+        .sum-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            min-width: 150px;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--border);
         }
-
-        .filter-group label {
+        .sum-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .sum-info h4 {
             font-size: 0.75rem;
             font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
-
-        .filter-group select {
-            padding: 10px 14px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .apply-filter-btn {
-            padding: 10px 24px;
-            background: #3b82f6;
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .apply-filter-btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-
-        .summary-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .summary-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: white;
-        }
-
-        .summary-info h3 {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
-
-        .summary-number {
+        .sum-num {
             font-size: 2rem;
-            font-weight: 700;
-            color: #1e293b;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
         }
 
-        .data-table-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* ── Filter & Search Bar ── */
+        .toolbar {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .table-header h3 {
-            font-size: 1.1rem;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--border);
         }
-
-        .table-search {
-            position: relative;
+        .filter-grp {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 140px;
         }
-
-        .table-search input {
-            padding: 8px 16px 8px 40px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            width: 250px;
-            font-size: 0.85rem;
-        }
-
-        .table-search i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 12px 12px;
-            background: #f8fafc;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #64748b;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .data-table td {
-            padding: 12px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 0.85rem;
-            vertical-align: middle;
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 40px;
+        .filter-grp label {
             font-size: 0.7rem;
-            font-weight: 600;
-            display: inline-block;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-        .status-active {
-            background: #dcfce7;
-            color: #16a34a;
+        .filter-grp select,
+        .filter-grp input {
+            padding: 9px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: 0.84rem;
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: 0.2s;
         }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #d97706;
+        .filter-grp select:focus,
+        .filter-grp input:focus {
+            outline: none;
+            border-color: var(--blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
-
-        .status-fail {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .btn-detail {
-            padding: 6px 12px;
-            background: #64748b;
+        .btn-apply {
+            padding: 9px 22px;
+            background: var(--blue);
             color: white;
             border: none;
-            border-radius: 40px;
+            border-radius: var(--radius-full);
+            font-size: 0.84rem;
+            font-weight: 700;
             cursor: pointer;
-            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: inherit;
+            transition: 0.2s;
+            white-space: nowrap;
         }
+        .btn-apply:hover { background: var(--blue-dark); }
 
-        .btn-detail:hover {
-            background: #475569;
+        /* ── Table Card ── */
+        .table-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--border);
+            overflow: hidden;
         }
-
-        .table-footer {
+        .table-card-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
+            padding: 18px 22px;
+            border-bottom: 1.5px solid var(--border);
             flex-wrap: wrap;
             gap: 12px;
         }
-
-        .pagination {
+        .table-card-head h3 {
+            font-size: 1rem;
+            font-weight: 700;
             display: flex;
-            gap: 8px;
             align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+        .table-card-head h3 i { color: var(--blue); }
+
+        .search-wrap { position: relative; }
+        .search-wrap input {
+            padding: 9px 16px 9px 38px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: 0.84rem;
+            width: 240px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .search-wrap input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        .search-wrap i {
+            position: absolute;
+            left: 13px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
         }
 
-        .page-btn {
-            padding: 6px 12px;
-            background: #f1f5f9;
+        .table-responsive { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: #f8fafc; }
+        th {
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1.5px solid var(--border);
+            white-space: nowrap;
+        }
+        td {
+            padding: 13px 14px;
+            font-size: 0.83rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            color: var(--text-primary);
+        }
+        tbody tr { transition: background 0.15s; }
+        tbody tr:hover { background: #f8fafc; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        /* ── Status Badges ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge-active   { background: var(--green-light); color: var(--green-text); }
+        .badge-pending  { background: var(--amber-light); color: var(--amber-text); }
+        .badge-fail     { background: var(--red-light);   color: var(--red-text);   }
+        .badge-selesai  { background: var(--slate-light); color: var(--slate);      }
+
+        .btn-detail {
+            padding: 6px 14px;
+            background: var(--blue-light);
+            color: var(--blue-dark);
             border: none;
-            border-radius: 40px;
+            border-radius: var(--radius-full);
             cursor: pointer;
+            font-size: 0.74rem;
+            font-weight: 700;
+            font-family: inherit;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
+        .btn-detail:hover { background: var(--blue); color: white; }
 
-        .page-btn:hover {
-            background: #3b82f6;
-            color: white;
+        /* ── Table Footer ── */
+        .table-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 22px;
+            border-top: 1.5px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
         }
+        .table-info { font-size: 0.8rem; color: var(--text-secondary); }
 
+        .pagination { display: flex; gap: 6px; align-items: center; }
+        .page-btn {
+            width: 34px; height: 34px;
+            background: var(--slate-light);
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+        .page-btn:hover { background: var(--blue); color: white; }
+        .page-info { font-size: 0.8rem; color: var(--text-secondary); padding: 0 4px; }
+
+        /* ── Empty Row ── */
+        .empty-row td {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-secondary);
+        }
+        .empty-row .empty-icon-sm {
+            font-size: 32px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .empty-row p { font-size: 0.9rem; }
+
+        /* ── Detail Modal ── */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(15,23,42,0.5);
+            z-index: 9999;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 28px;
+        .modal.active { display: flex; }
+        .modal-box {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: modalFadeIn 0.3s ease;
+            animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: var(--shadow-lg);
         }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        .modal-header {
+        .modal-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 18px 24px;
+            border-bottom: 1.5px solid var(--border);
         }
-
-        .modal-header h3 {
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .modal-head h3 {
+            font-size: 1.05rem; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #94a3b8;
+        .modal-head h3 i { color: var(--blue); }
+        .modal-close-btn {
+            background: var(--slate-light); border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; color: var(--text-secondary);
+            font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
         }
+        .modal-close-btn:hover { background: var(--red-light); color: var(--red); }
 
-        .modal-close:hover {
-            color: #ef4444;
+        .modal-body { padding: 22px 24px; }
+
+        .detail-section {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1.5px solid var(--border);
         }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            padding: 16px 24px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .btn-cancel {
-            padding: 8px 20px;
-            background: #f1f5f9;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
         .detail-row {
             display: flex;
-            padding: 8px 0;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--border);
         }
-
+        .detail-row:last-child { border-bottom: none; }
         .detail-label {
-            width: 120px;
-            font-weight: 600;
-            color: #64748b;
+            width: 130px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
         }
-
-        .detail-value {
+        .detail-val {
             flex: 1;
-            color: #1e293b;
+            font-size: 0.83rem;
+            color: var(--text-primary);
         }
 
+        .modal-foot {
+            display: flex;
+            justify-content: flex-end;
+            padding: 14px 24px;
+            border-top: 1.5px solid var(--border);
+        }
+        .btn-close-modal {
+            padding: 9px 24px;
+            background: var(--slate-light);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .btn-close-modal:hover { background: var(--border); }
+
+        /* ── Responsive ── */
         @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .sidebar-nav {
-                display: none;
-                padding: 0 20px 20px 20px;
-            }
-
-            .sidebar-nav.active {
-                display: flex;
-            }
-
-            .profile-section {
-                flex-direction: row;
-                gap: 16px;
-                text-align: left;
-            }
-
-            .avatar-circle {
-                width: 60px;
-                height: 60px;
-                margin: 0;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .page-title {
-                font-size: 1.4rem;
-            }
-
-            .filter-section {
-                flex-direction: column;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .table-search input {
-                width: 100%;
-            }
-
-            .table-footer {
-                flex-direction: column;
-                text-align: center;
-            }
+            .dashboard-container { flex-direction: column; }
+            .main-content { padding: 20px 16px; }
+            .page-title { font-size: 1.35rem; }
+            .page-subtitle { margin-left: 0; }
+            .summary-row { grid-template-columns: 1fr 1fr; }
+            .search-wrap input { width: 100%; }
+            .table-foot { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 480px) {
+            .summary-row { grid-template-columns: 1fr; }
         }
     </style>
+</head>
+<body>
+<div class="dashboard-container">
+    @include('mahasiswa/partials/sidebar')
 
-    <div class="dashboard-container">
-        @include('mahasiswa/partials/sidebar')
+    <main class="main-content">
+        {{-- ── Page Header ── --}}
+        <div class="page-header">
+            <div class="page-title-wrap">
+                <h1 class="page-title">
+                    <span class="title-icon"><i class="fas fa-pen-ruler"></i></span>
+                    Pendaftaran Saya
+                </h1>
+                <p class="page-subtitle">Daftar jadwal praktikum yang telah Anda ikuti</p>
+            </div>
+            <button class="btn-export" id="exportBtn">
+                <i class="fas fa-download"></i> Export CSV
+            </button>
+        </div>
 
-        <main class="main-content">
-            <div class="page-header">
-                <h1 class="page-title"><i class="fas fa-pen-ruler"></i> Pendaftaran Saya</h1>
-                <div class="header-actions">
-                    <button class="export-btn" id="exportBtn"><i class="fas fa-download"></i> Export Data</button>
+        {{-- ── Summary Cards ── --}}
+        <div class="summary-row">
+            <div class="sum-card">
+                <div class="sum-icon" style="background:linear-gradient(135deg,#3b82f6,#1e40af)">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="sum-info">
+                    <h4>Total</h4>
+                    <div class="sum-num" id="sumTotal">0</div>
                 </div>
             </div>
-
-            <div class="filter-section">
-                <div class="filter-group">
-                    <label><i class="fas fa-filter"></i> Filter Status</label>
-                    <select id="filterStatus">
-                        <option value="all">Semua Status</option>
-                        <option value="active">Active</option>
-                        <option value="pending">Pending</option>
-                        <option value="fail">Fail</option>
-                    </select>
+            <div class="sum-card">
+                <div class="sum-icon" style="background:linear-gradient(135deg,#10b981,#047857)">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="filter-group">
-                    <label><i class="fas fa-flask"></i> Mata Kuliah</label>
-                    <select id="filterMatkul">
-                        <option value="all">Semua Mata Kuliah</option>
-                        <option value="Pemrograman Dasar">Pemrograman Dasar</option>
-                        <option value="Struktur Data">Struktur Data</option>
-                        <option value="Basis Data">Basis Data</option>
-                        <option value="Jaringan Komputer">Jaringan Komputer</option>
-                        <option value="Sistem Operasi">Sistem Operasi</option>
-                        <option value="Pengolahan Citra Digital">Pengolahan Citra Digital</option>
-                        <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
-                        <option value="Rekayasa Perangkat Lunak (RPL)">Rekayasa Perangkat Lunak (RPL)</option>
-                    </select>
-                </div>
-                <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
-            </div>
-
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #10b981, #047857);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Active</h3>
-                        <p class="summary-number" id="totalActive">0</p>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #f59e0b, #b45309);">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Pending</h3>
-                        <p class="summary-number" id="totalPending">0</p>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">
-                        <i class="fas fa-times-circle"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Fail</h3>
-                        <p class="summary-number" id="totalFail">0</p>
-                    </div>
+                <div class="sum-info">
+                    <h4>Aktif / Dibuka</h4>
+                    <div class="sum-num" id="sumActive">0</div>
                 </div>
             </div>
-
-            <div class="data-table-card">
-                <div class="table-header">
-                    <h3><i class="fas fa-table-list"></i> Daftar Pendaftaran Praktikum</h3>
-                    <div class="table-search">
-                        <input type="text" id="tableSearch" placeholder="Cari mata kuliah atau modul...">
-                        <i class="fas fa-search"></i>
-                    </div>
+            <div class="sum-card">
+                <div class="sum-icon" style="background:linear-gradient(135deg,#64748b,#334155)">
+                    <i class="fas fa-flag-checkered"></i>
                 </div>
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Mata Kuliah</th>
-                                <th>Modul</th>
-                                <th>Materi</th>
-                                <th>Jadwal</th>
-                                <th>Laboratorium</th>
-                                <th>Dosen</th>
-                                <th>Status</th>
-                                <th>Keterangan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    <span id="tableInfo">Menampilkan data</span>
-                    <div class="pagination">
-                        <button class="page-btn" id="prevPage"><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageInfo">Halaman 1</span>
-                        <button class="page-btn" id="nextPage"><i class="fas fa-chevron-right"></i></button>
-                    </div>
+                <div class="sum-info">
+                    <h4>Selesai</h4>
+                    <div class="sum-num" id="sumSelesai">0</div>
                 </div>
             </div>
-        </main>
-    </div>
-
-    <div class="modal" id="detailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-info-circle"></i> Detail Pendaftaran</h3>
-                <button class="modal-close" id="closeDetailModal">&times;</button>
-            </div>
-            <div class="modal-body" id="detailModalBody"></div>
-            <div class="modal-footer">
-                <button class="btn-cancel" id="closeDetailModalBtn">Tutup</button>
+            <div class="sum-card">
+                <div class="sum-icon" style="background:linear-gradient(135deg,#f59e0b,#b45309)">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="sum-info">
+                    <h4>Pending</h4>
+                    <div class="sum-num" id="sumPending">0</div>
+                </div>
             </div>
         </div>
+
+        {{-- ── Toolbar ── --}}
+        <div class="toolbar">
+            <div class="filter-grp">
+                <label><i class="fas fa-filter"></i> Status Jadwal</label>
+                <select id="filterStatus">
+                    <option value="all">Semua Status</option>
+                    <option value="Dibuka">Dibuka (Aktif)</option>
+                    <option value="Penuh">Penuh</option>
+                    <option value="Selesai">Selesai</option>
+                </select>
+            </div>
+            <div class="filter-grp">
+                <label><i class="fas fa-flask"></i> Praktikum</label>
+                <select id="filterPraktikum">
+                    <option value="all">Semua Praktikum</option>
+                </select>
+            </div>
+            <button class="btn-apply" id="applyFilter">
+                <i class="fas fa-search"></i> Terapkan
+            </button>
+        </div>
+
+        {{-- ── Table Card ── --}}
+        <div class="table-card">
+            <div class="table-card-head">
+                <h3><i class="fas fa-table-list"></i> Daftar Pendaftaran Praktikum</h3>
+                <div class="search-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari praktikum, pertemuan...">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Praktikum</th>
+                            <th>Pertemuan</th>
+                            <th>Materi</th>
+                            <th>Tanggal & Waktu</th>
+                            <th>Laboratorium</th>
+                            <th>Dosen</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div class="table-foot">
+                <span class="table-info" id="tableInfo">—</span>
+                <div class="pagination">
+                    <button class="page-btn" id="prevPage"><i class="fas fa-chevron-left"></i></button>
+                    <span class="page-info" id="pageInfo">Halaman 1</span>
+                    <button class="page-btn" id="nextPage"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{{-- ── Detail Modal ── --}}
+<div class="modal" id="detailModal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3><i class="fas fa-info-circle"></i> Detail Pendaftaran</h3>
+            <button class="modal-close-btn" id="closeDetailModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-section" id="detailContent"></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn-close-modal" id="closeDetailBtn">Tutup</button>
+        </div>
     </div>
-    <script>
-        (function() {
-            let pendaftaranData = [{
-                    id: 1,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 1: Pengenalan Jaringan & OSI Layer",
-                    materi: "Konsep dasar jaringan, model OSI/TCP/IP, fungsi setiap layer.",
-                    jadwal: "Senin, 14 April 2026 | 13:00 - 15:30",
-                    lab: "Lab Jaringan Lt.3",
-                    dosen: "Dr. Budi Santoso, M.Kom.",
-                    status: "active",
-                    keterangan: "Pendaftaran berhasil, silakan ikuti praktikum sesuai jadwal"
-                },
-                {
-                    id: 2,
-                    matkul: "Rekayasa Perangkat Lunak (RPL)",
-                    modul: "Modul 1: Pengenalan RPL & Tools",
-                    materi: "Konsep RPL, metodologi (Waterfall, Agile), tools (JIRA, Trello).",
-                    jadwal: "Rabu, 16 April 2026 | 13:00 - 15:30",
-                    lab: "Lab RPL Lt.3",
-                    dosen: "Dr. Budi Santoso, M.Kom.",
-                    status: "active",
-                    keterangan: "Pendaftaran berhasil, silakan ikuti praktikum sesuai jadwal"
-                },
-                {
-                    id: 3,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 2: Subnetting & VLSM",
-                    materi: "Teknik subnetting IP address, perhitungan subnet mask, VLSM.",
-                    jadwal: "Rabu, 16 April 2026 | 10:00 - 12:30",
-                    lab: "Lab Jaringan Lt.3",
-                    dosen: "Dr. Budi Santoso, M.Kom.",
-                    status: "pending",
-                    keterangan: "Menunggu konfirmasi dosen, jadwal masih dalam proses verifikasi"
-                },
-                {
-                    id: 4,
-                    matkul: "Basis Data",
-                    modul: "Modul 1: Pengenalan Basis Data & SQL",
-                    materi: "Konsep basis data, DBMS, dan perintah dasar SQL.",
-                    jadwal: "Rabu, 16 April 2026 | 08:00 - 10:30",
-                    lab: "Lab Sistem Informasi Lt.3",
-                    dosen: "Dr. Citra Dewi, S.Si., M.Kom.",
-                    status: "fail",
-                    keterangan: "Pendaftaran gagal karena kuota sudah penuh (kuota: 35/35)"
-                },
-                {
-                    id: 5,
-                    matkul: "Pemrograman Dasar",
-                    modul: "Modul 2: Variabel & Tipe Data",
-                    materi: "Pengertian variabel, tipe data (int, float, char, boolean).",
-                    jadwal: "Selasa, 15 April 2026 | 10:00 - 12:30",
-                    lab: "Lab Multimedia Lt.3",
-                    dosen: "Dr. Anita Wijaya, M.Kom.",
-                    status: "pending",
-                    keterangan: "Menunggu persetujuan dari koordinator praktikum"
-                },
-                {
-                    id: 6,
-                    matkul: "Sistem Operasi",
-                    modul: "Modul 1: Pengenalan Sistem Operasi",
-                    materi: "Sejarah, jenis, dan arsitektur sistem operasi.",
-                    jadwal: "Jumat, 18 April 2026 | 08:00 - 10:30",
-                    lab: "Lab Sistem Informasi Lt.3",
-                    dosen: "Dr. Deni Setiawan, M.Cs.",
-                    status: "fail",
-                    keterangan: "Pendaftaran gagal karena bentrok dengan jadwal mata kuliah lain"
-                },
-                {
-                    id: 7,
-                    matkul: "Pengolahan Citra Digital",
-                    modul: "Modul 1: Sampling & Kuantisasi",
-                    materi: "Konsep sampling dan kuantisasi pada citra digital.",
-                    jadwal: "Selasa, 15 April 2026 | 13:00 - 15:30",
-                    lab: "Lab Multimedia Lt.3",
-                    dosen: "Dr. Eka Permata, M.T.",
-                    status: "active",
-                    keterangan: "Pendaftaran berhasil, silakan ikuti praktikum sesuai jadwal"
-                },
-                {
-                    id: 8,
-                    matkul: "Internet of Things (IoT)",
-                    modul: "Modul 1: Pengenalan IoT & Arduino",
-                    materi: "Konsep IoT, arsitektur, pengenalan platform Arduino.",
-                    jadwal: "Selasa, 15 April 2026 | 08:00 - 10:30",
-                    lab: "Lab Jaringan Lt.3",
-                    dosen: "Dr. Fajar Nugroho, S.T., M.Eng.",
-                    status: "fail",
-                    keterangan: "Pendaftaran gagal karena melebihi batas maksimal pendaftar"
-                }
-            ];
+</div>
 
-            let currentPage = 1;
-            let rowsPerPage = 5;
-            let filteredData = [];
+@php
+    $user = Auth::user();
 
-            function getStatusBadge(status) {
-                let statusClass = '';
-                let statusText = '';
-                if (status === 'active') {
-                    statusClass = 'status-active';
-                    statusText = 'Active';
-                } else if (status === 'pending') {
-                    statusClass = 'status-pending';
-                    statusText = 'Pending';
-                } else {
-                    statusClass = 'status-fail';
-                    statusText = 'Fail';
-                }
-                return `<span class="status-badge ${statusClass}">${statusText}</span>`;
-            }
+    $pendaftarans = \App\Models\PendaftaranPraktikum::with([
+        'jadwal.praktikum',
+        'jadwal.laboratorium',
+        'jadwal.dosen',
+        'jadwal.pertemuan.modul',
+        'jadwal.pendaftarans',
+    ])
+    ->where('id_user', $user->id)
+    ->get();
 
-            function renderTable() {
-                const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
-                let filtered = filteredData.filter(item =>
-                    item.matkul.toLowerCase().includes(searchTerm) ||
-                    item.modul.toLowerCase().includes(searchTerm)
-                );
+    $pendaftaranDataArray = $pendaftarans->map(function($p) {
+        $jadwal  = $p->jadwal;
+        $status  = $jadwal?->status ?? 'Pending';
 
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                const pageData = filtered.slice(start, end);
+        return [
+            'id'         => $p->id,
+            'id_jadwal'  => $jadwal?->id,
+            'praktikum'  => $jadwal?->praktikum?->nama_praktikum ?? '-',
+            'kode'       => $jadwal?->praktikum?->kode_praktikum ?? '-',
+            'pertemuan'  => $jadwal?->pertemuan?->nama_pertemuan ?? '-',
+            'pertemuan_ke' => $jadwal?->pertemuan?->pertemuan_ke ?? 0,
+            'materi'     => $jadwal?->pertemuan?->modul?->judul_modul
+                            ?? $jadwal?->pertemuan?->deskripsi_pertemuan
+                            ?? '-',
+            'tanggal'    => $jadwal?->tanggal?->format('l, d M Y') ?? '-',
+            'jam'        => ($jadwal?->jam_mulai ?? '-') . ' – ' . ($jadwal?->jam_selesai ?? '-'),
+            'lab'        => $jadwal?->laboratorium?->nama_laboratorium ?? '-',
+            'dosen'      => $jadwal?->dosen?->nama ?? '-',
+            'status'     => $status,
+            'terisi'     => $jadwal?->pendaftarans ? $jadwal->pendaftarans->count() : 0,
+            'maks'       => $jadwal?->jumlah_max_peserta ?? 0,
+            'keterangan' => match($status) {
+                'Dibuka'  => 'Pendaftaran berhasil. Silakan ikuti praktikum sesuai jadwal.',
+                'Penuh'   => 'Jadwal ini telah penuh.',
+                'Selesai' => 'Praktikum telah selesai dilaksanakan.',
+                default   => 'Status tidak diketahui.',
+            },
+        ];
+    })->values()->toArray();
+@endphp
 
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
+<script>
+(function () {
+    const allData = @json($pendaftaranDataArray);
 
-                pageData.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td>${item.matkul}</td>
-                <td>${item.modul}</td>
-                <td>${item.materi.substring(0, 60)}${item.materi.length > 60 ? '...' : ''}</td>
-                <td>${item.jadwal}</td>
-                <td>${item.lab}</td>
-                <td>${item.dosen}</td>
-                <td>${getStatusBadge(item.status)}</td>
-                <td>${item.keterangan.substring(0, 40)}${item.keterangan.length > 40 ? '...' : ''}</td>
-                <td><button class="btn-detail" data-id="${item.id}"><i class="fas fa-eye"></i> Detail</button></td>
-            `;
-                    tbody.appendChild(row);
-                });
+    let filteredData = [...allData];
+    let currentPage  = 1;
+    const rowsPerPage = 8;
 
-                document.querySelectorAll('.btn-detail').forEach(btn => {
-                    btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
-                });
+    // Populate praktikum filter options
+    const uniquePraktikums = [...new Set(allData.map(d => d.praktikum))];
+    const selPraktikum = document.getElementById('filterPraktikum');
+    uniquePraktikums.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name; opt.textContent = name;
+        selPraktikum.appendChild(opt);
+    });
 
-                const totalPages = Math.ceil(filtered.length / rowsPerPage);
-                document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
-                document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data pendaftaran`;
+    function statusBadge(status) {
+        const map = {
+            'Dibuka':  { cls: 'badge-active',  icon: 'fa-circle-dot',      label: 'Dibuka' },
+            'Penuh':   { cls: 'badge-pending',  icon: 'fa-users',            label: 'Penuh'  },
+            'Selesai': { cls: 'badge-selesai',  icon: 'fa-flag-checkered',   label: 'Selesai' },
+        };
+        const s = map[status] ?? { cls: 'badge-pending', icon: 'fa-clock', label: status };
+        return `<span class="badge ${s.cls}"><i class="fas ${s.icon}"></i> ${s.label}</span>`;
+    }
 
-                updateSummary();
-            }
+    function truncate(str, n) {
+        return str && str.length > n ? str.substring(0, n) + '…' : str;
+    }
 
-            function updateSummary() {
-                const totalActive = filteredData.filter(item => item.status === 'active').length;
-                const totalPending = filteredData.filter(item => item.status === 'pending').length;
-                const totalFail = filteredData.filter(item => item.status === 'fail').length;
+    function updateSummary() {
+        document.getElementById('sumTotal').textContent   = allData.length;
+        document.getElementById('sumActive').textContent  = allData.filter(d => d.status === 'Dibuka').length;
+        document.getElementById('sumSelesai').textContent = allData.filter(d => d.status === 'Selesai').length;
+        document.getElementById('sumPending').textContent = allData.filter(d => d.status === 'Penuh').length;
+    }
 
-                document.getElementById('totalActive').innerText = totalActive;
-                document.getElementById('totalPending').innerText = totalPending;
-                document.getElementById('totalFail').innerText = totalFail;
-            }
+    function renderTable() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const searched = filteredData.filter(d =>
+            d.praktikum.toLowerCase().includes(search) ||
+            d.pertemuan.toLowerCase().includes(search) ||
+            d.materi.toLowerCase().includes(search)
+        );
 
-            function filterData() {
-                const status = document.getElementById('filterStatus').value;
-                const matkul = document.getElementById('filterMatkul').value;
+        const total    = searched.length;
+        const totalPg  = Math.max(1, Math.ceil(total / rowsPerPage));
+        if (currentPage > totalPg) currentPage = totalPg;
 
-                filteredData = pendaftaranData.filter(item => {
-                    if (status !== 'all' && item.status !== status) return false;
-                    if (matkul !== 'all' && item.matkul !== matkul) return false;
-                    return true;
-                });
+        const start    = (currentPage - 1) * rowsPerPage;
+        const pageData = searched.slice(start, start + rowsPerPage);
 
-                currentPage = 1;
-                renderTable();
-            }
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
 
-            function openDetailModal(id) {
-                const item = pendaftaranData.find(d => d.id === id);
-                if (!item) return;
+        if (!pageData.length) {
+            tbody.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="8">
+                        <div class="empty-icon-sm"><i class="fas fa-inbox"></i></div>
+                        <p>Tidak ada data pendaftaran ditemukan.</p>
+                    </td>
+                </tr>`;
+        } else {
+            pageData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:700;">${item.praktikum}</div>
+                        <div style="font-size:0.72rem;color:var(--text-muted);">${item.kode}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600;">${item.pertemuan}</div>
+                        <div style="font-size:0.72rem;color:var(--text-muted);">Pertemuan ${item.pertemuan_ke}</div>
+                    </td>
+                    <td style="max-width:180px;">${truncate(item.materi, 55)}</td>
+                    <td>
+                        <div style="font-weight:600;">${item.tanggal}</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);">${item.jam}</div>
+                    </td>
+                    <td>${item.lab}</td>
+                    <td>${item.dosen}</td>
+                    <td>${statusBadge(item.status)}</td>
+                    <td>
+                        <button class="btn-detail" data-id="${item.id}">
+                            <i class="fas fa-eye"></i> Detail
+                        </button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
 
-                const modalBody = document.getElementById('detailModalBody');
-                modalBody.innerHTML = `
-            <div class="detail-row"><span class="detail-label">Mata Kuliah:</span><span class="detail-value">${item.matkul}</span></div>
-            <div class="detail-row"><span class="detail-label">Modul:</span><span class="detail-value">${item.modul}</span></div>
-            <div class="detail-row"><span class="detail-label">Materi:</span><span class="detail-value">${item.materi}</span></div>
-            <div class="detail-row"><span class="detail-label">Jadwal:</span><span class="detail-value">${item.jadwal}</span></div>
-            <div class="detail-row"><span class="detail-label">Laboratorium:</span><span class="detail-value">${item.lab}</span></div>
-            <div class="detail-row"><span class="detail-label">Dosen:</span><span class="detail-value">${item.dosen}</span></div>
-            <div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value">${getStatusBadge(item.status)}</span></div>
-            <div class="detail-row"><span class="detail-label">Keterangan:</span><span class="detail-value">${item.keterangan}</span></div>
+            document.querySelectorAll('.btn-detail').forEach(btn => {
+                btn.addEventListener('click', () => openDetail(+btn.dataset.id));
+            });
+        }
+
+        document.getElementById('pageInfo').textContent  = `Halaman ${currentPage} dari ${totalPg}`;
+        document.getElementById('tableInfo').textContent = `Menampilkan ${Math.min(start + 1, total)}–${Math.min(start + rowsPerPage, total)} dari ${total} data`;
+    }
+
+    function applyFilters() {
+        const status   = document.getElementById('filterStatus').value;
+        const praktikum = document.getElementById('filterPraktikum').value;
+
+        filteredData = allData.filter(d => {
+            if (status !== 'all' && d.status !== status)       return false;
+            if (praktikum !== 'all' && d.praktikum !== praktikum) return false;
+            return true;
+        });
+        currentPage = 1;
+        renderTable();
+    }
+
+    function openDetail(id) {
+        const item = allData.find(d => d.id === id);
+        if (!item) return;
+        document.getElementById('detailContent').innerHTML = `
+            <div class="detail-row"><span class="detail-label">Praktikum</span><span class="detail-val">${item.praktikum} (${item.kode})</span></div>
+            <div class="detail-row"><span class="detail-label">Pertemuan</span><span class="detail-val">${item.pertemuan} (ke-${item.pertemuan_ke})</span></div>
+            <div class="detail-row"><span class="detail-label">Materi</span><span class="detail-val">${item.materi}</span></div>
+            <div class="detail-row"><span class="detail-label">Tanggal</span><span class="detail-val">${item.tanggal}</span></div>
+            <div class="detail-row"><span class="detail-label">Waktu</span><span class="detail-val">${item.jam}</span></div>
+            <div class="detail-row"><span class="detail-label">Laboratorium</span><span class="detail-val">${item.lab}</span></div>
+            <div class="detail-row"><span class="detail-label">Dosen</span><span class="detail-val">${item.dosen}</span></div>
+            <div class="detail-row"><span class="detail-label">Status</span><span class="detail-val">${statusBadge(item.status)}</span></div>
+            <div class="detail-row"><span class="detail-label">Kuota</span><span class="detail-val">${item.terisi} / ${item.maks} peserta</span></div>
+            <div class="detail-row"><span class="detail-label">Keterangan</span><span class="detail-val">${item.keterangan}</span></div>
         `;
-                document.getElementById('detailModal').classList.add('active');
-            }
+        document.getElementById('detailModal').classList.add('active');
+    }
 
-            function closeModal() {
-                document.getElementById('detailModal').classList.remove('active');
-            }
+    function closeDetail() {
+        document.getElementById('detailModal').classList.remove('active');
+    }
 
-            function exportData() {
-                let csvContent = "Mata Kuliah,Modul,Materi,Jadwal,Laboratorium,Dosen,Status,Keterangan\n";
-                filteredData.forEach(item => {
-                    let statusText = item.status === 'active' ? 'Active' : (item.status === 'pending' ?
-                        'Pending' : 'Fail');
-                    csvContent +=
-                        `"${item.matkul}","${item.modul}","${item.materi}","${item.jadwal}","${item.lab}","${item.dosen}","${statusText}","${item.keterangan}"\n`;
-                });
-                const blob = new Blob([csvContent], {
-                    type: 'text/csv'
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'pendaftaran_praktikum.csv';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('📥 Data berhasil diekspor!');
-            }
+    function exportCSV() {
+        let csv = 'Praktikum,Kode,Pertemuan,Materi,Tanggal,Waktu,Laboratorium,Dosen,Status,Keterangan\n';
+        filteredData.forEach(d => {
+            csv += `"${d.praktikum}","${d.kode}","${d.pertemuan}","${d.materi}","${d.tanggal}","${d.jam}","${d.lab}","${d.dosen}","${d.status}","${d.keterangan}"\n`;
+        });
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+        Object.assign(document.createElement('a'), { href: url, download: 'pendaftaran_saya.csv' }).click();
+        URL.revokeObjectURL(url);
+    }
 
-            document.getElementById('applyFilter').addEventListener('click', filterData);
-            document.getElementById('tableSearch').addEventListener('input', () => {
-                currentPage = 1;
-                renderTable();
-            });
-            document.getElementById('prevPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            });
-            document.getElementById('nextPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            });
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            document.getElementById('closeDetailModal').addEventListener('click', closeModal);
-            document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) closeModal();
-            });
+    // Events
+    document.getElementById('applyFilter').addEventListener('click', applyFilters);
+    document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; renderTable(); });
+    document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const search   = document.getElementById('searchInput').value.toLowerCase();
+        const searched = filteredData.filter(d =>
+            d.praktikum.toLowerCase().includes(search) ||
+            d.pertemuan.toLowerCase().includes(search) ||
+            d.materi.toLowerCase().includes(search)
+        );
+        const totalPg = Math.ceil(searched.length / rowsPerPage);
+        if (currentPage < totalPg) { currentPage++; renderTable(); }
+    });
+    document.getElementById('exportBtn').addEventListener('click', exportCSV);
+    document.getElementById('closeDetailModal').addEventListener('click', closeDetail);
+    document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
+    window.addEventListener('click', e => { if (e.target.id === 'detailModal') closeDetail(); });
 
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
-            if (mobileToggle && sidebarNav) {
-                mobileToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('active');
-                    const icon = mobileToggle.querySelector('i');
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-times');
-                });
-            }
+    // Mobile sidebar
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const sidebarNav   = document.getElementById('sidebarNav');
+    if (mobileToggle && sidebarNav) {
+        mobileToggle.addEventListener('click', () => {
+            sidebarNav.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon?.classList.toggle('fa-bars');
+            icon?.classList.toggle('fa-times');
+        });
+    }
 
-            document.querySelectorAll('.has-sub .sub-trigger').forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const sub = trigger.parentElement.querySelector('.submenu');
-                    if (sub) sub.style.display = sub.style.display === 'none' ? 'block' : 'none';
-                });
-            });
-
-            document.querySelector('.logout-btn').addEventListener('click', () => alert('Anda telah logout.'));
-
-            document.querySelectorAll('.submenu li').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Pendaftaran Saya')) return;
-                });
-            });
-
-            filterData();
-        })();
-    </script>
+    // Init
+    updateSummary();
+    applyFilters();
+})();
+</script>
 </body>
-
 </html>

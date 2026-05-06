@@ -14,7 +14,9 @@ class PendaftaranPraktikumSeeder extends Seeder
      */
     public function run(): void
     {
-        $jadwals = Jadwal::all();
+        // Hanya jadwal untuk pertemuan 1-3 karena user sedang di pertemuan 3
+        $pertemuanIds = \App\Models\Pertemuan::where('pertemuan_ke', '<=', 3)->pluck('id');
+        $jadwals = Jadwal::whereIn('id_pertemuan', $pertemuanIds)->get();
         $praktikans = User::where('role', 'Praktikan')->get();
         $asistens = User::where('role', 'Asisten')->get();
 

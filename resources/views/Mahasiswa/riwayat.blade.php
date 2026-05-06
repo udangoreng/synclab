@@ -516,117 +516,18 @@
     </div>
     <script>
         (function() {
-            const riwayatData = [{
-                    id: 1,
-                    matkul: "Pemrograman Dasar",
-                    modul: "Modul 1: Algoritma & Flowchart",
-                    pretest: 85,
-                    laporan: 82,
-                    nilaiAkhir: 83.5,
-                    tanggalSelesai: "15 Maret 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 2,
-                    matkul: "Pemrograman Dasar",
-                    modul: "Modul 2: Variabel & Tipe Data",
-                    pretest: 88,
-                    laporan: 85,
-                    nilaiAkhir: 86.5,
-                    tanggalSelesai: "22 Maret 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 3,
-                    matkul: "Struktur Data",
-                    modul: "Modul 1: Array & Linked List",
-                    pretest: 90,
-                    laporan: 88,
-                    nilaiAkhir: 89,
-                    tanggalSelesai: "10 April 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 4,
-                    matkul: "Struktur Data",
-                    modul: "Modul 2: Stack & Queue",
-                    pretest: 85,
-                    laporan: 82,
-                    nilaiAkhir: 83.5,
-                    tanggalSelesai: "17 April 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 5,
-                    matkul: "Basis Data",
-                    modul: "Modul 1: Pengenalan Basis Data & SQL",
-                    pretest: 88,
-                    laporan: 85,
-                    nilaiAkhir: 86.5,
-                    tanggalSelesai: "5 Mei 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 6,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 1: Pengenalan Jaringan & OSI Layer",
-                    pretest: 90,
-                    laporan: 88,
-                    nilaiAkhir: 89,
-                    tanggalSelesai: "20 Mei 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 7,
-                    matkul: "Jaringan Komputer",
-                    modul: "Modul 2: Subnetting & VLSM",
-                    pretest: 85,
-                    laporan: 82,
-                    nilaiAkhir: 83.5,
-                    tanggalSelesai: "27 Mei 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 8,
-                    matkul: "Rekayasa Perangkat Lunak (RPL)",
-                    modul: "Modul 1: Pengenalan RPL & Tools",
-                    pretest: 88,
-                    laporan: 90,
-                    nilaiAkhir: 89,
-                    tanggalSelesai: "3 Juni 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 9,
-                    matkul: "Rekayasa Perangkat Lunak (RPL)",
-                    modul: "Modul 2: Analisis Kebutuhan",
-                    pretest: 85,
-                    laporan: 88,
-                    nilaiAkhir: 86.5,
-                    tanggalSelesai: "10 Juni 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 10,
-                    matkul: "Pengolahan Citra Digital",
-                    modul: "Modul 1: Sampling & Kuantisasi",
-                    pretest: 92,
-                    laporan: 88,
-                    nilaiAkhir: 90,
-                    tanggalSelesai: "15 Juni 2026",
-                    status: "Completed"
-                },
-                {
-                    id: 11,
-                    matkul: "Pengolahan Citra Digital",
-                    modul: "Modul 2: Operasi Aritmatika Citra",
-                    pretest: 88,
-                    laporan: 85,
-                    nilaiAkhir: 86.5,
-                    tanggalSelesai: "22 Juni 2026",
-                    status: "Completed"
-                }
-            ];
+            const riwayatData = @json($nilais->map(function($nilai) {
+                return [
+                    'id' => $nilai->id,
+                    'matkul' => $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum',
+                    'modul' => $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan',
+                    'pretest' => $nilai->nilai_pretest ?? 0,
+                    'laporan' => $nilai->nilai_laporan ?? 0,
+                    'nilaiAkhir' => $nilai->nilai_akhir ?? 0,
+                    'tanggalSelesai' => $nilai->created_at?->format('d M Y') ?? '-',
+                    'status' => $nilai->status ?? 'Pending'
+                ];
+            }));
 
             let filteredData = [];
 

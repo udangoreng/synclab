@@ -16,7 +16,8 @@ class PengumpulanLaporanSeeder extends Seeder
     public function run(): void
     {
         $laporans = Laporan::all();
-        $pertemuans = Pertemuan::all();
+        // Hanya pertemuan 1-2 karena user sedang di pertemuan 3
+        $pertemuans = Pertemuan::where('pertemuan_ke', '<=', 2)->get();
         $praktikans = User::where('role', 'Praktikan')->get();
 
         if ($laporans->isEmpty() || $praktikans->isEmpty() || $pertemuans->isEmpty()) {

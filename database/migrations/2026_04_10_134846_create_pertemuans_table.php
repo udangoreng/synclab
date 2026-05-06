@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('pertemuans', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_praktikum');
-            $table->foreign('kode_praktikum')->nullable()->references('kode_praktikum')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_praktikum')->nullable()->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_pertemuan');
             $table->integer('pertemuan_ke');
             $table->longText('deskripsi_pertemuan');

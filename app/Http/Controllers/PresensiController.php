@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Presensi;
-use App\Models\Pertemuan;
-use App\Models\Praktikum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,25 +17,25 @@ class PresensiController extends Controller
 
         try {
             if ($user->role === 'Praktikan') {
-                // Get presensi with pertemuan -> jadwal -> praktikum
+                // Get presensi with pertemuan -> praktikum
                 $presensis = Presensi::where('id_user', $user->id)
-                    ->with(['pertemuan.jadwal.praktikum', 'user'])
+                    ->with(['pertemuan.praktikum', 'user'])
                     ->get();
 
                 // Group by praktikum for summary
                 $presensiPerPraktikum = $presensis->groupBy(function($presensi) {
-                    return $presensi->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? 'Unknown';
+                    return $presensi->pertemuan?->praktikum?->nama_praktikum ?? 'Unknown';
                 });
 
                 return view('mahasiswa/presensi', compact('presensis', 'presensiPerPraktikum'));
-            } else {
-                $presensis = Presensi::with('pertemuan.jadwal.praktikum', 'user')->get();
+            }
 
-                if ($user->role === 'Dosen') {
-                    return view('dosen/presensi', compact('presensis'));
-                } elseif ($user->role === 'Asisten') {
-                    return view('asisten/presensiSatu_asisten', compact('presensis'));
-                }
+            $presensis = Presensi::with('pertemuan.praktikum', 'user')->get();
+
+            if ($user->role === 'Dosen') {
+                return view('dosen/presensi', compact('presensis'));
+            } elseif ($user->role === 'Asisten') {
+                return view('asisten/presensiSatu_asisten', compact('presensis'));
             }
 
             return response()->json([
@@ -53,8 +51,8 @@ class PresensiController extends Controller
         }
     }
 
-    function getHistoryPresensi() {
-        $presensis = Presensi::with('pertemuan.jadwal.praktikum', 'user')->get();
+    public function getHistoryPresensi() {
+        $presensis = Presensi::with('pertemuan.praktikum', 'user')->get();
         return view('asisten/presensiDua_asisten', compact('presensis'));
     }
 
@@ -105,7 +103,7 @@ class PresensiController extends Controller
         try {
             $presensi = Presensi::findOrFail($id);
             $validated = $request->validate([
-                'id_praktikum' => 'sometimes|integer|exists:praktikums,id',
+                'id_pertemuan' => 'sometimes|integer|exists:pertemuans,id',
                 'id_user' => 'sometimes|integer|exists:users,id',
                 'kehadiran' => 'sometimes|in:Hadir,Izin,Sakit,Alpha',
                 'status' => 'sometimes|in:Dikonfirmasi,Pending,Ditolak',
@@ -116,7 +114,7 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi updated successfully',
-                'data' => $presensi->load('pertemuan', 'user', 'praktikum')
+                'data' => $presensi->load('pertemuan.praktikum', 'user')
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -154,16 +152,14 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
-            $query = Presensi::where('id_praktikum', $idPraktikum)->with(['praktikum', 'user']);
+            $query = Presensi::whereHas('pertemuan', function($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
 
             if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
+                $presensis = $query->where('id_user', $user->id)->get();
             } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user');
+                $presensis = $query->get();
             }
 
             return response()->json([
@@ -188,15 +184,14 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
+            $query = Presensi::whereHas('pertemuan', function($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
+
             if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
+                $presensis = $query->where('id_user', $user->id)->get();
             } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user')
-                    ->get();
+                $presensis = $query->get();
             }
             return response()->json([
                 'success' => true,
@@ -219,14 +214,14 @@ class PresensiController extends Controller
         $user = Auth::user();
 
         try {
+            $query = Presensi::whereHas('pertemuan', function($q) use ($idPraktikum) {
+                $q->where('id_praktikum', $idPraktikum);
+            })->with(['pertemuan.praktikum', 'user']);
+
             if ($user->role === 'Praktikan') {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->where('id_user', $user->id)
-                    ->with('praktikum', 'user')
-                    ->get();
+                $presensis = $query->where('id_user', $user->id)->get();
             } else {
-                $presensis = Presensi::where('id_praktikum', $idPraktikum)
-                    ->with('praktikum', 'user');
+                $presensis = $query->get();
             }
 
             return response()->json([

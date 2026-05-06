@@ -24,7 +24,7 @@ class PraktikumSeeder extends Seeder
             [
                 'kode_praktikum' => 'PD2401',
                 'nama_praktikum' => 'Pemrograman Dasar',
-                'id_dosen' => $dosens[0]->nomor_induk, // Gunakan nomor_induk, bukan id
+                'id_dosen' => $dosens[0]->nomor_induk, 
                 'angkatan' => 2024,
                 'semester' => 2,
             ],

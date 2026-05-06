@@ -825,7 +825,7 @@
             <div class="hero-card">
                 <div class="hero-overlay">
                     <div class="hero-text">
-                        <h2 id="topGreetingText">Selamat Siang, Dr. Budi Santoso! 👋</h2>
+                        <h2 id="topGreetingText">Selamat datang, {{ Auth::user()->nama }}! 👋</h2>
                         <p>
                             <span id="fullDateDisplay"></span>
                             <span class="hero-badge"><i class="fas fa-chalkboard"></i> Semester Genap 2025/2026</span>
@@ -839,23 +839,23 @@
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-info">
                         <h3>Total Mahasiswa</h3>
-                        <p class="stat-number">112</p>
-                        <span class="stat-trend">3 Kelas (2024A,2024B,2024C)</span>
+                        <p class="stat-number">{{ $totalMahasiswa }}</p>
+                        <span class="stat-trend">Praktikan terdaftar</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-flask"></i></div>
                     <div class="stat-info">
                         <h3>Praktikum Aktif</h3>
-                        <p class="stat-number">2</p>
-                        <span class="stat-trend">RPL & Jaringan</span>
+                        <p class="stat-number">{{ count($aktivePraktikums) }}</p>
+                        <span class="stat-trend">Total praktikum</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
                     <div class="stat-info">
                         <h3>Menunggu Validasi</h3>
-                        <p class="stat-number">27</p>
+                        <p class="stat-number">{{ $menungguValidasi }}</p>
                         <span class="stat-trend">Nilai perlu divalidasi</span>
                     </div>
                 </div>
@@ -865,46 +865,33 @@
                 <h2><i class="fas fa-desktop"></i> Monitoring Praktikum</h2>
                 <div class="filter-buttons">
                     <button class="filter-btn active">Semua</button>
-                    <button class="filter-btn">Jaringan Komputer</button>
-                    <button class="filter-btn">RPL</button>
                 </div>
             </div>
 
             <div class="praktikum-grid-cards">
+                @forelse($aktivePraktikums as $praktikum)
                 <div class="praktikum-card">
-                    <div class="card-header-bg" style="background: linear-gradient(135deg, #10b981, #047857);">
-                        <i class="fas fa-network-wired"></i>
-                        <h3>Jaringan Komputer</h3>
+                    <div class="card-header-bg" style="background: {{ $praktikum['gradient'] }};">
+                        <i class="fas fa-flask"></i>
+                        <h3>{{ $praktikum['nama_praktikum'] }}</h3>
                     </div>
                     <div class="card-stats">
                         <div class="stat-item"><span class="stat-label">Total Mahasiswa</span><span
-                                class="stat-value">58</span></div>
+                                class="stat-value">{{ $praktikum['total_mahasiswa'] }}</span></div>
                         <div class="stat-item"><span class="stat-label">Hadir Hari Ini</span><span
-                                class="stat-value success">52</span></div>
+                                class="stat-value success">{{ $praktikum['hadir'] }}</span></div>
                         <div class="stat-item"><span class="stat-label">Izin</span><span
-                                class="stat-value warning">4</span></div>
+                                class="stat-value warning">{{ $praktikum['izin'] }}</span></div>
                         <div class="stat-item"><span class="stat-label">Tanpa Keterangan</span><span
-                                class="stat-value danger">2</span></div>
+                                class="stat-value danger">{{ $praktikum['alpha'] }}</span></div>
                     </div>
-                    <button class="detail-btn">Detail <i class="fas fa-arrow-right"></i></button>
+                    <button class="detail-btn" onclick="window.location.href='{{ route('monitoring') }}?praktikum={{ urlencode($praktikum['nama_praktikum']) }}'">Detail <i class="fas fa-arrow-right"></i></button>
                 </div>
-                <div class="praktikum-card">
-                    <div class="card-header-bg" style="background: linear-gradient(135deg, #f59e0b, #b45309);">
-                        <i class="fas fa-code-branch"></i>
-                        <h3>RPL</h3>
-                    </div>
-                    <div class="card-stats">
-                        <div class="stat-item"><span class="stat-label">Total Mahasiswa</span><span
-                                class="stat-value">54</span></div>
-                        <div class="stat-item"><span class="stat-label">Hadir Hari Ini</span><span
-                                class="stat-value success">48</span></div>
-                        <div class="stat-item"><span class="stat-label">Izin</span><span
-                                class="stat-value warning">4</span></div>
-                        <div class="stat-item"><span class="stat-label">Tanpa Keterangan</span><span
-                                class="stat-value danger">2</span></div>
-                    </div>
-                    <button class="detail-btn">Detail <i class="fas fa-arrow-right"></i></button>
+                @empty
+                <div style="text-align: center; padding: 40px; color: #64748b;">
+                    <p>Tidak ada praktikum yang tersedia</p>
                 </div>
+                @endforelse
             </div>
 
             <div class="two-columns-dosen">
@@ -915,39 +902,37 @@
                             <h3>Status Pendaftaran Praktikum</h3>
                         </div>
                         <div class="registration-list">
+                            @forelse($validationSummary as $summary)
                             <div class="reg-item">
-                                <div class="reg-info"><span class="reg-name">Jaringan Komputer</span><span
-                                        class="reg-desc">Pendaftar: 58/100</span></div>
+                                <div class="reg-info"><span class="reg-name">{{ $summary['nama_praktikum'] }}</span><span
+                                        class="reg-desc">Tervalidasi: {{ $summary['tervalidasi'] }}/{{ $summary['tervalidasi'] + $summary['belum'] }}</span></div>
                                 <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 58%; background: #10b981;"></div>
+                                    @php
+                                        $total = $summary['tervalidasi'] + $summary['belum'];
+                                        $percentage = $total > 0 ? round(($summary['tervalidasi'] / $total) * 100) : 0;
+                                    @endphp
+                                    <div class="progress-bar" style="width: {{ $percentage }}%; background: {{ $percentage >= 80 ? '#10b981' : ($percentage >= 50 ? '#f59e0b' : '#ef4444') }};"></div>
                                 </div>
-                                <div class="reg-footer"><span class="reg-status success">Aktif</span><button
-                                        class="detail-small-btn" data-course="Jaringan Komputer">Detail <i
+                                <div class="reg-footer"><span class="reg-status" style="color: {{ $percentage >= 80 ? '#10b981' : ($percentage >= 50 ? '#f59e0b' : '#ef4444') }};">{{ $percentage }}%</span><button
+                                        class="detail-small-btn" onclick="window.location.href='{{ route('validasinilai') }}?praktikum={{ urlencode($summary['nama_praktikum']) }}'">Detail <i
                                             class="fas fa-chevron-right"></i></button></div>
                             </div>
-                            <div class="reg-item">
-                                <div class="reg-info"><span class="reg-name">RPL</span><span
-                                        class="reg-desc">Pendaftar: 54/100</span></div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 54%; background: #f59e0b;"></div>
-                                </div>
-                                <div class="reg-footer"><span class="reg-status warning">Tersedia</span><button
-                                        class="detail-small-btn" data-course="RPL">Detail <i
-                                            class="fas fa-chevron-right"></i></button></div>
-                            </div>
+                            @empty
+                            <p style="text-align: center; color: #64748b; padding: 20px;">Tidak ada data validasi</p>
+                            @endforelse
                         </div>
                     </div>
 
                     <div class="glass-card">
                         <div class="card-title-icon"><i class="fas fa-check-double"></i>
-                            <h3>Validasi Nilai</h3><span class="badge-pending">27 Pending</span>
+                            <h3>Validasi Nilai</h3><span class="badge-pending">{{ $menungguValidasi }} Pending</span>
                         </div>
                         <div class="validation-summary">
+                            @forelse($validationSummary as $summary)
                             <div class="validation-course-card">
-                                <div class="course-header"><i class="fas fa-network-wired"></i><strong>Jaringan
-                                        Komputer</strong></div>
-                                <div class="validation-stats"><span class="validated">✓ Tervalidasi: 42</span><span
-                                        class="pending">⏳ Belum: 16</span></div>
+                                <div class="course-header"><i class="fas fa-flask"></i><strong>{{ $summary['nama_praktikum'] }}</strong></div>
+                                <div class="validation-stats"><span class="validated">✓ Tervalidasi: {{ $summary['tervalidasi'] }}</span><span
+                                        class="pending">⏳ Belum: {{ $summary['belum'] }}</span></div>
                                 <button class="detail-small-btn view-course-valid"
                                     data-course="Jaringan Komputer">Lihat Detail</button>
                             </div>

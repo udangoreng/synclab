@@ -126,6 +126,14 @@ class UserSeeder extends Seeder
             'nomor_induk' => '198702011987',
             'role' => 'Dosen',
         ]);
+        
+        User::create([
+            'nama' => 'Dr. Bambang, S.Kom, M.T',
+            'email' => 'bambango@univ.ac.id',
+            'password' => Hash::make('password123'),
+            'nomor_induk' => '198702010819',
+            'role' => 'Dosen',
+        ]);
 
         // Asisten - untuk membantu dosen
         User::create([

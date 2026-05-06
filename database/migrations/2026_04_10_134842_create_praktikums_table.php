@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('praktikums', function (Blueprint $table) {
-            $table->string('kode_praktikum')->unique();
+            $table->id();
+            $table->string('kode_praktikum');
             $table->string('nama_praktikum');
             $table->unsignedBigInteger('id_dosen');
             $table->foreign('id_dosen')->references('nomor_induk')->on('users')->onDelete('cascade')->onUpdate('cascade');

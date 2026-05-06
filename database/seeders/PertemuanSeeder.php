@@ -45,6 +45,18 @@ class PertemuanSeeder extends Seeder
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Implementasi array 1D dan 2D, serta manipulasi string dalam C++.',
             ],
+            [
+                'kode_praktikum' => 'PD2401',
+                'nama_pertemuan' => 'Pertemuan 5: Pointer & Memory Management',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Konsep pointer, alokasi memori dinamis, dan manajemen memori.',
+            ],
+            [
+                'kode_praktikum' => 'PD2401',
+                'nama_pertemuan' => 'Pertemuan 6: File I/O & Error Handling',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Operasi file input/output dan penanganan error dalam program.',
+            ],
 
             // --- Struktur Data (SD2402) ---
             [
@@ -70,6 +82,18 @@ class PertemuanSeeder extends Seeder
                 'nama_pertemuan' => 'Pertemuan 4: Graph & Searching',
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Implementasi graph dan algoritma searching seperti BFS dan DFS.',
+            ],
+            [
+                'kode_praktikum' => 'SD2402',
+                'nama_pertemuan' => 'Pertemuan 5: Sorting Algorithms',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Implementasi berbagai algoritma sorting dan analisis kompleksitasnya.',
+            ],
+            [
+                'kode_praktikum' => 'SD2402',
+                'nama_pertemuan' => 'Pertemuan 6: Hash Tables & Hashing',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Konsep hash table, fungsi hash, dan resolusi collision.',
             ],
 
             // --- Basis Data (BD2403) ---
@@ -97,6 +121,18 @@ class PertemuanSeeder extends Seeder
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Penggunaan index untuk optimasi query dan performa database.',
             ],
+            [
+                'kode_praktikum' => 'BD2403',
+                'nama_pertemuan' => 'Pertemuan 5: Transactions & Concurrency',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Konsep transaksi database, ACID properties, dan concurrency control.',
+            ],
+            [
+                'kode_praktikum' => 'BD2403',
+                'nama_pertemuan' => 'Pertemuan 6: Database Security & Backup',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Keamanan database, backup, dan recovery strategies.',
+            ],
 
             // --- Jaringan Komputer (JARKOM2404) ---
             [
@@ -122,6 +158,18 @@ class PertemuanSeeder extends Seeder
                 'nama_pertemuan' => 'Pertemuan 4: ACL & Security',
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Konfigurasi ACL (Access Control List) untuk keamanan jaringan.',
+            ],
+            [
+                'kode_praktikum' => 'JARKOM2404',
+                'nama_pertemuan' => 'Pertemuan 5: VLAN & Inter-VLAN Routing',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Konfigurasi VLAN dan routing antar VLAN.',
+            ],
+            [
+                'kode_praktikum' => 'JARKOM2404',
+                'nama_pertemuan' => 'Pertemuan 6: Network Troubleshooting',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Teknik troubleshooting jaringan dan pemecahan masalah.',
             ],
 
             // --- Sistem Operasi (SO2405) ---
@@ -149,6 +197,18 @@ class PertemuanSeeder extends Seeder
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Manajemen input/output dan device driver dalam sistem operasi.',
             ],
+            [
+                'kode_praktikum' => 'SO2405',
+                'nama_pertemuan' => 'Pertemuan 5: Deadlock & Synchronization',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Konsep deadlock, prevention, avoidance, dan synchronization primitives.',
+            ],
+            [
+                'kode_praktikum' => 'SO2405',
+                'nama_pertemuan' => 'Pertemuan 6: Security & Protection',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Keamanan sistem operasi dan mekanisme proteksi.',
+            ],
 
             // --- Pengolahan Citra Digital (PCD2406) ---
             [
@@ -174,6 +234,18 @@ class PertemuanSeeder extends Seeder
                 'nama_pertemuan' => 'Pertemuan 4: Image Segmentation',
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Segmentasi citra menggunakan thresholding dan region-based methods.',
+            ],
+            [
+                'kode_praktikum' => 'PCD2406',
+                'nama_pertemuan' => 'Pertemuan 5: Feature Extraction',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Ekstraksi fitur citra seperti edge detection dan corner detection.',
+            ],
+            [
+                'kode_praktikum' => 'PCD2406',
+                'nama_pertemuan' => 'Pertemuan 6: Image Recognition',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Teknik pengenalan pola dan klasifikasi citra.',
             ],
 
             // --- Internet of Things (IOT2407) ---
@@ -201,6 +273,18 @@ class PertemuanSeeder extends Seeder
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Integrasi dengan cloud platform dan analisis data IoT.',
             ],
+            [
+                'kode_praktikum' => 'IOT2407',
+                'nama_pertemuan' => 'Pertemuan 5: IoT Security',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Keamanan perangkat IoT dan protokol komunikasi yang aman.',
+            ],
+            [
+                'kode_praktikum' => 'IOT2407',
+                'nama_pertemuan' => 'Pertemuan 6: IoT Applications',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Pengembangan aplikasi IoT untuk berbagai use case.',
+            ],
 
             // --- Rekayasa Perangkat Lunak (RPL2408) ---
             [
@@ -227,6 +311,18 @@ class PertemuanSeeder extends Seeder
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Unit testing, integration testing, dan dokumentasi software.',
             ],
+            [
+                'kode_praktikum' => 'RPL2408',
+                'nama_pertemuan' => 'Pertemuan 5: Version Control & CI/CD',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Penggunaan Git untuk version control dan implementasi CI/CD pipeline.',
+            ],
+            [
+                'kode_praktikum' => 'RPL2408',
+                'nama_pertemuan' => 'Pertemuan 6: Software Maintenance',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Maintenance software, refactoring, dan evolution of software systems.',
+            ],
 
             // --- Pemrograman Web (WEB2401) ---
             [
@@ -252,11 +348,30 @@ class PertemuanSeeder extends Seeder
                 'nama_pertemuan' => 'Pertemuan 4: Database Integration',
                 'pertemuan_ke' => 4,
                 'deskripsi_pertemuan' => 'Integrasi database dengan web application.',
+            ],            
+            [
+                'kode_praktikum' => 'WEB2401',
+                'nama_pertemuan' => 'Pertemuan 5: Authentication & Security',
+                'pertemuan_ke' => 5,
+                'deskripsi_pertemuan' => 'Implementasi authentication, authorization, dan keamanan web.',
             ],
-        ];
+            [
+                'kode_praktikum' => 'WEB2401',
+                'nama_pertemuan' => 'Pertemuan 6: Deployment & Optimization',
+                'pertemuan_ke' => 6,
+                'deskripsi_pertemuan' => 'Deployment aplikasi web dan optimasi performa.',
+            ],        ];
 
         foreach ($pertemuans as $pertemuan) {
-            Pertemuan::create($pertemuan);
+            $praktikum = Praktikum::where('kode_praktikum', $pertemuan['kode_praktikum'])->first();
+            if ($praktikum) {
+                Pertemuan::create([
+                    'id_praktikum' => $praktikum->id,
+                    'nama_pertemuan' => $pertemuan['nama_pertemuan'],
+                    'pertemuan_ke' => $pertemuan['pertemuan_ke'],
+                    'deskripsi_pertemuan' => $pertemuan['deskripsi_pertemuan'],
+                ]);
+            }
         }
     }
 }

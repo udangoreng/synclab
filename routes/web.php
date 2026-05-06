@@ -34,7 +34,11 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('mahasiswa')->group(function () {
         Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('praktikum');
         Route::get('/praktikum', [PraktikumController::class, 'getMyPraktikum'])->name('pendaftaran');
+        Route::post('/praktikum/daftar', [PraktikumController::class, 'daftarJadwal']);
         Route::get('/pretest', [MahasiswaController::class, 'getMyPretest'])->name('pretest');
+        Route::post('/pretest/absen/{modulId}',  [MahasiswaController::class, 'absenPretest'])->name('pretest.absen');
+        Route::post('/pretest/start/{modulId}',  [MahasiswaController::class, 'startPretest'])->name('pretest.start');
+        Route::post('/pretest/upload/{modulId}', [MahasiswaController::class, 'uploadLaporan'])->name('pretest.upload');
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
         Route::get('/riwayat', [MahasiswaController::class, 'getMyHistory'])->name('riwayat');

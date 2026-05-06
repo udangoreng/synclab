@@ -14,8 +14,8 @@ class NilaiSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get pertemuans dan praktikans
-        $pertemuans = Pertemuan::all();
+        // Get pertemuans dan praktikans (hanya pertemuan 1-2 karena user sedang di pertemuan 3)
+        $pertemuans = Pertemuan::where('pertemuan_ke', '<=', 2)->get();
         $praktikans = User::where('role', 'Praktikan')->get();
 
         if ($praktikans->isEmpty() || $pertemuans->isEmpty()) {

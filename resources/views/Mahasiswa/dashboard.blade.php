@@ -667,7 +667,9 @@
             }
         }
     </style>
+</head>
 
+<body>
     <div class="dashboard-container">
         @include('mahasiswa/partials/sidebar')
 
@@ -701,7 +703,7 @@
                             <div class="notif-card info">
                                 <div class="notif-icon">📚</div>
                                 <div class="notif-text">
-                                    <b>{{ $nilai->pertemuan?->jadwal?->praktikum?->nama_praktikum ?? 'Praktikum' }}</b> - 
+                                    <b>{{ $nilai->pertemuan?->praktikum?->nama_praktikum ?? 'Praktikum' }}</b> - 
                                     {{ $nilai->pertemuan?->nama_pertemuan ?? 'Pertemuan' }}<br>
                                     <span style="font-size: 0.75rem; color: #64748b;">Nilai Pretest: {{ $nilai->nilai_pretest }} | Laporan: {{ $nilai->nilai_laporan }}</span>
                                 </div>
@@ -782,7 +784,7 @@
                             <div class="task-item {{ $presensi->kehadiran == 'Hadir' ? 'done' : '' }}">
                                 <span class="task-text">
                                     {{ $presensi->pertemuan?->nama_pertemuan ?? 'Presensi' }} - 
-                                    {{ $presensi->pertemuan?->jadwals?->praktikum?->nama_praktikum ?? '' }}
+                                    {{ $presensi->pertemuan?->praktikum?->nama_praktikum ?? '' }}
                                 </span>
                                 <span class="task-badge {{ $presensi->kehadiran == 'Hadir' ? 'done-badge' : 'not-done' }}">
                                     {{ $presensi->kehadiran }}
@@ -834,26 +836,31 @@
             const todayChip = document.getElementById("todayDateChip");
             if (todayChip) todayChip.innerText = formattedDate;
 
-            const reminderContainer = document.getElementById("reminderContainer");
 
-            const assignmentsContainer = document.getElementById("assignmentsList");
             const progressHint = document.getElementById("progressHint");
 
+            function renderReminders() {
+                // Reminder section is rendered server-side via Blade.
+            }
+
+            function renderAssignments() {
+                // Assignment section is rendered server-side via Blade.
+            }
+
             function handleTaskToggle(e) {
-                const checkbox = e.target;
-                const idx = checkbox.getAttribute("data-index");
-                if (idx !== null && assignments[idx]) {
-                    assignments[idx].status = checkbox.checked ? "Done" : "Not Yet";
-                    renderAssignments();
-                }
+                // This dashboard uses server-rendered tasks, so no client-side task array is available.
             }
 
             const seeAllBtn = document.getElementById("seeAllReminder");
             if (seeAllBtn) {
                 seeAllBtn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    alert(
-                        "📋 Semua pengingat:\n• Praktikum Jarkom (13:00 WIB)\n• RPL - Pretest (Besok 14:00 WIB)\n• Pretest PCD (Mulai 7 April)\n• Laporan Basis Data (Deadline 10 April)");
+                    const reminders = @json($reminders);
+                    let reminderText = "📋 Semua pengingat:\n";
+                    reminders.forEach(reminder => {
+                        reminderText += "• " + reminder + "\n";
+                    });
+                    alert(reminderText);
                 });
             }
 
