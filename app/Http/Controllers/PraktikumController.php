@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Praktikum;
-use App\Models\User;
-use App\Models\Nilai;
-use App\Models\Presensi;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -83,7 +80,7 @@ class PraktikumController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $praktikum = Praktikum::findOrFail($id);
 
@@ -112,7 +109,7 @@ class PraktikumController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $praktikum = Praktikum::findOrFail($id);
         

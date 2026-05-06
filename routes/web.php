@@ -6,7 +6,6 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\LaboratoriumController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PresensiController;
-use App\Http\Controllers\PraktikumController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\ModulController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PertemuanController;
+use App\Http\Controllers\PraktikumController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'welcome']);
