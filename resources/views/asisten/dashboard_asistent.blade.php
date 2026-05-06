@@ -155,7 +155,7 @@
 
                             <div class="actions">
                                 @if($jadwal['pertemuan'])
-                                    <form action="{{ route('presensi.detail') }}" method="GET" style="display: inline;">
+                                    <form action="{{ route('detailPresensi') }}" method="GET" style="display: inline;">
                                         <input type="hidden" name="pertemuan_id" value="{{ $jadwal['pertemuan']->first()->id }}">
                                         <input type="hidden" name="praktikum_id" value="{{ $jadwal['praktikum']->id }}">
                                         <button type="submit" class="btn primary">Input Presensi</button>
@@ -195,7 +195,7 @@
 
                     <div class="attendance-detail" id="detailBox">
                         @if(!empty($processedPraktikums))
-                            @php $firstPraktikum = $processedPraktikums->first(); @endphp
+                            @php $firstPraktikum = $processedPraktikums[0] ?? null;@endphp
                             <div class="detail-title">{{ $firstPraktikum['nama_praktikum'] }}</div>
                             <div class="detail-item"><b>Practicum:</b> {{ $firstPraktikum['kode_praktikum'] }}</div>
                             <div class="detail-item"><b>Ruangan:</b> {{ $firstPraktikum['laboratorium_nama'] }}</div>

@@ -12,9 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Jadwal extends Model
 {
     protected $fillable = [
-        'kode_praktikum',
+        'id_praktikum',
         'id_dosen',
-        'id_pertemuan',
         'id_laboratorium',
         'hari',
         'jam_mulai',

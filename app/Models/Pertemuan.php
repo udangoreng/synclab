@@ -17,8 +17,7 @@ class Pertemuan extends Model
 {
     protected $fillable = [
         'id_jadwal',
-        'id_modul',
-        'kode_praktikum',
+        'id_praktikum',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',

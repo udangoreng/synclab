@@ -65,7 +65,6 @@
                     @forelse ($praktikums as $prak)
                         <script>
                             const praktikumData = @json($praktikums->items());
-                            console.log(praktikumData);
                         </script>
                         <tr>
                             <td>{{ $prak->kode_praktikum }}</td>

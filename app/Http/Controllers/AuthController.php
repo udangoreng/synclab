@@ -125,11 +125,16 @@ class AuthController extends Controller
             $greeting = 'Malam';
         }
 
-        $praktikumIds = DB::table('pendaftaran_praktikum')
+        $jadwalIds = DB::table('pendaftaran_praktikum')
             ->where('id_user', $user->id)
             ->where('role', 'Asisten')
-            ->whereIn('status', ['Dikonfirmasi', 'Pending'])
+            ->pluck('id_jadwal')
+            ->toArray();
+
+        $praktikumIds = DB::table('jadwals')
+            ->whereIn('id', $jadwalIds)
             ->pluck('id_praktikum')
+            ->unique()
             ->toArray();
 
         $praktikums = Praktikum::whereIn('id', $praktikumIds)
@@ -145,10 +150,14 @@ class AuthController extends Controller
             $presensiHadir = 0;
             $nilaiLengkap = 0;
             $totalPresensi = 0;
-            $totalMahasiswa = DB::table('pendaftaran_praktikum')
+            $praktikumJadwalIds = DB::table('jadwals')
                 ->where('id_praktikum', $praktikum->id)
+                ->pluck('id')
+                ->toArray();
+
+            $totalMahasiswa = DB::table('pendaftaran_praktikum')
+                ->whereIn('id_jadwal', $praktikumJadwalIds)
                 ->where('role', 'Praktikan')
-                ->where('status', 'Dikonfirmasi')
                 ->count();
 
             // Get first pertemuan if exists
@@ -253,9 +262,8 @@ class AuthController extends Controller
             }
 
             $totalMahasiswa = DB::table('pendaftaran_praktikum')
-                ->where('id_praktikum', $jadwal->id_praktikum)
+                ->where('id_jadwal', $jadwal->id)
                 ->where('role', 'Praktikan')
-                ->where('status', 'Dikonfirmasi')
                 ->count();
 
             $processedJadwals[] = [

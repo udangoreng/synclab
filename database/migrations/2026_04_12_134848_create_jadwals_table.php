@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_praktikum');
             $table->foreignId('id_praktikum')->references('id')->on('praktikums')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_dosen')->references('nomor_induk')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_laboratorium')->references('id')->on('laboratoriums')->onDelete('cascade')->onUpdate('cascade');

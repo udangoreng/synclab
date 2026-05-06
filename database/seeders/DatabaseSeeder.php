@@ -22,8 +22,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Call seeders in order of dependencies
-        // User harus pertama karena dibutuhkan oleh seeder lain
         $this->call([
             UserSeeder::class,
             LaboratoriumSeeder::class,
