@@ -59,18 +59,7 @@ class PraktikumSeeder extends Seeder
             [
                 'kode_praktikum' => 'RPL2408',
                 'nama_praktikum' => 'Rekayasa Perangkat Lunak (RPL)',
-<<<<<<< HEAD
                 'id_dosen' => $dosens[5]->nomor_induk,
-=======
-                'id_dosen' => $dosens[7]->nomor_induk,
-                'angkatan' => 2024,
-                'semester' => 2,
-            ],
-            [
-                'kode_praktikum' => 'WEB2401',
-                'nama_praktikum' => 'Pemrograman Web',
-                'id_dosen' => $dosens[7]->nomor_induk,
->>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
                 'angkatan' => 2024,
                 'semester' => 2,
             ],

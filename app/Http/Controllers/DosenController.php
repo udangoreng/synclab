@@ -46,7 +46,10 @@ class DosenController extends Controller
             
             $pendingCount = Nilai::whereHas('pertemuan', function($q) use ($praktikum) {
                 $q->where('id_praktikum', $praktikum->id);
-            })->whereNull('status')->orWhere('status', 'Pending')->count();
+            })->where(function($q) {
+                $q->whereNull('status')->orWhere('status', 'Pending');
+            })->count();
+
             
             // Today's attendance stats
             $today = now()->toDateString();
@@ -80,8 +83,9 @@ class DosenController extends Controller
         }
         
         // Pending validation count
-        $menungguValidasi = Nilai::whereNull('status')->orWhere('status', 'Pending')->count();
-        
+        $menungguValidasi = Nilai::where(function($q) {
+            $q->whereNull('status')->orWhere('status', 'Pending');
+        })->count();
         // Attendance data per class and course
         $presenceData = $this->getPresenceDataByClassAndCourse();
         
@@ -162,7 +166,7 @@ class DosenController extends Controller
                 ->whereHas('user', function($q) use ($kelas) {
                     $q->where('nomor_induk', 'like', $kelas . '%');
                 })
-                ->orderBy('pertemuan.pertemuan_ke')
+                ->orderByRaw('(SELECT pertemuan_ke FROM pertemuans WHERE pertemuans.id = nilais.id_pertemuan)')
                 ->get()
                 ->groupBy(function($item) {
                     return $item->pertemuan->pertemuan_ke;
@@ -266,7 +270,8 @@ class DosenController extends Controller
         
         // Get all praktikums for filter
         $praktikums = Praktikum::all()->pluck('nama_praktikum')->unique();
-        
+        $kehadiranChartData = $this->getAttendanceChartDataByClass($filterPraktikum, $filterPertemuan);
+
         return view('dosen.monitoring', compact(
             'presences',
             'kehadiranPercent',

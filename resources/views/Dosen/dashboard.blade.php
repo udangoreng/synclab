@@ -936,14 +936,6 @@
                                 <button class="detail-small-btn view-course-valid"
                                     data-course="Jaringan Komputer">Lihat Detail</button>
                             </div>
-                            <div class="validation-course-card">
-                                <div class="course-header"><i class="fas fa-code-branch"></i><strong>RPL</strong>
-                                </div>
-                                <div class="validation-stats"><span class="validated">✓ Tervalidasi: 31</span><span
-                                        class="pending">⏳ Belum: 11</span></div>
-                                <button class="detail-small-btn view-course-valid" data-course="RPL">Lihat
-                                    Detail</button>
-                            </div>
                         </div>
                     </div>
                 </div>

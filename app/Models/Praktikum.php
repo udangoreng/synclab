@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-=======
->>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+
+// Import all related models
 use App\Models\Jadwal;
 use App\Models\Pertemuan;
 use App\Models\Nilai;
 use App\Models\User;
+use App\Models\Modul;
 use App\Models\PendaftaranPraktikum;
 
 class Praktikum extends Model
@@ -27,7 +27,7 @@ class Praktikum extends Model
     ];
 
     /**
-     * Praktikum memiliki banyak Jadwal
+     * Relasi ke Jadwal
      */
     public function jadwals(): HasMany
     {
@@ -35,7 +35,7 @@ class Praktikum extends Model
     }
 
     /**
-     * Praktikum memiliki banyak Nilai
+     * Relasi ke Nilai
      */
     public function nilais(): HasMany
     {
@@ -43,34 +43,66 @@ class Praktikum extends Model
     }
 
     /**
-     * Praktikum dimiliki oleh satu Dosen
+     * Relasi ke Dosen (User dengan role Dosen)
      */
     public function dosen(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_dosen')->where('role', 'Dosen');
+        return $this->belongsTo(User::class, 'id_dosen');
     }
 
     /**
-     * Praktikum memiliki banyak Pertemuan
+     * Relasi ke Pertemuan
      */
     public function pertemuans(): HasMany
     {
         return $this->hasMany(Pertemuan::class, 'id_praktikum');
     }
 
-<<<<<<< HEAD
+    /**
+     * Mendapatkan Modul melalui Pertemuan
+     */
     public function moduls(): HasManyThrough
     {
-        return $this->hasManyThrough(Modul::class, Pertemuan::class, 'id_praktikum', 'id_pertemuan');
+        return $this->hasManyThrough(
+            Modul::class, 
+            Pertemuan::class, 
+            'id_praktikum', // Foreign key on Pertemuan table
+            'id_pertemuan', // Foreign key on Modul table
+            'id',            // Local key on Praktikum table
+            'id'             // Local key on Pertemuan table
+        );
     }
 
-    public function jadwals(): HasMany
-    {
-        return $this->hasMany(Jadwal::class, 'id_praktikum', 'id');
-=======
     /**
-     * Get all Asisten through Jadwal → PendaftaranPraktikum → User
-     * Note: Use ->get() to execute, not with() for eager loading
+     * Relasi Many-to-Many ke Asisten melalui tabel pivot pendaftaran_praktikum
+     */
+    public function asisten(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'pendaftaran_praktikum', 'id_praktikum', 'id_user')
+                    ->wherePivot('role', 'Asisten')
+                    ->wherePivot('status', 'Dikonfirmasi')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relasi Many-to-Many ke Mahasiswa (Praktikan) melalui tabel pivot pendaftaran_praktikum
+     */
+    public function mahasiswa(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'pendaftaran_praktikum', 'id_praktikum', 'id_user')
+                    ->wherePivot('role', 'Praktikan')
+                    ->wherePivot('status', 'Dikonfirmasi')
+                    ->withTimestamps();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helper Methods (Custom Queries)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Mendapatkan semua Asisten yang terdaftar di Jadwal praktikum ini
      */
     public function getAsistens()
     {
@@ -81,40 +113,13 @@ class Praktikum extends Model
             ->where('pendaftaran_praktikum.role', 'Asisten')
             ->distinct()
             ->get();
->>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
     }
 
     /**
-     * Get all Praktikan through Jadwal → PendaftaranPraktikum → User
-     * Note: Use ->get() to execute, not with() for eager loading
+     * Mendapatkan semua Praktikan yang terdaftar di Jadwal praktikum ini
      */
     public function getPraktikans()
     {
-<<<<<<< HEAD
-        return $this->hasMany(Nilai::class, 'id_praktikum');
-    }
-
-    /**
-     * Relasi ke Asisten melalui pendaftaran_praktikum
-     */
-    public function asisten(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'pendaftaran_praktikum', 'id_praktikum', 'id_user')
-                    ->where('pendaftaran_praktikum.role', 'Asisten')
-                    ->where('pendaftaran_praktikum.status', 'Dikonfirmasi')
-                    ->withTimestamps();
-    }
-    
-    /**
-     * Relasi ke Mahasiswa melalui pendaftaran_praktikum
-     */
-    public function mahasiswa(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'pendaftaran_praktikum', 'id_praktikum', 'id_user')
-                    ->where('pendaftaran_praktikum.role', 'Praktikan')
-                    ->where('pendaftaran_praktikum.status', 'Dikonfirmasi')
-                    ->withTimestamps();
-=======
         return User::select('users.*')
             ->join('pendaftaran_praktikum', 'users.id', '=', 'pendaftaran_praktikum.id_user')
             ->join('jadwals', 'pendaftaran_praktikum.id_jadwal', '=', 'jadwals.id')
@@ -122,6 +127,5 @@ class Praktikum extends Model
             ->where('pendaftaran_praktikum.role', 'Praktikan')
             ->distinct()
             ->get();
->>>>>>> 678a83826b4cbe2f46bb253ccc21e84b4d159423
     }
 }
