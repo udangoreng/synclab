@@ -6,6 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use App\Models\Nilai;
+use App\Models\Jadwal;
+use App\Models\Presensi;
+use App\Models\Praktikum;
 
 class User extends Authenticatable
 {
@@ -13,6 +18,7 @@ class User extends Authenticatable
         'nomor_induk',
         'nama',
         'email',
+        'nohp',
         'role',
         'password',
     ];
@@ -34,7 +40,25 @@ class User extends Authenticatable
     }
 
     /**
-     * User memiliki banyak Pendaftaran Praktikum
+     * User memiliki banyak Praktikum
+     */
+    public function praktikums() 
+    { 
+        return $this->belongsToMany(Praktikum::class, 'pendaftaran_praktikum', 'id_user', 'id_praktikum'); 
+    }
+
+    /**
+     * User memiliki banyak Jadwal (sebagai dosen/asisten)
+     */
+    public function jadwals()
+    {
+        return $this->hasMany(Jadwal::class, 'id_dosen');
+    }
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
      */
     public function pendaftaranPraktikums(): HasMany
     {

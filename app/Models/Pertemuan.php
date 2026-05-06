@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Jadwal;
+use App\Models\Modul;
 
 class Pertemuan extends Model
 {
     protected $fillable = [
         'id_praktikum',
+        'id_jadwal',
+        'id_modul',
         'nama_pertemuan',
         'pertemuan_ke',
         'deskripsi_pertemuan',
@@ -21,7 +25,7 @@ class Pertemuan extends Model
      */
     public function praktikum(): BelongsTo
     {
-        return $this->belongsTo(Praktikum::class, 'id_praktikum');
+        return $this->belongsTo(Jadwal::class, 'id_jadwal');
     }
 
     /**
@@ -70,5 +74,15 @@ class Pertemuan extends Model
     public function pengumpulanLaporans(): HasMany
     {
         return $this->hasMany(PengumpulanLaporan::class, 'id_pertemuan');
+    }
+
+    public function presensi(): HasMany
+    {
+        return $this->hasMany(Presensi::class, 'id_pertemuan');
+    }
+
+    public function nilai(): HasMany
+    {
+        return $this->hasMany(Nilai::class, 'id_pertemuan');
     }
 }

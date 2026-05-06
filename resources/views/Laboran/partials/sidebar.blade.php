@@ -7,7 +7,7 @@
     <title>Dashboard Praktikum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        a{
+        a {
             all: unset;
         }
 
@@ -39,6 +39,8 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            max-height: 100vh;
+            overflow-y: hidden;
         }
 
         .profile {
@@ -161,32 +163,55 @@
             </li>
 
             <li class="menu-item dropdown">
-                <div class="dropdown-btn" onclick="toggleDropdown()">
-                    <span><i class="fas fa-folder"></i> Management</span>
+                <div class="dropdown-btn" onclick="toggleDropdown(event)">
+                    <span><i class="fas fa-folder"></i> Manajemen Sistem</span>
                     <span><i class="fas fa-chevron-down"></i></span>
                 </div>
 
-                <ul class="dropdown-menu" id="dropdown">
+                <ul class="dropdown-menu" id="dropdown1">
                     <li class="{{ request()->routeIs('masterPraktikum') ? 'active' : '' }}"><a
-                            href="{{ route('masterPraktikum') }}"><i class="fas fa-flask"></i> Practicum Management </a>
+                            href="{{ route('masterPraktikum') }}"><i class="fas fa-flask"></i> Kelola Praktikum </a>
+                    </li>
+                    <li class="{{ request()->routeIs('masterUser') ? 'active' : '' }}"><a
+                            href="{{ route('masterUser') }}"><i class="fas fa-users"></i> Kelola Pengguna</a>
+                    </li>
+                    <li class="{{ request()->routeIs('masterLaboratorium') ? 'active' : '' }}"><a
+                            href="{{ route('masterLaboratorium') }}"><i class="fa-solid fa-users-viewfinder"></i>
+                            Kelola Laboratorium</a>
+                    </li>
+                    <li class="{{ request()->routeIs('masterPertemuan') ? 'active' : '' }}"><a
+                            href="{{ route('masterPertemuan') }}"><i class="fa-solid fa-chalkboard-user"></i> Kelola
+                            Pertemuan</a>
                     </li>
                     <li class="{{ request()->routeIs('masterJadwal') ? 'active' : '' }}"><a
-                            href="{{ route('masterJadwal') }}"><i class="fas fa-calendar"></i> Schedule Management</a>
-                    </li>
-                    <li class="{{ request()->routeIs('masterAsisten') ? 'active' : '' }}"><a
-                            href="{{ route('masterAsisten') }}"><i class="fas fa-users"></i> Assistant Management</a>
+                            href="{{ route('masterJadwal') }}"><i class="fas fa-calendar"></i>Kelola Jadwal</a>
                     </li>
                 </ul>
             </li>
 
-            <li class="menu-item {{ request()->routeIs('masterMonitoring') ? 'active' : '' }}"><a
-                    href="{{ route('masterMonitoring') }}">
-                    <i class="fas fa-chart-line"></i> System Monitoring</a>
+            <li class="menu-item dropdown">
+                <div class="dropdown-btn"  style="display: flex;" onclick="toggleDropdown1(event)">
+                    <span><i class="fa-solid fa-computer"></i> Monitor Praktikum</span>
+                    <span><i class="fas fa-chevron-down"></i></span>
+                </div>
+
+                <ul class="dropdown-menu" id="dropdown2">
+                    <li class="{{ request()->routeIs('kelolaPendaftaran') ? 'active' : '' }}"><a
+                            href="{{ route('kelolaPendaftaran') }}"><i class="fa-solid fa-address-card"></i> Kelola Pendaftaran </a>
+                    </li>
+                    <li class="{{ request()->routeIs('kelolaLaporan') ? 'active' : '' }}"><a
+                            href="{{ route('kelolaLaporan') }}"><i class="fa-solid fa-laptop-file"></i>Kelola Laporan</a>
+                    </li>
+                    <li class="{{ request()->routeIs('kelolaNilai') ? 'active' : '' }}"><a
+                            href="{{ route('kelolaNilai') }}"><i class="fa-solid fa-table-list"></i>
+                            Kelola Nilai</a>
+                    </li>
+                </ul>
             </li>
 
             <li class="menu-item {{ request()->routeIs('masterLaporan') ? 'active' : '' }}"><a
                     href="{{ route('masterLaporan') }}">
-                    <i class="fas fa-file-alt"></i> Reports</a>
+                    <i class="fas fa-file-alt"></i> Rekap Praktikum</a>
             </li>
         </ul>
 
@@ -196,23 +221,77 @@
     </aside>
 </body>
 <script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('active');
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const body = document.body;
+  
+  sidebar.classList.toggle('active');
+  
+  if (sidebar.classList.contains('active')) {
+    body.classList.add('sidebar-open');
+  } else {
+    body.classList.remove('sidebar-open');
+  }
+}
+
+// Close sidebar when clicking backdrop (mobile only)
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.querySelector('.toggle');
+  const isMobile = window.innerWidth <= 1023;
+  
+  if (isMobile && 
+      e.target === document.body && 
+      sidebar.classList.contains('active') &&
+      !sidebar.contains(e.target) && 
+      !toggle?.contains(e.target)) {
+    toggleSidebar();
+  }
+});
+
+function toggleDropdown(e) {
+  if (e) {
+    e.stopPropagation();
+  }
+  const dropdown1 = document.getElementById('dropdown1');
+  const dropdown2 = document.getElementById('dropdown2');
+  
+  dropdown1.style.display = dropdown1.style.display === 'block' ? 'none' : 'block';
+  dropdown2.style.display = 'none';
+}
+
+function toggleDropdown1(e) {
+  if (e) {
+    e.stopPropagation();
+  }
+  const dropdown1 = document.getElementById('dropdown1');
+  const dropdown2 = document.getElementById('dropdown2');
+  
+  dropdown2.style.display = dropdown2.style.display === 'block' ? 'none' : 'block';
+  dropdown1.style.display = 'none';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const dropdown1 = document.getElementById('dropdown1');
+  const dropdown2 = document.getElementById('dropdown2');
+  const isClickingBtn = e.target.closest('.dropdown-btn') || 
+                        e.target.closest('.dropdown-menu');
+  
+  if (!isClickingBtn) {
+    dropdown1.style.display = 'none';
+    dropdown2.style.display = 'none';
+  }
+});
+
+// Prevent body scroll when sidebar open on mobile
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 1023 && document.getElementById('sidebar').classList.contains('active')) {
+      document.body.classList.remove('sidebar-open');
+      document.getElementById('sidebar').classList.remove('active');
     }
-
-    function toggleDropdown() {
-        const dropdown = document.getElementById('dropdown');
-        dropdown.style.display =
-        dropdown.style.display === 'block' ? 'none' : 'block';
-        console.log(dropdown.style.display);
-    }
-
-    document.addEventListener("click", function(e) {
-        const sidebar = document.getElementById("sidebar");
-        const toggle = document.querySelector(".toggle");
-
-        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove("active");
-        }
-    });
+  });
+});
 </script>

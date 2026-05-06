@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nilai;
+use App\Models\Pertemuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class NilaiController extends Controller
 {
@@ -314,5 +316,47 @@ class NilaiController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function masterNilai(Request $request)
+    {
+        $search = $request->get('search');
+        $status = $request->get('status');
+        
+        // Query using Eloquent Model (Nilai)
+        $query = Nilai::with(['pertemuan.modul', 'user']);
+        
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%")
+                       ->orWhere('name', 'like', "%{$search}%")
+                       ->orWhere('nomor_induk', 'like', "%{$search}%");
+                })->orWhereHas('pertemuan', function($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        // Apply status filter
+        if ($status && in_array($status, ['Pending', 'Terkonfirmasi'])) {
+            $query->where('status', $status);
+        }
+        
+        // Order by latest
+        $nilais = $query->orderBy('created_at', 'desc')->paginate(10);
+        
+        // Calculate statistics
+        $statistics = [
+            'rata_rata_nilai_akhir' => number_format(Nilai::avg('nilai_akhir') ?? 0, 2),
+            'nilai_tertinggi' => Nilai::max('nilai_akhir') ?? 0,
+            'nilai_terendah' => Nilai::min('nilai_akhir') ?? 0,
+            'total_mahasiswa' => Nilai::distinct('id_user')->count('id_user'),
+            'total_terkonfirmasi' => Nilai::where('status', 'Terkonfirmasi')->count(),
+            'total_pending' => Nilai::where('status', 'Pending')->count(),
+        ];
+        
+        return view('laboran.kelolaNilai', compact('nilais', 'statistics'));
     }
 }
