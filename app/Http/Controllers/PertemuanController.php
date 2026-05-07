@@ -42,25 +42,21 @@ class PertemuanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pertemuan' => 'required|string|max:255',
-            'pertemuan_ke' => 'required|integer|min:1',
+            'nama_pertemuan'      => 'required|string|max:255',
+            'pertemuan_ke'        => 'required|integer|min:1',
             'deskripsi_pertemuan' => 'nullable|string',
-            'id_jadwal' => 'nullable|exists:jadwals,id',
-            'id_modul' => 'nullable|exists:moduls,id',
+            'id_jadwal'           => 'required|exists:jadwals,id',
         ]);
+
+        $jadwal = Jadwal::findOrFail($request->id_jadwal);
 
         Pertemuan::create([
-            'nama_pertemuan' => $request->nama_pertemuan,
-            'pertemuan_ke' => $request->pertemuan_ke,
+            'nama_pertemuan'      => $request->nama_pertemuan,
+            'pertemuan_ke'        => $request->pertemuan_ke,
             'deskripsi_pertemuan' => $request->deskripsi_pertemuan,
-            'id_jadwal' => $request->id_jadwal,
+            'id_jadwal'           => $request->id_jadwal,
+            'id_praktikum'        => $jadwal->id_praktikum,
         ]);
-
-        if($request->modul){
-            Pertemuan::create([
-                'id_modul' => $request->modul,
-            ]);
-        }
 
         return redirect('admin/pertemuan')->with('success', 'Pertemuan berhasil ditambahkan');
     }

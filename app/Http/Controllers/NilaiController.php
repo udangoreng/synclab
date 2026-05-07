@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nilai;
+use App\Models\Pertemuan;
 use App\Models\Praktikum;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class NilaiController extends Controller
 {
@@ -104,7 +106,7 @@ class NilaiController extends Controller
                 }
             }
 
-            return response()->json(['success' => true, 'data' => $nilais]);
+            // return response()->json(['success' => true, 'data' => $nilais]);
 
         } catch (\Exception $e) {
             return response()->json([

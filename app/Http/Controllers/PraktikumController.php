@@ -33,7 +33,9 @@ class PraktikumController extends Controller
             return $praktikum;
         });
 
-        return view('laboran.kelolaPraktikum_lab', compact('praktikums'));
+        $dosens = User::where('role', 'Dosen')->get();
+
+        return view('laboran.kelolaPraktikum_lab', compact('praktikums', 'dosens'));
     }
 
     /**
@@ -43,6 +45,7 @@ class PraktikumController extends Controller
     {
         $validated = $request->validate([
             'kode_praktikum' => 'required|string|max:255|unique:praktikums',
+            'id_dosen' => 'required|string',
             'nama_praktikum' => 'required|string|max:255',
             'angkatan'       => 'required|string|max:255',
             'semester'       => 'required|string|max:255',

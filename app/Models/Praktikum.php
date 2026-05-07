@@ -13,13 +13,14 @@ use App\Models\Pertemuan;
 use App\Models\Nilai;
 use App\Models\User;
 use App\Models\Modul;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Praktikum extends Model
 {
     protected $fillable = [
         'kode_praktikum',
         'nama_praktikum',
-        'id_dosen',
+        'id_dosen', 
         'angkatan',
         'semester',
     ];

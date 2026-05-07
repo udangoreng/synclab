@@ -157,7 +157,7 @@
                                 <p>Semester : {{ $praktikum->semester }}</p>
                                 
                                 <div class="card-actions" style="margin-top: 12px;">
-                                    <form action="{{ route('presensi.record') }}" method="GET" style="display: inline;">
+                                    <form action="{{ route('konfirmasiPresensi') }}" method="GET" style="display: inline;">
                                         <input type="hidden" name="praktikum_id" value="{{ $praktikum->id }}">
                                         <button type="submit" class="btn-presensi" style="background: #dbeafe; color: #1d4ed8; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Input Presensi</button>
                                     </form>
