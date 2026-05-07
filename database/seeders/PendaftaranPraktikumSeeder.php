@@ -14,64 +14,66 @@ class PendaftaranPraktikumSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-        // 1. Fetch data
-        $jadwals = Jadwal::all();
-        $praktikans = User::where('role', 'Praktikan')->get();
-        $asistens = User::where('role', 'Asisten')->get();
+{
+    $jadwals = Jadwal::all();
+    $praktikans = User::where('role', 'Praktikan')->get();
+    $asistens   = User::where('role', 'Asisten')->get();
 
-        // 2. Safety check
-        if ($jadwals->isEmpty() || $praktikans->isEmpty()) {
-            $this->command->warn("Data Jadwal atau Praktikan kosong. Seeder dilewati.");
-            return;
+    if ($jadwals->isEmpty() || $praktikans->isEmpty()) {
+        $this->command->warn("Data Jadwal atau Praktikan kosong. Seeder dilewati.");
+        return;
+    }
+
+    $pendaftarans = [];
+    $now = Carbon::now();
+
+    // Group jadwal by praktikum
+    $jadwalsByPraktikum = $jadwals->groupBy('id_praktikum');
+
+    foreach ($jadwalsByPraktikum as $idPraktikum => $jadwalGroup) {
+        $jadwalList = $jadwalGroup->values();
+
+        // Distribusikan praktikan: setiap praktikan hanya masuk 1 jadwal per praktikum
+        foreach ($praktikans as $index => $praktikan) {
+            // Round-robin: tentukan jadwal mana yang dapat praktikan ini
+            $jadwal = $jadwalList[$index % $jadwalList->count()];
+
+            $pendaftarans[] = [
+                'id_jadwal'  => $jadwal->id,
+                'id_user'    => $praktikan->id,
+                'role'       => 'Praktikan',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
         }
 
-        $pendaftarans = [];
-        $now = Carbon::now();
+        // Asisten: 1-2 per jadwal, tapi tetap tidak double per praktikum
+        $assignedAsisten = collect();
+        foreach ($jadwalList as $jadwal) {
+            $available = $asistens->diff($assignedAsisten);
+            if ($available->isEmpty()) break;
 
-        // 3. Loop through each schedule
-        foreach ($jadwals as $jadwal) {
-            
-            // --- ADD PRAKTIKAN ---
-            // Take 8 random students for this schedule
-            $selectedPraktikans = $praktikans->random(min(8, $praktikans->count()));
-
-            foreach ($selectedPraktikans as $praktikan) {
+            $pick = $available->random(min(2, $available->count()));
+            foreach ($pick as $asisten) {
                 $pendaftarans[] = [
-                    'id_jadwal' => $jadwal->id,
-                    'id_user'   => $praktikan->id, 
-                    'role'      => 'Praktikan',
+                    'id_jadwal'  => $jadwal->id,
+                    'id_user'    => $asisten->id,
+                    'role'       => 'Asisten',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
+                $assignedAsisten->push($asisten);
             }
-
-            // --- ADD ASISTEN ---
-            // Take 1-2 random assistants for this schedule
-            $asistenCount = min(2, $asistens->count());
-            if ($asistenCount > 0) {
-                $selectedAsistens = $asistens->random($asistenCount);
-
-                foreach ($selectedAsistens as $asisten) {
-                    $pendaftarans[] = [
-                        'id_jadwal' => $jadwal->id,
-                        'id_user'   => $asisten->id,
-                        'role'      => 'Asisten',
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
-                }
-            }
-        }
-
-        // 4. Batch Insert (More efficient than looping inside the loop)
-        // We use collect()->unique() to prevent primary/unique key violations
-        $chunks = collect($pendaftarans)->unique(function ($item) {
-            return $item['id_jadwal'].$item['id_user'];
-        })->chunk(100);
-
-        foreach ($chunks as $chunk) {
-            PendaftaranPraktikum::insert($chunk->toArray());
         }
     }
+
+    // Deduplikasi berdasarkan id_jadwal + id_user (tetap sebagai safety net)
+    $chunks = collect($pendaftarans)
+        ->unique(fn($item) => $item['id_jadwal'] . '_' . $item['id_user'])
+        ->chunk(100);
+
+    foreach ($chunks as $chunk) {
+        PendaftaranPraktikum::insert($chunk->toArray());
+    }
+}
 }

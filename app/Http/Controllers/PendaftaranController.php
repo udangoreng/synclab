@@ -3,11 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Jadwal;
+use App\Models\User;
+use App\Models\PendaftaranPraktikum;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
-class PendaftaranCOntroller extends Controller
+class PendaftaranController extends Controller
 {
+
+    public function store(Request $request)
+{
+    $jadwal = Jadwal::findOrFail($request->id_jadwal);
+
+    // Cek apakah sudah terdaftar di praktikum yang sama
+    if (PendaftaranPraktikum::sudahTerdaftarDiPraktikum(auth()->id , $jadwal->id_praktikum)) {
+        return back()->withErrors(['msg' => 'Anda sudah terdaftar di jadwal lain untuk praktikum ini.']);
+    }
+
+    PendaftaranPraktikum::create([
+        'id_jadwal' => $request->id_jadwal,
+        'id_user'   => auth()->id,
+        'role'      => 'Praktikan',
+    ]);
+
+    return redirect()->back()->with('success', 'Pendaftaran berhasil.');
+}
     public function masterPendaftaran(Request $request)
     {
        $search = $request->get('search');
@@ -81,4 +102,6 @@ class PendaftaranCOntroller extends Controller
 
         return view('laboran.kelolaPendaftaran', compact('pendaftarans', 'statistics'));
     }
+
+    
 }

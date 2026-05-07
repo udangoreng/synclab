@@ -1,3 +1,13 @@
+{{--
+    praktikum.blade.php  –  Halaman My Praktikum (Mahasiswa)
+    ─────────────────────────────────────────────────────────
+    KONSEP BARU:
+    • Mahasiswa mendaftar ke 1 Jadwal → otomatis tercatat di semua Pertemuan jadwal itu.
+    • Tab "Active"    → Pertemuan yang sedang berlangsung (current session).
+    • Tab "Upcoming"  → Pertemuan yang belum tiba (pertemuan ke > pertemuan aktif).
+    • Tab "Completed" → Pertemuan yang sudah selesai.
+    • Di atas grid selalu ada info card: Nama Praktikum, Ruangan, Hari, Jam, Dosen.
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -30,6 +40,9 @@
             --red: #ef4444;
             --red-light: #fee2e2;
             --red-text: #dc2626;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --purple-text: #6d28d9;
             --radius-sm: 8px;
             --radius-md: 16px;
             --radius-lg: 24px;
@@ -74,6 +87,120 @@
             margin-left: 56px;
         }
 
+        /* ── Jadwal Info Banner (shown when registered) ── */
+        .jadwal-banner {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+        .jadwal-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 220px;
+        }
+        .jadwal-banner-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 22px;
+            flex-shrink: 0;
+        }
+        .jadwal-banner-nama {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .jadwal-banner-kode {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .jadwal-banner-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .jadwal-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            padding: 6px 14px;
+            font-size: 0.79rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .jadwal-pill i { color: var(--blue); font-size: 0.72rem; }
+        .jadwal-pill.pill-hari  { background: var(--blue-light); border-color: #bfdbfe; color: var(--blue-dark); }
+        .jadwal-pill.pill-hari i { color: var(--blue-dark); }
+        .jadwal-banner-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .progress-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+        .progress-track {
+            width: 120px;
+            height: 6px;
+            background: var(--slate-light);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            transition: width 0.6s ease;
+        }
+        .progress-num {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* ── Not Registered State ── */
+        .not-registered-banner {
+            background: var(--amber-light);
+            border: 1.5px solid #fcd34d;
+            border-radius: var(--radius-lg);
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .not-registered-banner i { color: var(--amber-text); font-size: 20px; flex-shrink: 0; }
+        .not-registered-banner p { font-size: 0.87rem; color: var(--amber-text); font-weight: 600; }
+        .not-registered-banner a {
+            margin-left: auto;
+            padding: 8px 20px;
+            background: var(--amber);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.83rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .not-registered-banner a:hover { background: var(--amber-text); }
+
         /* ── Tab Navigation ── */
         .tab-nav {
             display: flex;
@@ -83,7 +210,7 @@
             padding: 5px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             width: fit-content;
         }
         .tab-btn {
@@ -111,19 +238,9 @@
             border-radius: var(--radius-full);
             transition: all 0.2s;
         }
-        .tab-btn.active {
-            background: var(--blue);
-            color: white;
-            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
-        }
-        .tab-btn.active .tab-count {
-            background: rgba(255,255,255,0.25);
-            color: white;
-        }
-        .tab-btn:hover:not(.active) {
-            background: var(--slate-light);
-            color: var(--text-primary);
-        }
+        .tab-btn.active { background: var(--blue); color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .tab-btn.active .tab-count { background: rgba(255,255,255,0.25); color: white; }
+        .tab-btn:hover:not(.active) { background: var(--slate-light); color: var(--text-primary); }
 
         .tab-content { display: none; animation: fadeIn 0.25s ease; }
         .tab-content.active { display: block; }
@@ -133,58 +250,74 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Schedule Cards Grid ── */
-        .schedules-grid {
+        /* ── Pertemuan Grid ── */
+        .pertemuan-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 16px;
         }
 
-        .schedule-card {
+        /* ── Pertemuan Card ── */
+        .pertemuan-card {
             background: var(--surface);
             border-radius: var(--radius-lg);
             border: 1.5px solid var(--border);
             overflow: hidden;
             transition: all 0.22s ease;
             box-shadow: var(--shadow-sm);
+            position: relative;
         }
-        .schedule-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--blue);
+        .pertemuan-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .pertemuan-card.card-active { border-color: var(--blue); }
+        .pertemuan-card.card-completed { border-color: var(--green); }
+        .pertemuan-card.card-upcoming { border-color: var(--border); }
+
+        /* Accent stripe on left */
+        .pertemuan-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
         }
+        .card-active::before  { background: var(--blue); }
+        .card-completed::before { background: var(--green); }
+        .card-upcoming::before  { background: var(--border); }
 
         .card-top {
-            padding: 18px 20px 14px;
+            padding: 18px 20px 14px 24px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: flex-start;
             gap: 14px;
         }
-        .card-icon {
-            width: 48px; height: 48px;
-            border-radius: 14px;
+        .card-number {
+            width: 44px; height: 44px;
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
+            font-size: 1rem;
+            font-weight: 800;
             color: white;
             flex-shrink: 0;
         }
+        .card-active  .card-number { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); }
+        .card-completed .card-number { background: linear-gradient(135deg, var(--green), #047857); }
+        .card-upcoming  .card-number { background: linear-gradient(135deg, var(--slate), #334155); }
+
         .card-meta { flex: 1; min-width: 0; }
-        .card-praktikum {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
-        }
-        .card-pertemuan {
-            font-size: 1rem;
+        .card-nama {
+            font-size: 0.97rem;
             font-weight: 700;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .card-praktikum-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
         .card-badge {
             padding: 4px 10px;
@@ -193,97 +326,78 @@
             font-weight: 700;
             letter-spacing: 0.3px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
-        .badge-open   { background: var(--green-light); color: var(--green-text); }
-        .badge-upcoming { background: var(--amber-light); color: var(--amber-text); }
-        .badge-done   { background: var(--slate-light); color: var(--slate); }
-        .badge-full   { background: var(--red-light); color: var(--red-text); }
+        .badge-active   { background: var(--blue-light); color: var(--blue-dark); }
+        .badge-completed { background: var(--green-light); color: var(--green-text); }
+        .badge-upcoming { background: var(--slate-light); color: var(--slate); }
 
-        .card-details { padding: 14px 20px; }
+        .card-details { padding: 14px 20px 14px 24px; }
         .detail-item {
             display: flex;
             align-items: center;
             gap: 9px;
-            padding: 4px 0;
-            font-size: 0.82rem;
+            padding: 3px 0;
+            font-size: 0.81rem;
             color: var(--text-secondary);
         }
-        .detail-item i {
-            width: 15px;
-            color: var(--blue);
-            font-size: 0.75rem;
-            flex-shrink: 0;
-        }
+        .detail-item i { width: 14px; color: var(--blue); font-size: 0.74rem; flex-shrink: 0; }
 
-        .quota-bar-wrap { margin-top: 12px; }
-        .quota-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .quota-label .q-text { color: var(--text-secondary); }
-        .quota-label .q-num { color: var(--text-primary); }
-        .quota-bar {
-            height: 5px;
-            background: var(--slate-light);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-        .quota-fill {
-            height: 100%;
-            border-radius: var(--radius-full);
-            transition: width 0.5s ease;
-        }
-        .fill-ok   { background: var(--green); }
-        .fill-warn { background: var(--amber); }
-        .fill-full { background: var(--red); }
+        .card-footer { padding: 12px 20px 12px 24px; border-top: 1px solid var(--border); }
 
-        .card-footer { padding: 12px 20px; border-top: 1px solid var(--border); }
-        .btn-register {
-            width: 100%;
-            padding: 11px;
-            border: none;
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
+        /* Modul/laporan action pills */
+        .action-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+        .action-pill {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
             font-family: inherit;
+            transition: 0.2s;
         }
-        .btn-register.can-register {
-            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-            color: white;
-            box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+        .pill-modul { background: var(--blue-light); color: var(--blue-dark); }
+        .pill-modul:hover { background: var(--blue); color: white; }
+        .pill-laporan { background: var(--green-light); color: var(--green-text); }
+        .pill-laporan:hover { background: var(--green); color: white; }
+        .pill-nilai { background: var(--purple-light); color: var(--purple-text); }
+        .pill-nilai:hover { background: var(--purple); color: white; }
+        .pill-presensi { background: var(--amber-light); color: var(--amber-text); }
+        .pill-presensi:hover { background: var(--amber); color: white; }
+        .pill-locked { background: var(--slate-light); color: var(--text-muted); cursor: not-allowed; }
+
+        /* Active-specific: highlight card status */
+        .active-now-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--blue-dark);
+            background: var(--blue-light);
+            border-radius: var(--radius-full);
+            padding: 4px 10px;
+            animation: pulse 2s infinite;
         }
-        .btn-register.can-register:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(59,130,246,0.35);
+        .active-now-label::before {
+            content: '';
+            width: 7px; height: 7px;
+            background: var(--blue);
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
         }
-        .btn-register.registered {
-            background: var(--green-light);
-            color: var(--green-text);
-            cursor: default;
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
-        .btn-register.full {
-            background: var(--red-light);
-            color: var(--red-text);
-            cursor: not-allowed;
-        }
-        .btn-register.completed-btn {
-            background: var(--slate-light);
-            color: var(--slate);
-            cursor: default;
-        }
-        .btn-register.upcoming-btn {
-            background: var(--amber-light);
-            color: var(--amber-text);
-            cursor: default;
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.2); }
+            50% { box-shadow: 0 0 0 5px rgba(59,130,246,0); }
         }
 
         /* ── Empty State ── */
@@ -291,6 +405,7 @@
             text-align: center;
             padding: 64px 24px;
             color: var(--text-secondary);
+            grid-column: 1 / -1;
         }
         .empty-icon {
             width: 72px; height: 72px;
@@ -304,167 +419,6 @@
         .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
         .empty-state p  { font-size: 0.83rem; }
 
-        /* ── Confirmation Modal ── */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15,23,42,0.5);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .modal.active { display: flex; }
-
-        .modal-box {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 480px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: var(--shadow-lg);
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-        }
-        .modal-head h3 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-primary);
-        }
-        .modal-head h3 i { color: var(--blue); }
-        .modal-close-btn {
-            background: var(--slate-light);
-            border: none;
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 14px;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
-        }
-        .modal-close-btn:hover { background: var(--red-light); color: var(--red); }
-
-        .modal-body { padding: 22px 24px; }
-
-        .confirm-summary {
-            background: var(--blue-light);
-            border: 1px solid #bfdbfe;
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .confirm-summary .cs-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--blue-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-        }
-        .cs-row {
-            display: flex;
-            gap: 8px;
-            padding: 5px 0;
-            font-size: 0.82rem;
-            border-bottom: 1px solid #bfdbfe;
-        }
-        .cs-row:last-child { border-bottom: none; }
-        .cs-label { width: 110px; font-weight: 600; color: var(--blue-dark); flex-shrink: 0; }
-        .cs-val   { color: var(--text-primary); }
-
-        .confirm-note {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        .confirm-note i { color: var(--amber); margin-top: 2px; flex-shrink: 0; }
-
-        .modal-foot {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
-        }
-        .btn-cancel-modal {
-            padding: 9px 22px;
-            background: var(--slate-light);
-            border: none;
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-family: inherit;
-            transition: 0.2s;
-        }
-        .btn-cancel-modal:hover { background: var(--border); }
-        .btn-confirm {
-            padding: 9px 22px;
-            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
-            border: none;
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            color: white;
-            font-family: inherit;
-            transition: 0.2s;
-            display: flex; align-items: center; gap: 7px;
-        }
-        .btn-confirm:hover { box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
-        .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* ── Toast ── */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            background: var(--text-primary);
-            color: white;
-            padding: 13px 18px;
-            border-radius: var(--radius-md);
-            font-size: 0.84rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 280px;
-            box-shadow: var(--shadow-lg);
-            animation: toastIn 0.3s ease;
-        }
-        .toast.success { background: #064e3b; border-left: 3px solid var(--green); }
-        .toast.error   { background: #7f1d1d; border-left: 3px solid var(--red); }
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateX(40px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
         /* ── Responsive ── */
         @media (max-width: 768px) {
             .dashboard-container { flex-direction: column; }
@@ -472,7 +426,10 @@
             .page-title { font-size: 1.4rem; }
             .page-subtitle { margin-left: 0; }
             .tab-nav { width: 100%; flex-wrap: wrap; }
-            .schedules-grid { grid-template-columns: 1fr; }
+            .pertemuan-grid { grid-template-columns: 1fr; }
+            .jadwal-banner { flex-direction: column; align-items: flex-start; }
+            .jadwal-banner-progress { width: 100%; }
+            .progress-track { flex: 1; }
         }
     </style>
 </head>
@@ -486,326 +443,370 @@
                 <span class="title-icon"><i class="fas fa-flask"></i></span>
                 My Praktikum
             </h1>
-            <p class="page-subtitle">Lihat dan daftarkan diri ke jadwal praktikum yang tersedia</p>
+            <p class="page-subtitle">Progres pertemuan praktikum yang Anda ikuti</p>
         </div>
+
+        @php
+            $user = Auth::user();
+
+            /*
+            ┌─────────────────────────────────────────────────────────────┐
+            │  KONSEP BARU                                                │
+            │  User daftar ke 1 Jadwal → semua Pertemuan dalam jadwal itu │
+            │  secara otomatis tercakup.                                  │
+            │  Pertemuan dikelompokkan:                                   │
+            │   - pertemuan_ke <= activeThreshold && status jadwal Selesai │
+            │     → Completed                                             │
+            │   - pertemuan aktif saat ini  → Active                     │
+            │   - sisanya                   → Upcoming                   │
+            └─────────────────────────────────────────────────────────────┘
+            */
+
+            // Ambil pendaftaran user (hanya role Praktikan)
+            $pendaftaran = \App\Models\PendaftaranPraktikum::with([
+                'jadwal.praktikum',
+                'jadwal.laboratorium',
+                'jadwal.dosen',
+                'jadwal.pertemuan' => function($q) { $q->orderBy('pertemuan_ke'); },
+                'jadwal.pertemuan.modul',
+                'jadwal.pertemuan.nilais',
+                'jadwal.pertemuan.presensis',
+                'jadwal.pertemuan.laporan',
+            ])
+            ->where('id_user', $user->id)
+            ->where('role', 'Praktikan')
+            ->first(); // satu jadwal aktif
+
+            $isRegistered = !is_null($pendaftaran);
+            $jadwal       = $pendaftaran?->jadwal;
+            $praktikum    = $jadwal?->praktikum;
+            $pertemuans   = $jadwal ? $jadwal->pertemuan->sortBy('pertemuan_ke') : collect();
+
+            $totalPertemuan = $pertemuans->count();
+
+            /*
+             Tentukan posisi pertemuan aktif:
+             Gunakan field status pada Jadwal atau logika urutan:
+             - Jika tidak ada pertemuan → semua upcoming
+             - Pertemuan ke-N dianggap ACTIVE jika jadwal/pertemuan memiliki status "Berlangsung"
+               atau fallback: anggap pertemuan ke-3 aktif (sesuai permintaan: 1&2 done, 3 active)
+             Strategi robust: cek apakah ada field "status" di pertemuan,
+             atau gunakan pertemuan_ke untuk simulasi.
+            */
+
+            // Tentukan pertemuan "aktif" sekarang (bisa dari DB atau logika urut)
+            // Fallback: pertemuan dengan status tertentu, atau gunakan angka hardcode jika belum ada field
+            $activePertemuanKe = null;
+            $completedCount    = 0;
+
+            // Coba deteksi dari status jadwal/pertemuan jika ada field 'status' di pertemuan
+            // (fallback ke urutan: pertemuan selesai = sebelum aktif)
+            // Untuk sementara: semua pertemuan sebelum "aktif" = completed, yang aktif = active, sisanya = upcoming
+            // Di sini kita anggap pertemuan_ke paling kecil yang belum selesai = aktif
+            // (Implementasi ini bisa diganti logika real jika ada field status di pertemuan)
+
+            $pertemuanActive    = collect();
+            $pertemuanUpcoming  = collect();
+            $pertemuanCompleted = collect();
+
+            if ($isRegistered && $totalPertemuan > 0) {
+                // Logika: temukan pertemuan "aktif" = pertemuan_ke terkecil yang statusnya bukan Selesai
+                // Jika Jadwal masih Dibuka/Penuh, cari pertemuan yang paling "current"
+                // Fallback sederhana: urutkan, pertemuan ke-1 dst yg jadwal sudah Selesai = completed,
+                // sisanya lihat dari urutan.
+
+                // Diasumsikan: di table pertemuan ada field status (Selesai, Aktif, Upcoming)
+                // Jika tidak: gunakan heuristik dari jadwal.status
+                foreach ($pertemuans as $p) {
+                    // Cek apakah ada presensi untuk user ini di pertemuan ini (tanda sudah dilangsungkan)
+                    $sudahHadir = $p->presensis->where('id_user', $user->id)->count() > 0;
+                    $pStatus    = $p->status ?? null; // field status jika ada
+
+                    if ($pStatus === 'Selesai' || $sudahHadir) {
+                        $pertemuanCompleted->push($p);
+                        $completedCount++;
+                    } elseif ($pStatus === 'Aktif' || ($activePertemuanKe === null && $jadwal->status !== 'Selesai')) {
+                        // Jadikan yang pertama belum selesai sebagai aktif
+                        $pertemuanActive->push($p);
+                        $activePertemuanKe = $p->pertemuan_ke;
+                    } else {
+                        $pertemuanUpcoming->push($p);
+                    }
+                }
+            }
+
+            $progressPct = $totalPertemuan > 0
+                ? round(($completedCount / $totalPertemuan) * 100)
+                : 0;
+        @endphp
+
+        {{-- ── Jadwal Info Banner ── --}}
+        @if($isRegistered && $jadwal)
+            <div class="jadwal-banner">
+                <div class="jadwal-banner-left">
+                    <div class="jadwal-banner-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div>
+                        <div class="jadwal-banner-nama">{{ $praktikum?->nama_praktikum ?? '-' }}</div>
+                        <div class="jadwal-banner-kode">{{ $praktikum?->kode_praktikum ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="jadwal-banner-pills">
+                    <span class="jadwal-pill pill-hari">
+                        <i class="fas fa-calendar-day"></i>
+                        {{ $jadwal->hari ?? '-' }}
+                    </span>
+                    <span class="jadwal-pill">
+                        <i class="fas fa-clock"></i>
+                        {{ $jadwal->jam_mulai ?? '-' }} – {{ $jadwal->jam_selesai ?? '-' }}
+                    </span>
+                    <span class="jadwal-pill">
+                        <i class="fas fa-door-open"></i>
+                        {{ $jadwal->laboratorium?->nama_laboratorium ?? '-' }}
+                    </span>
+                    <span class="jadwal-pill">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        {{ $jadwal->dosen?->nama ?? '-' }}
+                    </span>
+                </div>
+                <div class="jadwal-banner-progress">
+                    <span class="progress-label">Progres</span>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: {{ $progressPct }}%"></div>
+                    </div>
+                    <span class="progress-num">{{ $completedCount }}/{{ $totalPertemuan }}</span>
+                </div>
+            </div>
+        @else
+            <div class="not-registered-banner">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Anda belum terdaftar di jadwal praktikum manapun.</p>
+                <a href="{{ route('mahasiswa.praktikum.daftar') }}">Daftar Sekarang</a>
+            </div>
+        @endif
 
         {{-- ── Tab Navigation ── --}}
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="active">
-                <i class="fas fa-door-open"></i> Active
-                <span class="tab-count" id="count-active">0</span>
+                <i class="fas fa-circle-dot"></i> Aktif
+                <span class="tab-count" id="count-active">{{ $pertemuanActive->count() }}</span>
             </button>
             <button class="tab-btn" data-tab="upcoming">
-                <i class="fas fa-calendar-alt"></i> Upcoming
-                <span class="tab-count" id="count-upcoming">0</span>
+                <i class="fas fa-hourglass-half"></i> Upcoming
+                <span class="tab-count" id="count-upcoming">{{ $pertemuanUpcoming->count() }}</span>
             </button>
             <button class="tab-btn" data-tab="completed">
-                <i class="fas fa-check-double"></i> Completed
-                <span class="tab-count" id="count-completed">0</span>
+                <i class="fas fa-check-double"></i> Selesai
+                <span class="tab-count" id="count-completed">{{ $pertemuanCompleted->count() }}</span>
             </button>
         </div>
 
-        {{-- ── Tab: Active ── --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
+        {{-- TAB: AKTIF                                                     --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
         <div id="tab-active" class="tab-content active">
-            <div class="schedules-grid" id="grid-active"></div>
+            <div class="pertemuan-grid">
+                @forelse($pertemuanActive as $p)
+                    <div class="pertemuan-card card-active">
+                        <div class="card-top">
+                            <div class="card-number">{{ $p->pertemuan_ke }}</div>
+                            <div class="card-meta">
+                                <div class="card-praktikum-label">{{ $praktikum?->nama_praktikum }}</div>
+                                <div class="card-nama">{{ $p->nama_pertemuan }}</div>
+                            </div>
+                            <div>
+                                <span class="card-badge badge-active">
+                                    <span class="active-now-label">Sedang Aktif</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            @if($p->modul?->judul_modul)
+                                <div class="detail-item">
+                                    <i class="fas fa-book-open"></i>
+                                    {{ $p->modul->judul_modul }}
+                                </div>
+                            @endif
+                            @if($p->deskripsi_pertemuan)
+                                <div class="detail-item">
+                                    <i class="fas fa-align-left"></i>
+                                    {{ Str::limit($p->deskripsi_pertemuan, 80) }}
+                                </div>
+                            @endif
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-day"></i>
+                                {{ $jadwal->hari ?? '-' }}, {{ $jadwal->jam_mulai ?? '' }} – {{ $jadwal->jam_selesai ?? '' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-door-open"></i>
+                                {{ $jadwal->laboratorium?->nama_laboratorium ?? '-' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                {{ $jadwal->dosen?->nama ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="action-pills">
+                                @if($p->modul?->filepath)
+                                    <a href="{{ asset('storage/' . $p->modul->filepath) }}" target="_blank" class="action-pill pill-modul">
+                                        <i class="fas fa-file-pdf"></i> Modul
+                                    </a>
+                                @endif
+                                @if($p->laporan)
+                                    <a href="{{ route('mahasiswa.laporan.submit', $p->id) }}" class="action-pill pill-laporan">
+                                        <i class="fas fa-upload"></i> Kumpul Laporan
+                                    </a>
+                                @endif
+                                <a href="{{ route('mahasiswa.presensi.show', $p->id) }}" class="action-pill pill-presensi">
+                                    <i class="fas fa-qrcode"></i> Presensi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-circle-dot"></i></div>
+                        <h3>Tidak Ada Pertemuan Aktif</h3>
+                        <p>Pertemuan yang sedang berlangsung akan muncul di sini.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
 
-        {{-- ── Tab: Upcoming ── --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
+        {{-- TAB: UPCOMING                                                  --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
         <div id="tab-upcoming" class="tab-content">
-            <div class="schedules-grid" id="grid-upcoming"></div>
+            <div class="pertemuan-grid">
+                @forelse($pertemuanUpcoming as $p)
+                    <div class="pertemuan-card card-upcoming">
+                        <div class="card-top">
+                            <div class="card-number">{{ $p->pertemuan_ke }}</div>
+                            <div class="card-meta">
+                                <div class="card-praktikum-label">{{ $praktikum?->nama_praktikum }}</div>
+                                <div class="card-nama">{{ $p->nama_pertemuan }}</div>
+                            </div>
+                            <span class="card-badge badge-upcoming">Akan Datang</span>
+                        </div>
+                        <div class="card-details">
+                            @if($p->modul?->judul_modul)
+                                <div class="detail-item">
+                                    <i class="fas fa-book-open"></i>
+                                    {{ $p->modul->judul_modul }}
+                                </div>
+                            @endif
+                            @if($p->deskripsi_pertemuan)
+                                <div class="detail-item">
+                                    <i class="fas fa-align-left"></i>
+                                    {{ Str::limit($p->deskripsi_pertemuan, 80) }}
+                                </div>
+                            @endif
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-day"></i>
+                                {{ $jadwal->hari ?? '-' }}, {{ $jadwal->jam_mulai ?? '' }} – {{ $jadwal->jam_selesai ?? '' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-door-open"></i>
+                                {{ $jadwal->laboratorium?->nama_laboratorium ?? '-' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                {{ $jadwal->dosen?->nama ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="action-pills">
+                                <span class="action-pill pill-locked">
+                                    <i class="fas fa-lock"></i> Belum Dibuka
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-hourglass-half"></i></div>
+                        <h3>Tidak Ada Pertemuan Mendatang</h3>
+                        <p>Semua pertemuan sudah berlangsung atau Anda belum terdaftar.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
 
-        {{-- ── Tab: Completed ── --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
+        {{-- TAB: COMPLETED                                                 --}}
+        {{-- ────────────────────────────────────────────────────────────── --}}
         <div id="tab-completed" class="tab-content">
-            <div class="schedules-grid" id="grid-completed"></div>
+            <div class="pertemuan-grid">
+                @forelse($pertemuanCompleted as $p)
+                    @php
+                        $nilaiUser = $p->nilais->where('id_user', $user->id)->first();
+                    @endphp
+                    <div class="pertemuan-card card-completed">
+                        <div class="card-top">
+                            <div class="card-number">{{ $p->pertemuan_ke }}</div>
+                            <div class="card-meta">
+                                <div class="card-praktikum-label">{{ $praktikum?->nama_praktikum }}</div>
+                                <div class="card-nama">{{ $p->nama_pertemuan }}</div>
+                            </div>
+                            <span class="card-badge badge-completed"><i class="fas fa-check"></i> Selesai</span>
+                        </div>
+                        <div class="card-details">
+                            @if($p->modul?->judul_modul)
+                                <div class="detail-item">
+                                    <i class="fas fa-book-open"></i>
+                                    {{ $p->modul->judul_modul }}
+                                </div>
+                            @endif
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-day"></i>
+                                {{ $jadwal->hari ?? '-' }}, {{ $jadwal->jam_mulai ?? '' }} – {{ $jadwal->jam_selesai ?? '' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-door-open"></i>
+                                {{ $jadwal->laboratorium?->nama_laboratorium ?? '-' }}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                {{ $jadwal->dosen?->nama ?? '-' }}
+                            </div>
+                            @if($nilaiUser)
+                                <div class="detail-item" style="margin-top: 6px; padding: 6px 10px; background: var(--green-light); border-radius: 8px; color: var(--green-text); font-weight: 600;">
+                                    <i class="fas fa-star" style="color: var(--green-text);"></i>
+                                    Nilai: {{ $nilaiUser->nilai_total ?? $nilaiUser->nilai_akhir ?? '-' }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="card-footer">
+                            <div class="action-pills">
+                                @if($p->modul?->filepath)
+                                    <a href="{{ asset('storage/' . $p->modul->filepath) }}" target="_blank" class="action-pill pill-modul">
+                                        <i class="fas fa-file-pdf"></i> Modul
+                                    </a>
+                                @endif
+                                @if($nilaiUser)
+                                    <a href="{{ route('mahasiswa.nilai.show', $p->id) }}" class="action-pill pill-nilai">
+                                        <i class="fas fa-chart-bar"></i> Nilai
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-flag-checkered"></i></div>
+                        <h3>Belum Ada Pertemuan Selesai</h3>
+                        <p>Riwayat pertemuan yang telah Anda selesaikan akan muncul di sini.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </main>
 </div>
 
-{{-- ── Confirmation Modal ── --}}
-<div class="modal" id="confirmModal">
-    <div class="modal-box">
-        <div class="modal-head">
-            <h3><i class="fas fa-calendar-check"></i> Konfirmasi Pendaftaran</h3>
-            <button class="modal-close-btn" id="closeConfirmModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <div class="confirm-summary">
-                <div class="cs-title"><i class="fas fa-info-circle"></i> Detail Jadwal</div>
-                <div id="confirmDetails"></div>
-            </div>
-            <div class="confirm-note">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>Anda hanya dapat mendaftar ke <strong>1 jadwal per pertemuan</strong>. Pastikan jadwal ini sesuai dengan ketersediaan Anda.</span>
-            </div>
-        </div>
-        <div class="modal-foot">
-            <button class="btn-cancel-modal" id="cancelConfirm">Batal</button>
-            <button class="btn-confirm" id="submitDaftar">
-                <i class="fas fa-check"></i> Daftar Sekarang
-            </button>
-        </div>
-    </div>
-</div>
-
-{{-- ── Toast Container ── --}}
-<div class="toast-container" id="toastContainer"></div>
-
-{{-- ── Data from Server ── --}}
-@php
-    $currentUserId = Auth::id();
-
-    // Kumpulkan semua jadwal yang sudah didaftar user ini (id_pertemuan => id_jadwal)
-    $userRegistrations = \App\Models\PendaftaranPraktikum::where('id_user', $currentUserId)
-        ->with('jadwal')
-        ->get()
-        ->mapWithKeys(fn($p) => [$p->jadwal->id_pertemuan => $p->id_jadwal])
-        ->toArray();
-
-    // Ambil semua jadwal dengan relasi lengkap
-    $allJadwals = \App\Models\Jadwal::with([
-        'praktikum',
-        'dosen',
-        'pertemuan.modul',
-        'laboratorium',
-        'pendaftarans',
-    ])->get();
-
-    $now = \Carbon\Carbon::now();
-
-    $jadwalActive    = [];
-    $jadwalUpcoming  = [];
-    $jadwalCompleted = [];
-
-    foreach ($allJadwals as $j) {
-        $tanggal  = $j->tanggal;
-        $status   = $j->status;
-        $terisi   = $j->pendaftarans ? $j->pendaftarans->count() : 0;
-        $maks     = $j->jumlah_max_peserta ?? 0;
-        $isFull   = $maks > 0 && $terisi >= $maks;
-        $isFullStatus = $status === 'Penuh';
-
-        $idPertemuan = $j->id_pertemuan;
-        $isRegistered = isset($userRegistrations[$idPertemuan]) && $userRegistrations[$idPertemuan] === $j->id;
-        $hasOtherOnPertemuan = isset($userRegistrations[$idPertemuan]) && !$isRegistered;
-
-        $item = [
-            'id'            => $j->id,
-            'id_pertemuan'  => $idPertemuan,
-            'praktikum'     => $j->praktikum?->nama_praktikum ?? '-',
-            'kode'          => $j->praktikum?->kode_praktikum ?? '-',
-            'pertemuan'     => $j->pertemuan?->nama_pertemuan ?? '-',
-            'pertemuan_ke'  => $j->pertemuan?->pertemuan_ke ?? 0,
-            'materi'        => $j->pertemuan?->modul?->judul_modul ?? $j->pertemuan?->deskripsi_pertemuan ?? '-',
-            'dosen'         => $j->dosen?->nama ?? '-',
-            'lab'           => $j->laboratorium?->nama_laboratorium ?? '-',
-            'tanggal'       => $tanggal ? $tanggal->format('l, d M Y') : '-',
-            'jam'           => ($j->jam_mulai ?? '-') . ' – ' . ($j->jam_selesai ?? '-'),
-            'terisi'        => $terisi,
-            'maks'          => $maks,
-            'status'        => $status,
-            'is_full'       => $isFull || $isFullStatus,
-            'is_registered' => $isRegistered,
-            'has_other'     => $hasOtherOnPertemuan,
-        ];
-
-        if ($status === 'Selesai') {
-            $jadwalCompleted[] = $item;
-        } elseif ($status === 'Dibuka' || $status === 'Penuh') {
-            if ($tanggal && $tanggal->diffInDays($now, false) >= -7) {
-                $jadwalActive[] = $item;
-            } else {
-                $jadwalUpcoming[] = $item;
-            }
-        } else {
-            $jadwalUpcoming[] = $item;
-        }
-    }
-@endphp
-
 <script>
 (function () {
-    const jadwalActive    = @json($jadwalActive);
-    const jadwalUpcoming  = @json($jadwalUpcoming);
-    const jadwalCompleted = @json($jadwalCompleted);
-
-    let pendingJadwal = null;
-
-    const iconColors = [
-        'linear-gradient(135deg,#3b82f6,#1e40af)',
-        'linear-gradient(135deg,#10b981,#065f46)',
-        'linear-gradient(135deg,#f59e0b,#92400e)',
-        'linear-gradient(135deg,#8b5cf6,#5b21b6)',
-        'linear-gradient(135deg,#ef4444,#991b1b)',
-        'linear-gradient(135deg,#06b6d4,#0e7490)',
-        'linear-gradient(135deg,#ec4899,#9d174d)',
-        'linear-gradient(135deg,#14b8a6,#0f766e)',
-    ];
-    const iconClasses = [
-        'fa-code','fa-database','fa-network-wired','fa-desktop',
-        'fa-layer-group','fa-image','fa-microchip','fa-cogs',
-    ];
-
-    function colorFor(idx) { return iconColors[idx % iconColors.length]; }
-    function iconFor(idx)  { return iconClasses[idx % iconClasses.length]; }
-
-    function quotaColor(terisi, maks) {
-        if (!maks) return 'fill-ok';
-        const pct = terisi / maks;
-        if (pct >= 1)   return 'fill-full';
-        if (pct >= 0.8) return 'fill-warn';
-        return 'fill-ok';
-    }
-
-    function renderCard(item, idx, type) {
-        const isFull       = item.is_full;
-        const isRegistered = item.is_registered;
-        const isCompleted  = type === 'completed';
-        const isUpcoming   = type === 'upcoming';
-
-        let badgeHtml, btnHtml;
-
-        if (isCompleted) {
-            badgeHtml = `<span class="card-badge badge-done">Selesai</span>`;
-            btnHtml   = `<button class="btn-register completed-btn" disabled><i class="fas fa-flag-checkered"></i> Praktikum Selesai</button>`;
-        } else if (isUpcoming) {
-            badgeHtml = `<span class="card-badge badge-upcoming">Akan Datang</span>`;
-            btnHtml   = `<button class="btn-register upcoming-btn" disabled><i class="fas fa-clock"></i> Belum Dibuka</button>`;
-        } else if (isRegistered) {
-            badgeHtml = `<span class="card-badge badge-open">Terdaftar ✓</span>`;
-            btnHtml   = `<button class="btn-register registered" disabled><i class="fas fa-check-circle"></i> Sudah Terdaftar</button>`;
-        } else if (isFull) {
-            badgeHtml = `<span class="card-badge badge-full">Penuh</span>`;
-            btnHtml   = `<button class="btn-register full" disabled><i class="fas fa-ban"></i> Kuota Penuh</button>`;
-        } else if (item.has_other) {
-            badgeHtml = `<span class="card-badge badge-open">Dibuka</span>`;
-            btnHtml   = `<button class="btn-register full" disabled><i class="fas fa-minus-circle"></i> Sudah Daftar Pertemuan Ini</button>`;
-        } else {
-            badgeHtml = `<span class="card-badge badge-open">Dibuka</span>`;
-            btnHtml   = `<button class="btn-register can-register" data-id="${item.id}" onclick="openConfirm(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                            <i class="fas fa-plus-circle"></i> Daftar Sekarang
-                         </button>`;
-        }
-
-        const pct = item.maks > 0 ? Math.min(100, Math.round(item.terisi / item.maks * 100)) : 0;
-
-        return `
-        <div class="schedule-card">
-            <div class="card-top">
-                <div class="card-icon" style="background:${colorFor(idx)}">
-                    <i class="fas ${iconFor(item.pertemuan_ke || idx)}"></i>
-                </div>
-                <div class="card-meta">
-                    <div class="card-praktikum">${item.praktikum} · ${item.kode}</div>
-                    <div class="card-pertemuan">${item.pertemuan}</div>
-                </div>
-                ${badgeHtml}
-            </div>
-            <div class="card-details">
-                <div class="detail-item"><i class="fas fa-book-open"></i> ${item.materi}</div>
-                <div class="detail-item"><i class="fas fa-user-tie"></i> ${item.dosen}</div>
-                <div class="detail-item"><i class="fas fa-flask"></i> ${item.lab}</div>
-                <div class="detail-item"><i class="far fa-calendar-alt"></i> ${item.tanggal}</div>
-                <div class="detail-item"><i class="far fa-clock"></i> ${item.jam}</div>
-                ${item.maks > 0 ? `
-                <div class="quota-bar-wrap">
-                    <div class="quota-label">
-                        <span class="q-text">Kuota Terisi</span>
-                        <span class="q-num">${item.terisi} / ${item.maks}</span>
-                    </div>
-                    <div class="quota-bar">
-                        <div class="quota-fill ${quotaColor(item.terisi, item.maks)}" style="width:${pct}%"></div>
-                    </div>
-                </div>` : ''}
-            </div>
-            <div class="card-footer">${btnHtml}</div>
-        </div>`;
-    }
-
-    function renderGrid(gridId, data, type, countId) {
-        const grid = document.getElementById(gridId);
-        document.getElementById(countId).textContent = data.length;
-        if (!data.length) {
-            const msgs = {
-                active:    ['Tidak Ada Jadwal Aktif', 'Jadwal yang sedang dibuka akan muncul di sini.'],
-                upcoming:  ['Tidak Ada Jadwal Mendatang', 'Jadwal yang akan datang akan muncul di sini.'],
-                completed: ['Belum Ada Jadwal Selesai', 'Riwayat praktikum yang selesai akan muncul di sini.'],
-            };
-            const [h, p] = msgs[type] || ['Tidak Ada Data', ''];
-            grid.innerHTML = `
-                <div class="empty-state" style="grid-column:1/-1">
-                    <div class="empty-icon"><i class="fas fa-calendar-xmark"></i></div>
-                    <h3>${h}</h3><p>${p}</p>
-                </div>`;
-            return;
-        }
-        grid.innerHTML = data.map((item, i) => renderCard(item, i, type)).join('');
-    }
-
-    window.openConfirm = function(item) {
-        pendingJadwal = item;
-        document.getElementById('confirmDetails').innerHTML = `
-            <div class="cs-row"><span class="cs-label">Praktikum</span><span class="cs-val">${item.praktikum}</span></div>
-            <div class="cs-row"><span class="cs-label">Pertemuan</span><span class="cs-val">${item.pertemuan}</span></div>
-            <div class="cs-row"><span class="cs-label">Materi</span><span class="cs-val">${item.materi}</span></div>
-            <div class="cs-row"><span class="cs-label">Dosen</span><span class="cs-val">${item.dosen}</span></div>
-            <div class="cs-row"><span class="cs-label">Laboratorium</span><span class="cs-val">${item.lab}</span></div>
-            <div class="cs-row"><span class="cs-label">Tanggal</span><span class="cs-val">${item.tanggal}</span></div>
-            <div class="cs-row"><span class="cs-label">Waktu</span><span class="cs-val">${item.jam}</span></div>
-            <div class="cs-row"><span class="cs-label">Sisa Kuota</span><span class="cs-val">${item.maks - item.terisi} dari ${item.maks}</span></div>
-        `;
-        document.getElementById('confirmModal').classList.add('active');
-    };
-
-    function showToast(msg, type = 'success') {
-        const icon = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
-        const t = document.createElement('div');
-        t.className = `toast ${type}`;
-        t.innerHTML = `<i class="fas ${icon}"></i> ${msg}`;
-        document.getElementById('toastContainer').appendChild(t);
-        setTimeout(() => t.remove(), 4000);
-    }
-
-    document.getElementById('submitDaftar').addEventListener('click', function () {
-        if (!pendingJadwal) return;
-        this.disabled = true;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendaftar...';
-
-        fetch('/mahasiswa/praktikum/daftar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
-                    || '{{ csrf_token() }}',
-            },
-            body: JSON.stringify({ id_jadwal: pendingJadwal.id }),
-        })
-        .then(r => r.json())
-        .then(data => {
-            document.getElementById('confirmModal').classList.remove('active');
-            if (data.success) {
-                showToast('Pendaftaran berhasil! Silakan cek halaman Pendaftaran Saya.', 'success');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast(data.message || 'Gagal mendaftar. Coba lagi.', 'error');
-            }
-        })
-        .catch(() => showToast('Terjadi kesalahan jaringan.', 'error'))
-        .finally(() => {
-            this.disabled = false;
-            this.innerHTML = '<i class="fas fa-check"></i> Daftar Sekarang';
-        });
-    });
-
-    function closeConfirm() {
-        document.getElementById('confirmModal').classList.remove('active');
-        pendingJadwal = null;
-    }
-
-    document.getElementById('closeConfirmModal').addEventListener('click', closeConfirm);
-    document.getElementById('cancelConfirm').addEventListener('click', closeConfirm);
-    window.addEventListener('click', e => { if (e.target.id === 'confirmModal') closeConfirm(); });
-
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -827,11 +828,6 @@
             icon?.classList.toggle('fa-times');
         });
     }
-
-    // Render all grids
-    renderGrid('grid-active',    jadwalActive,    'active',    'count-active');
-    renderGrid('grid-upcoming',  jadwalUpcoming,  'upcoming',  'count-upcoming');
-    renderGrid('grid-completed', jadwalCompleted, 'completed', 'count-completed');
 })();
 </script>
 </body>

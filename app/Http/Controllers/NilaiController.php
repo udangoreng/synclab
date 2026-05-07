@@ -13,13 +13,36 @@ class NilaiController extends Controller
         $user = Auth::user();
 
         try {
-            if ($user->role === 'Praktikan') {
-                $nilais = Nilai::where('id_user', $user->id)
-                    ->with('pertemuan.praktikum', 'user')
-                    ->get();
-
-                return view('mahasiswa/nilai', compact('nilais', 'user'));
-
+            if ($user->role === 'Dosen') {
+    $nilais = Nilai::with(['pertemuan.praktikum', 'user'])
+        ->orderBy('created_at', 'desc')
+        ->paginate(20);
+    
+    // Transform data untuk view
+    $nilaiData = $nilais->through(function ($nilai) {
+        return [
+            'id' => $nilai->id,
+            'nama' => optional($nilai->user)->nama ?? '-',
+            'nim' => optional($nilai->user)->nomor_induk ?? '-',
+            'matkul' => optional($nilai->pertemuan?->praktikum)->nama_praktikum ?? '-',
+            'kelas' => optional($nilai->user)->angkatan ?? '-',
+            'pretest' => $nilai->nilai_pretest ?? 0,
+            'laporan' => $nilai->nilai_laporan ?? 0,
+            'nilai_akhir' => $nilai->nilai_akhir ?? 0,
+            'validated' => $nilai->status === 'Tervalidasi',
+            'status' => $nilai->status ?? 'Pending',
+        ];
+    });
+    
+    $praktikums = \App\Models\Praktikum::all();
+    
+    return view('dosen.validasinilai', [
+        'nilais' => $nilaiData,
+        'praktikums' => $praktikums,
+        'filterPraktikum' => 'all',
+        'filterStatus' => 'all',
+        'user' => $user
+    ]);
             } else {
                 $nilais = Nilai::with('pertemuan.praktikum', 'user')->get();
 

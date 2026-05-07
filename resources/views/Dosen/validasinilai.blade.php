@@ -1,88 +1,191 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Validasi Nilai Dosen | Portal Akademik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-
-<body>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --sidebar-bg: #1a2035;
+            --sidebar-width: 260px;
+            --accent: #4f8ef7;
+            --accent-green: #22c55e;
+            --accent-orange: #f59e0b;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --bg: #f1f5fb;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-mid: #64748b;
+            --text-light: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 2px 12px rgba(0,0,0,0.07);
+            --radius: 14px;
+            --radius-sm: 8px;
         }
 
         body {
-            background: #f0f4f8;
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
-        }
-
-        .dashboard-container {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
             display: flex;
             min-height: 100vh;
         }
 
-        .main-content {
-            flex: 1;
-            padding: 28px 32px;
-            overflow-x: auto;
-        }
-
-        .page-header {
+        /* ── SIDEBAR ────────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
         }
 
-        .page-title {
-            font-size: 1.8rem;
+        .sidebar-profile {
+            padding: 32px 20px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 28px; color: #fff;
+        }
+
+        .sidebar-name {
             font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .sidebar-role {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #1e293b;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        .export-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #10b981, #047857);
-            border: none;
-            border-radius: 40px;
-            color: white;
+        .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+        .nav-item.active { background: rgba(79,142,247,0.18); color: #4f8ef7; }
+        .nav-item i { width: 18px; text-align: center; font-size: 15px; }
+
+        .sidebar-logout {
+            padding: 16px 12px 24px;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px;
+            border-radius: 10px;
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 14px;
             font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: 0.2s;
+            transition: background 0.2s;
+        }
+        .btn-logout:hover { background: rgba(239,68,68,0.28); }
+
+        /* ── MAIN ───────────────────────────────────── */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 32px 48px;
+            min-height: 100vh;
+        }
+
+        /* ── PAGE HEADER ────────────────────────────── */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            font-size: 22px;
+            color: var(--accent);
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn-export {
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 10px 20px;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
         }
+        .btn-export:hover { opacity: 0.85; }
 
-        .export-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .filter-section {
-            background: white;
-            border-radius: 24px;
+        /* ── FILTER CARD ────────────────────────────── */
+        .filter-card {
+            background: var(--white);
+            border-radius: var(--radius);
             padding: 20px 24px;
+            box-shadow: var(--shadow);
             margin-bottom: 24px;
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
+            gap: 20px;
             align-items: flex-end;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
         }
 
         .filter-group {
@@ -90,325 +193,321 @@
             flex-direction: column;
             gap: 6px;
             flex: 1;
-            min-width: 150px;
+            min-width: 200px;
         }
 
-        .filter-group label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #64748b;
+        .filter-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-mid);
             text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .filter-group select {
+        .filter-select {
             padding: 10px 14px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: var(--white);
             cursor: pointer;
-            font-size: 0.85rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            transition: border-color 0.2s;
         }
+        .filter-select:focus { outline: none; border-color: var(--accent); }
 
-        .apply-filter-btn {
-            padding: 10px 24px;
-            background: #3b82f6;
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
+        .btn-apply {
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: 0.2s;
+            padding: 10px 22px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity 0.2s;
         }
+        .btn-apply:hover { opacity: 0.85; }
 
-        .apply-filter-btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-
-        .summary-cards {
+        /* ── STATS CARDS ────────────────────────────── */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
-        .summary-card {
-            background: white;
-            border-radius: 24px;
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
             padding: 20px;
+            box-shadow: var(--shadow);
             display: flex;
             align-items: center;
             gap: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .summary-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 20px;
+        .stat-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            color: white;
+            font-size: 22px;
+            flex-shrink: 0;
         }
 
-        .summary-info h3 {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #64748b;
-            margin-bottom: 4px;
-        }
+        .stat-icon.blue   { background: rgba(79,142,247,0.12); color: var(--accent); }
+        .stat-icon.green  { background: rgba(34,197,94,0.12);  color: var(--accent-green); }
+        .stat-icon.orange { background: rgba(245,158,11,0.12); color: var(--accent-orange); }
+        .stat-icon.purple { background: rgba(168,85,247,0.12); color: var(--accent-purple); }
 
-        .summary-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1e293b;
-        }
+        .stat-info { flex: 1; }
+        .stat-label { font-size: 12px; color: var(--text-mid); font-weight: 500; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--text-dark); line-height: 1.2; margin-top: 2px; }
 
-        .data-table-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        /* ── TABLE CARD ─────────────────────────────── */
+        .table-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
         }
 
         .table-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 16px;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .table-header h3 {
-            font-size: 1.1rem;
+        .table-title {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
         }
 
         .table-search {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            width: 240px;
         }
 
         .table-search input {
-            padding: 8px 16px 8px 40px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            width: 250px;
-            font-size: 0.85rem;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-dark);
+            background: transparent;
+            width: 100%;
         }
 
-        .table-search i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
+        .table-search input::placeholder { color: var(--text-light); }
+        .table-search i { color: var(--text-light); font-size: 13px; }
 
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .data-table {
+        table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .data-table th {
+        thead th {
+            padding: 13px 18px;
             text-align: left;
-            padding: 12px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             background: #f8fafc;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #64748b;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .data-table td {
-            padding: 12px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 0.85rem;
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f8fafc; }
+
+        td {
+            padding: 14px 18px;
+            font-size: 13.5px;
+            color: var(--text-dark);
+            vertical-align: middle;
         }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+        .td-name { font-weight: 600; }
+        .td-nim  { color: var(--text-mid); font-size: 12.5px; }
+        .td-num  { font-weight: 600; }
+        .td-num.bold { font-weight: 700; }
 
-        .status-validated {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .btn-edit {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #2563eb;
-        }
-
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-
-        .btn-detail {
-            background: #64748b;
-            color: white;
-        }
-
-        .btn-detail:hover {
-            background: #475569;
-        }
-
-        .table-footer {
-            display: flex;
-            justify-content: space-between;
+        /* Status badges */
+        .badge {
+            display: inline-flex;
             align-items: center;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
-            flex-wrap: wrap;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-pending    { background: rgba(245,158,11,0.12); color: #b45309; }
+        .badge-validated  { background: rgba(34,197,94,0.12);  color: #15803d; }
+        .badge-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: opacity 0.2s, transform 0.15s;
+            text-decoration: none;
+        }
+        .btn-action:hover { opacity: 0.8; transform: scale(1.08); }
+
+        .btn-validate { background: rgba(34,197,94,0.15);  color: #16a34a; }
+        .btn-edit     { background: rgba(79,142,247,0.15); color: #1d4ed8; }
+        .btn-detail   { background: rgba(100,116,139,0.15); color: #475569; }
+        .btn-delete   { background: rgba(239,68,68,0.15);  color: #dc2626; }
+
+        /* Empty state */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-mid);
+        }
+        .empty-state i { font-size: 40px; margin-bottom: 14px; opacity: 0.4; }
+        .empty-state p { font-size: 15px; }
+
+        /* ── PAGINATION ──────────────────────────────── */
+        .pagination-wrap {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-mid);
         }
 
         .pagination {
             display: flex;
-            gap: 8px;
             align-items: center;
+            gap: 4px;
+            list-style: none;
         }
 
-        .page-btn {
-            padding: 6px 12px;
-            background: #f1f5f9;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
+        .pagination li a,
+        .pagination li span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-mid);
+            border: 1.5px solid var(--border);
+            transition: all 0.15s;
+            line-height: 1;
         }
 
-        .page-btn:hover {
-            background: #3b82f6;
-            color: white;
+        .pagination li a:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
         }
 
-        .modal {
+        .pagination li.active span,
+        .pagination li span[aria-current="page"] {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .pagination li.disabled span {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        /* Override Laravel default pagination SVG arrows size */
+        .pagination li a svg,
+        .pagination li span svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        /* ── MODAL ───────────────────────────────────── */
+        .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 200;
             align-items: center;
             justify-content: center;
         }
+        .modal-overlay.open { display: flex; }
 
-        .modal.active {
-            display: flex;
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            width: 420px;
+            max-width: 95vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 28px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalFadeIn 0.3s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .modal-header h3 {
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #94a3b8;
-            transition: 0.2s;
-        }
-
-        .modal-close:hover {
-            color: #ef4444;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-info {
-            background: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 16px;
+        .modal h3 {
+            font-size: 18px;
+            font-weight: 700;
             margin-bottom: 20px;
-        }
-
-        .modal-info p {
-            margin: 6px 0;
-            font-size: 0.9rem;
+            color: var(--text-dark);
         }
 
         .form-group {
@@ -417,877 +516,423 @@
 
         .form-group label {
             display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 6px;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 40px;
-            font-size: 0.9rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            transition: border-color 0.2s;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--accent);
         }
 
-        .modal-footer {
+        .modal-actions {
             display: flex;
+            gap: 10px;
             justify-content: flex-end;
-            gap: 12px;
-            padding: 16px 24px;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 24px;
         }
 
         .btn-cancel {
-            padding: 8px 20px;
-            background: #f1f5f9;
-            border: none;
-            border-radius: 40px;
+            padding: 10px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-mid);
             cursor: pointer;
-            font-weight: 500;
         }
 
         .btn-save {
-            padding: 8px 20px;
-            background: #3b82f6;
-            color: white;
+            padding: 10px 24px;
+            background: var(--accent);
             border: none;
-            border-radius: 40px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-save:hover { opacity: 0.85; }
+
+        /* Alert */
+        .alert {
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            font-size: 14px;
             font-weight: 500;
         }
+        .alert-success { background: rgba(34,197,94,0.1); color: #15803d; border-left: 4px solid #22c55e; }
+        .alert-error   { background: rgba(239,68,68,0.1); color: #dc2626; border-left: 4px solid #ef4444; }
 
-        .btn-save:hover {
-            background: #2563eb;
-        }
-
-        .detail-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .detail-row {
-            display: flex;
-            padding: 8px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .detail-label {
-            width: 140px;
-            font-weight: 600;
-            color: #64748b;
-        }
-
-        .detail-value {
-            flex: 1;
-            color: #1e293b;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .sidebar-nav {
-                display: none;
-            }
-
-            .sidebar-nav.active {
-                display: flex;
-            }
-
-            .profile-section {
-                flex-direction: row;
-                gap: 16px;
-                text-align: left;
-            }
-
-            .avatar-circle {
-                width: 60px;
-                height: 60px;
-                margin: 0;
-            }
-
-            .avatar-circle i {
-                font-size: 30px;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .page-title {
-                font-size: 1.4rem;
-            }
-
-            .filter-section {
-                flex-direction: column;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .table-search input {
-                width: 100%;
-            }
-
-            .table-footer {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
-
-            .detail-row {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .detail-label {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 16px;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 8px;
-                font-size: 0.75rem;
-            }
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .main { padding: 20px 16px 40px; }
         }
     </style>
-    <div class="dashboard-container">
-       @include('dosen/partials/sidebar')
+</head>
+<body>
 
-        <main class="main-content">
-            <div class="page-header">
-                <h1 class="page-title"><i class="fas fa-check-double"></i> Validasi Nilai</h1>
-                <div class="header-actions">
-                    <button class="export-btn" id="exportBtn"><i class="fas fa-download"></i> Export Data</button>
-                </div>
-            </div>
-
-            <div class="filter-section">
-                <div class="filter-group">
-                    <label><i class="fas fa-flask"></i> Mata Kuliah</label>
-                    <select id="filterMatkul">
-                        <option value="all">Semua Mata Kuliah</option>
-                        <option value="Jaringan Komputer">Jaringan Komputer</option>
-                        <option value="RPL">RPL</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label><i class="fas fa-users"></i> Kelas</label>
-                    <select id="filterKelas">
-                        <option value="all">Semua Kelas</option>
-                        <option value="2024A">Kelas 2024A</option>
-                        <option value="2024B">Kelas 2024B</option>
-                        <option value="2024C">Kelas 2024C</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label><i class="fas fa-flag-checkered"></i> Status</label>
-                    <select id="filterStatus">
-                        <option value="all">Semua Status</option>
-                        <option value="validated">Sudah Tervalidasi</option>
-                        <option value="pending">Belum Tervalidasi</option>
-                    </select>
-                </div>
-                <button class="apply-filter-btn" id="applyFilter"><i class="fas fa-search"></i> Terapkan</button>
-            </div>
-
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Total Mahasiswa</h3>
-                        <p class="summary-number" id="totalMahasiswa">0</p>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #10b981, #047857);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Tervalidasi</h3>
-                        <p class="summary-number" id="totalValidated">0</p>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon" style="background: linear-gradient(135deg, #f59e0b, #b45309);">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="summary-info">
-                        <h3>Belum Tervalidasi</h3>
-                        <p class="summary-number" id="totalPending">0</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="data-table-card">
-                <div class="table-header">
-                    <h3><i class="fas fa-table-list"></i> Daftar Nilai Mahasiswa</h3>
-                    <div class="table-search">
-                        <input type="text" id="tableSearch" placeholder="Cari nama atau NIM...">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>NIM</th>
-                                <th>Mata Kuliah</th>
-                                <th>Kelas</th>
-                                <th>Pretest</th>
-                                <th>Laporan</th>
-                                <th>Nilai Akhir</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    <span id="tableInfo">Menampilkan data</span>
-                    <div class="pagination">
-                        <button class="page-btn" id="prevPage"><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageInfo">Halaman 1</span>
-                        <button class="page-btn" id="nextPage"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-            </div>
-        </main>
+<!-- ── SIDEBAR ────────────────────────────────────────── -->
+<aside class="sidebar">
+    <div class="sidebar-profile">
+        <div class="sidebar-avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="sidebar-name">{{ Auth::user()->nama ?? Auth::user()->name ?? 'Dosen' }}</div>
+        <div class="sidebar-role">{{ Auth::user()->prodi ?? 'Dosen' }}</div>
     </div>
 
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-edit"></i> Edit Nilai Mahasiswa</h3>
-                <button class="modal-close" id="closeModal">&times;</button>
+    <nav class="sidebar-nav">
+        <a href="{{ route('dashboard') }}" class="nav-item">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+        <a href="{{ route('monitoring') }}" class="nav-item">
+            <i class="fas fa-eye"></i> Monitoring
+        </a>
+        <a href="{{ route('validasinilai') }}" class="nav-item active">
+            <i class="fas fa-check-double"></i> Validasi Nilai
+        </a>
+        <a href="{{ route('presensi') }}" class="nav-item">
+            <i class="fas fa-fingerprint"></i> Presensi
+        </a>
+    </nav>
+
+    <div class="sidebar-logout">
+        <a href="{{ route('logout') }}" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+        </a>
+    </div>
+</aside>
+
+<!-- ── MAIN ───────────────────────────────────────────── -->
+<main class="main">
+
+    @php
+        // Compute stats across ALL records (not just current page)
+        $totalNilai      = \App\Models\Nilai::count();
+        $totalValidated  = \App\Models\Nilai::where('status', 'Tervalidasi')->count();
+        $totalPending    = \App\Models\Nilai::where(function($q){ $q->whereNull('status')->orWhere('status','Pending'); })->count();
+        $avgNilaiAkhir   = number_format(\App\Models\Nilai::avg('nilai_akhir') ?? 0, 1);
+    @endphp
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-check-double"></i>
+            <h1>Validasi Nilai</h1>
+        </div>
+        <a href="{{ url()->current() }}?export=csv&praktikum={{ $filterPraktikum }}&status={{ $filterStatus }}"
+           class="btn-export">
+            <i class="fas fa-download"></i> Export CSV
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    @if(session('success'))
+        <div class="alert alert-success"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> {{ session('error') }}</div>
+    @endif
+
+    <!-- Filter -->
+    <form method="GET" action="{{ route('validasinilai') }}">
+        <div class="filter-card">
+            <div class="filter-group">
+                <span class="filter-label"><i class="fas fa-flask"></i> Praktikum</span>
+                <select name="praktikum" class="filter-select">
+                    <option value="all" {{ $filterPraktikum === 'all' ? 'selected' : '' }}>Semua Praktikum</option>
+                    @foreach($praktikums as $p)
+                        <option value="{{ $p->nama_praktikum }}"
+                            {{ $filterPraktikum === $p->nama_praktikum ? 'selected' : '' }}>
+                            {{ $p->nama_praktikum }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            <div class="modal-body">
-                <div class="modal-info">
-                    <p><strong>Nama:</strong> <span id="editNama"></span></p>
-                    <p><strong>NIM:</strong> <span id="editNim"></span></p>
-                    <p><strong>Mata Kuliah:</strong> <span id="editMatkul"></span></p>
-                </div>
-                <div class="form-group">
-                    <label>Nilai Pretest</label>
-                    <input type="number" id="editPretest" min="0" max="100" step="1">
-                </div>
-                <div class="form-group">
-                    <label>Nilai Laporan</label>
-                    <input type="number" id="editLaporan" min="0" max="100" step="1">
-                </div>
-                <div class="form-group">
-                    <label>Nilai Akhir (Otomatis)</label>
-                    <input type="text" id="editNilaiAkhir" readonly disabled>
-                </div>
+
+            <div class="filter-group">
+                <span class="filter-label"><i class="fas fa-tag"></i> Status</span>
+                <select name="status" class="filter-select">
+                    <option value="all"       {{ $filterStatus === 'all'       ? 'selected' : '' }}>Semua Status</option>
+                    <option value="pending"   {{ $filterStatus === 'pending'   ? 'selected' : '' }}>Belum Tervalidasi</option>
+                    <option value="validated" {{ $filterStatus === 'validated' ? 'selected' : '' }}>Sudah Tervalidasi</option>
+                </select>
             </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" id="cancelModal">Batal</button>
-                <button class="btn-save" id="saveModal">Simpan</button>
+
+            <button type="submit" class="btn-apply">
+                <i class="fas fa-search"></i> Terapkan
+            </button>
+        </div>
+    </form>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Total Nilai</div>
+                <div class="stat-value">{{ $totalNilai }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Tervalidasi</div>
+                <div class="stat-value">{{ $totalValidated }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Belum Tervalidasi</div>
+                <div class="stat-value">{{ $totalPending }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-chart-bar"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Rata-rata Nilai</div>
+                <div class="stat-value">{{ $avgNilaiAkhir }}</div>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="detailModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-info-circle"></i> Detail Nilai Mahasiswa</h3>
-                <button class="modal-close" id="closeDetailModal">&times;</button>
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-header">
+            <div class="table-title">
+                <i class="fas fa-list-alt" style="color:var(--accent)"></i>
+                Daftar Nilai Mahasiswa
             </div>
-            <div class="modal-body">
-                <div class="detail-info">
-                    <div class="detail-row">
-                        <span class="detail-label">Nama Lengkap:</span>
-                        <span class="detail-value" id="detailNama"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">NIM:</span>
-                        <span class="detail-value" id="detailNim"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Mata Kuliah:</span>
-                        <span class="detail-value" id="detailMatkul"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Kelas:</span>
-                        <span class="detail-value" id="detailKelas"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Nilai Pretest:</span>
-                        <span class="detail-value" id="detailPretest"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Nilai Laporan:</span>
-                        <span class="detail-value" id="detailLaporan"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Nilai Akhir:</span>
-                        <span class="detail-value" id="detailNilaiAkhir"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Status Validasi:</span>
-                        <span class="detail-value" id="detailStatus"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" id="closeDetailModalBtn">Tutup</button>
+            <div class="table-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari nama atau NIM...">
             </div>
         </div>
-    </div>
-    <script>
-        (function() {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-            let nilaiData = @json($nilais);
-            let currentPage = 1;
-            let rowsPerPage = 10;
-            let filteredData = [...nilaiData];
-            let currentEditId = null;
 
-            const filterMatkul = document.getElementById('filterMatkul');
-            const filterKelas = document.getElementById('filterKelas');
-            const filterStatus = document.getElementById('filterStatus');
-            const tableSearch = document.getElementById('tableSearch');
-
-            function hitungNilaiAkhir(pretest, laporan) {
-                return ((pretest * 0.5) + (laporan * 0.5)).toFixed(1);
-            }
-
-            function initializeFilters() {
-                const matkuls = [...new Set(nilaiData.map(item => item.matkul).filter(Boolean))].sort();
-                const kelasList = [...new Set(nilaiData.map(item => item.kelas).filter(k => k && k !== 'N/A'))].sort();
-
-                filterMatkul.innerHTML = '<option value="all">Semua Mata Kuliah</option>' + matkuls.map(matkul => `\n                        <option value="${matkul}">${matkul}</option>`).join('');
-                filterKelas.innerHTML = '<option value="all">Semua Kelas</option>' + kelasList.map(kelas => `\n                        <option value="${kelas}">${kelas}</option>`).join('');
-            }
-
-            function renderTable() {
-                const searchTerm = tableSearch.value.toLowerCase();
-                let filtered = filteredData.filter(item =>
-                    item.nama.toLowerCase().includes(searchTerm) ||
-                    String(item.nim).includes(searchTerm)
-                );
-
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                const pageData = filtered.slice(start, end);
-
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
-
-                pageData.forEach(item => {
-                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
-                    const statusText = item.validated ? 'Tervalidasi' : 'Belum Validasi';
-                    const statusClass = item.validated ? 'status-validated' : 'status-pending';
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.nama}</td>
-                        <td>${item.nim}</td>
-                        <td>${item.matkul}</td>
-                        <td>${item.kelas ?? '-'}</td>
-                        <td>${item.pretest}</td>
-                        <td>${item.laporan}</td>
-                        <td>${nilaiAkhir}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td class="action-buttons">
-                            <button class="action-btn btn-edit" data-id="${item.id}"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="action-btn btn-delete" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
-                            <button class="action-btn btn-detail" data-id="${item.id}"><i class="fas fa-info-circle"></i> Detail</button>
+        <div style="overflow-x:auto;">
+            <table id="nilaiTable">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>NIM</th>
+                        <th>Mata Kuliah</th>
+                        <th>Pretest</th>
+                        <th>Laporan</th>
+                        <th>Nilai Akhir</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($nilais as $nilai)
+                    <tr class="data-row"
+                        data-nama="{{ strtolower(optional($nilai->user)->nama ?? '') }}"
+                        data-nim="{{ optional($nilai->user)->nomor_induk ?? '' }}">
+                        <td class="td-name">{{ optional($nilai->user)->nama ?? '-' }}</td>
+                        <td class="td-nim">{{ optional($nilai->user)->nomor_induk ?? '-' }}</td>
+                        <td>{{ optional($nilai->pertemuan?->praktikum)->nama_praktikum ?? (optional($nilai->pertemuan)->nama_pertemuan ?? '-') }}</td>
+                        <td class="td-num">{{ $nilai->nilai_pretest ?? 0 }}</td>
+                        <td class="td-num">{{ $nilai->nilai_laporan ?? 0 }}</td>
+                        <td class="td-num bold">{{ number_format($nilai->nilai_akhir ?? 0, 1) }}</td>
+                        <td>
+                            @if($nilai->status === 'Tervalidasi')
+                                <span class="badge badge-validated">
+                                    <span class="badge-dot"></span> Tervalidasi
+                                </span>
+                            @else
+                                <span class="badge badge-pending">
+                                    <span class="badge-dot"></span> Pending
+                                </span>
+                            @endif
                         </td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                        <td>
+                            <div class="actions">
+                                @if($nilai->status !== 'Tervalidasi')
+                                <button class="btn-action btn-validate"
+                                        title="Validasi"
+                                        onclick="openValidasiModal({{ $nilai->id }}, {{ $nilai->nilai_akhir ?? 0 }})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                @endif
+                                <button class="btn-action btn-edit"
+                                        title="Edit"
+                                        onclick="openEditModal({{ $nilai->id }}, {{ $nilai->nilai_pretest ?? 0 }}, {{ $nilai->nilai_laporan ?? 0 }}, {{ $nilai->nilai_akhir ?? 0 }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-detail"
+                                        title="Detail"
+                                        onclick="openDetailModal({{ $nilai->id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-action btn-delete"
+                                        title="Hapus"
+                                        onclick="confirmDelete({{ $nilai->id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>Tidak ada data nilai ditemukan.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-                document.querySelectorAll('.btn-edit').forEach(btn => {
-                    btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.id)));
-                });
-                document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', () => deleteData(parseInt(btn.dataset.id)));
-                });
-                document.querySelectorAll('.btn-detail').forEach(btn => {
-                    btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
-                });
+        <!-- Pagination -->
+        @if($nilais->hasPages())
+        <div class="pagination-wrap">
+            <div class="pagination-info">
+                Menampilkan {{ $nilais->firstItem() }}–{{ $nilais->lastItem() }}
+                dari {{ $nilais->total() }} data
+            </div>
+            {{ $nilais->appends(request()->query())->links() }}
+        </div>
+        @endif
+    </div>
+</main>
 
-                const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
-                document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages}`;
-                document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data mahasiswa`;
+<!-- ── MODAL: Validasi ──────────────────────────────────── -->
+<div class="modal-overlay" id="validasiModal">
+    <div class="modal">
+        <h3><i class="fas fa-check-circle" style="color:var(--accent-green);margin-right:8px"></i>Validasi Nilai</h3>
+        <form id="validasiForm" method="POST">
+            @csrf
+            @method('POST')
+            <div class="form-group">
+                <label>Nilai Akhir</label>
+                <input type="number" name="nilai_akhir" id="validasiNilaiAkhir"
+                       min="0" max="100" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label>Komentar (opsional)</label>
+                <textarea name="komentar" rows="3" style="resize:vertical"
+                          placeholder="Tambahkan komentar..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('validasiModal')">Batal</button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-check"></i> Validasi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-                updateSummary();
-            }
+<!-- ── MODAL: Edit ─────────────────────────────────────── -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3><i class="fas fa-edit" style="color:var(--accent);margin-right:8px"></i>Edit Nilai</h3>
+        <form id="editForm" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="form-group">
+                <label>Nilai Pretest</label>
+                <input type="number" name="nilai_pretest" id="editPretest" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label>Nilai Laporan</label>
+                <input type="number" name="nilai_laporan" id="editLaporan" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label>Nilai Akhir</label>
+                <input type="number" name="nilai_akhir" id="editNilaiAkhir" min="0" max="100" step="0.1">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Batal</button>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            function filterData() {
-                const matkul = filterMatkul.value;
-                const kelas = filterKelas.value;
-                const status = filterStatus.value;
+<!-- Delete form (hidden) -->
+<form id="deleteForm" method="POST" style="display:none">
+    @csrf
+    @method('DELETE')
+</form>
 
-                filteredData = nilaiData.filter(item => {
-                    if (matkul !== 'all' && item.matkul !== matkul) return false;
-                    if (kelas !== 'all' && item.kelas !== kelas) return false;
-                    if (status === 'validated' && !item.validated) return false;
-                    if (status === 'pending' && item.validated) return false;
-                    return true;
-                });
+<script>
+    // Search filter
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('.data-row').forEach(row => {
+            const nama = row.dataset.nama;
+            const nim  = row.dataset.nim;
+            row.style.display = (nama.includes(q) || nim.includes(q)) ? '' : 'none';
+        });
+    });
 
-                currentPage = 1;
-                renderTable();
-            }
+    function openValidasiModal(id, nilaiAkhir) {
+        const form = document.getElementById('validasiForm');
+        form.action = '/dosen/validasi-nilai/' + id;
+        document.getElementById('validasiNilaiAkhir').value = nilaiAkhir;
+        document.getElementById('validasiModal').classList.add('open');
+    }
 
-            function updateSummary() {
-                const total = filteredData.length;
-                const validated = filteredData.filter(item => item.validated).length;
-                const pending = total - validated;
+    function openEditModal(id, pretest, laporan, nilaiAkhir) {
+        const form = document.getElementById('editForm');
+        form.action = '/api/nilai/' + id;
+        document.getElementById('editPretest').value   = pretest;
+        document.getElementById('editLaporan').value   = laporan;
+        document.getElementById('editNilaiAkhir').value = nilaiAkhir;
+        document.getElementById('editModal').classList.add('open');
+    }
 
-                document.getElementById('totalMahasiswa').innerText = total;
-                document.getElementById('totalValidated').innerText = validated;
-                document.getElementById('totalPending').innerText = pending;
-            }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+    }
 
-            function openEditModal(id) {
-                const item = nilaiData.find(d => d.id === id);
-                if (!item) return;
+    function confirmDelete(id) {
+        if (confirm('Yakin ingin menghapus nilai ini?')) {
+            const form = document.getElementById('deleteForm');
+            form.action = '/api/nilai/' + id;
+            form.submit();
+        }
+    }
 
-                currentEditId = id;
-                document.getElementById('editNama').innerText = item.nama;
-                document.getElementById('editNim').innerText = item.nim;
-                document.getElementById('editMatkul').innerText = item.matkul;
-                document.getElementById('editPretest').value = item.pretest;
-                document.getElementById('editLaporan').value = item.laporan;
-                document.getElementById('editNilaiAkhir').value = hitungNilaiAkhir(item.pretest, item.laporan);
-                document.getElementById('editModal').classList.add('active');
-            }
+    function openDetailModal(id) {
+        window.location.href = '/api/nilai/' + id;
+    }
 
-            function updateNilaiAkhirOtomatis() {
-                const pretest = parseFloat(document.getElementById('editPretest').value) || 0;
-                const laporan = parseFloat(document.getElementById('editLaporan').value) || 0;
-                document.getElementById('editNilaiAkhir').value = hitungNilaiAkhir(pretest, laporan);
-            }
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('open');
+        });
+    });
+</script>
 
-            async function saveEdit() {
-                const pretest = parseInt(document.getElementById('editPretest').value);
-                const laporan = parseInt(document.getElementById('editLaporan').value);
-                const nilaiAkhir = parseFloat(hitungNilaiAkhir(pretest, laporan));
-
-                if (Number.isNaN(pretest) || Number.isNaN(laporan)) {
-                    alert('Nilai Pretest dan Nilai Laporan harus berupa angka valid.');
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/api/nilai/${currentEditId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({
-                            nilai_pretest: pretest,
-                            nilai_laporan: laporan,
-                            nilai_akhir: nilaiAkhir,
-                            status: 'Terkonfirmasi',
-                        }),
-                    });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        alert(error.message || 'Gagal menyimpan nilai.');
-                        return;
-                    }
-
-                    const result = await response.json();
-                    const index = nilaiData.findIndex(d => d.id === currentEditId);
-                    if (index !== -1) {
-                        nilaiData[index].pretest = pretest;
-                        nilaiData[index].laporan = laporan;
-                        nilaiData[index].validated = true;
-                    }
-                    filterData();
-                    closeModal();
-                } catch (error) {
-                    console.error(error);
-                    alert('Terjadi kesalahan saat menyimpan perubahan.');
-                }
-            }
-
-            async function deleteData(id) {
-                if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/api/nilai/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                    });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        alert(error.message || 'Gagal menghapus data.');
-                        return;
-                    }
-
-                    nilaiData = nilaiData.filter(d => d.id !== id);
-                    filterData();
-                } catch (error) {
-                    console.error(error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                }
-            }
-
-            function openDetailModal(id) {
-                const item = nilaiData.find(d => d.id === id);
-                if (!item) return;
-
-                document.getElementById('detailNama').innerText = item.nama;
-                document.getElementById('detailNim').innerText = item.nim;
-                document.getElementById('detailMatkul').innerText = item.matkul;
-                document.getElementById('detailKelas').innerText = item.kelas ?? '-';
-                document.getElementById('detailPretest').innerText = item.pretest;
-                document.getElementById('detailLaporan').innerText = item.laporan;
-                document.getElementById('detailNilaiAkhir').innerText = hitungNilaiAkhir(item.pretest, item.laporan);
-                document.getElementById('detailStatus').innerHTML = item.validated ?
-                    '<span class="status-badge status-validated">Tervalidasi</span>' :
-                    '<span class="status-badge status-pending">Belum Tervalidasi</span>';
-
-                document.getElementById('detailModal').classList.add('active');
-            }
-
-            function closeModal() {
-                document.getElementById('editModal').classList.remove('active');
-                document.getElementById('detailModal').classList.remove('active');
-                currentEditId = null;
-            }
-
-            function exportData() {
-                let csvContent = 'Nama,NIM,Mata Kuliah,Kelas,Pretest,Laporan,Nilai Akhir,Status\n';
-                filteredData.forEach(item => {
-                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
-                    const status = item.validated ? 'Tervalidasi' : 'Belum Validasi';
-                    csvContent += `${item.nama},${item.nim},${item.matkul},${item.kelas ?? '-'},${item.pretest},${item.laporan},${nilaiAkhir},${status}\n`;
-                });
-
-                const blob = new Blob([csvContent], { type: 'text/csv' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'data_nilai_mahasiswa.csv';
-                a.click();
-                URL.revokeObjectURL(url);
-            }
-
-            function bindEvents() {
-                document.getElementById('applyFilter').addEventListener('click', filterData);
-                tableSearch.addEventListener('input', () => {
-                    currentPage = 1;
-                    renderTable();
-                });
-                document.getElementById('prevPage').addEventListener('click', () => {
-                    const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable();
-                    }
-                });
-                document.getElementById('nextPage').addEventListener('click', () => {
-                    const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        renderTable();
-                    }
-                });
-                document.getElementById('exportBtn').addEventListener('click', exportData);
-                document.getElementById('closeModal').addEventListener('click', closeModal);
-                document.getElementById('cancelModal').addEventListener('click', closeModal);
-                document.getElementById('saveModal').addEventListener('click', saveEdit);
-                document.getElementById('closeDetailModal').addEventListener('click', closeModal);
-                document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
-                document.getElementById('editPretest').addEventListener('input', updateNilaiAkhirOtomatis);
-                document.getElementById('editLaporan').addEventListener('input', updateNilaiAkhirOtomatis);
-
-                window.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal')) {
-                        closeModal();
-                    }
-                });
-            }
-
-            initializeFilters();
-            bindEvents();
-            filterData();
-        })();
-    </script>                const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
-                let filtered = filteredData.filter(item =>
-                    item.nama.toLowerCase().includes(searchTerm) ||
-                    item.nim.includes(searchTerm)
-                );
-
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                const pageData = filtered.slice(start, end);
-
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
-
-                pageData.forEach(item => {
-                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
-                    const statusText = item.validated ? 'Tervalidasi' : 'Belum Validasi';
-                    const statusClass = item.validated ? 'status-validated' : 'status-pending';
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td>${item.nama}</td>
-                <td>${item.nim}</td>
-                <td>${item.matkul}</td>
-                <td>${item.kelas}</td>
-                <td>${item.pretest}</td>
-                <td>${item.laporan}</td>
-                <td>${nilaiAkhir}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td class="action-buttons">
-                    <button class="action-btn btn-edit" data-id="${item.id}"><i class="fas fa-edit"></i> Edit</button>
-                    <button class="action-btn btn-delete" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
-                    <button class="action-btn btn-detail" data-id="${item.id}"><i class="fas fa-info-circle"></i> Detail</button>
-                </td>
-            `;
-                    tbody.appendChild(row);
-                });
-
-                document.querySelectorAll('.btn-edit').forEach(btn => {
-                    btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.id)));
-                });
-                document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', () => deleteData(parseInt(btn.dataset.id)));
-                });
-                document.querySelectorAll('.btn-detail').forEach(btn => {
-                    btn.addEventListener('click', () => openDetailModal(parseInt(btn.dataset.id)));
-                });
-
-                const totalPages = Math.ceil(filtered.length / rowsPerPage);
-                document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
-                document.getElementById('tableInfo').innerText = `Menampilkan ${filtered.length} data mahasiswa`;
-
-                updateSummary();
-            }
-
-            function filterData() {
-                const matkul = document.getElementById('filterMatkul').value;
-                const kelas = document.getElementById('filterKelas').value;
-                const status = document.getElementById('filterStatus').value;
-
-                filteredData = nilaiData.filter(item => {
-                    if (matkul !== 'all' && item.matkul !== matkul) return false;
-                    if (kelas !== 'all' && item.kelas !== kelas) return false;
-                    if (status === 'validated' && !item.validated) return false;
-                    if (status === 'pending' && item.validated) return false;
-                    return true;
-                });
-
-                currentPage = 1;
-                renderTable();
-            }
-
-            function updateSummary() {
-                const total = filteredData.length;
-                const validated = filteredData.filter(item => item.validated).length;
-                const pending = total - validated;
-
-                document.getElementById('totalMahasiswa').innerText = total;
-                document.getElementById('totalValidated').innerText = validated;
-                document.getElementById('totalPending').innerText = pending;
-            }
-
-            function openEditModal(id) {
-                const item = nilaiData.find(d => d.id === id);
-                if (!item) return;
-
-                currentEditId = id;
-                document.getElementById('editNama').innerText = item.nama;
-                document.getElementById('editNim').innerText = item.nim;
-                document.getElementById('editMatkul').innerText = item.matkul;
-                document.getElementById('editPretest').value = item.pretest;
-                document.getElementById('editLaporan').value = item.laporan;
-
-                const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
-                document.getElementById('editNilaiAkhir').value = nilaiAkhir;
-
-                document.getElementById('editModal').classList.add('active');
-            }
-
-            function updateNilaiAkhirOtomatis() {
-                const pretest = parseFloat(document.getElementById('editPretest').value) || 0;
-                const laporan = parseFloat(document.getElementById('editLaporan').value) || 0;
-                const nilaiAkhir = hitungNilaiAkhir(pretest, laporan);
-                document.getElementById('editNilaiAkhir').value = nilaiAkhir;
-            }
-
-            function saveEdit() {
-                const pretest = parseInt(document.getElementById('editPretest').value);
-                const laporan = parseInt(document.getElementById('editLaporan').value);
-
-                const index = nilaiData.findIndex(d => d.id === currentEditId);
-                if (index !== -1) {
-                    nilaiData[index].pretest = pretest;
-                    nilaiData[index].laporan = laporan;
-                    nilaiData[index].validated = true; // Setelah diedit, otomatis tervalidasi
-                    filterData();
-                }
-
-                closeModal();
-            }
-
-            function deleteData(id) {
-                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    nilaiData = nilaiData.filter(d => d.id !== id);
-                    filterData();
-                }
-            }
-
-            function openDetailModal(id) {
-                const item = nilaiData.find(d => d.id === id);
-                if (!item) return;
-
-                document.getElementById('detailNama').innerText = item.nama;
-                document.getElementById('detailNim').innerText = item.nim;
-                document.getElementById('detailMatkul').innerText = item.matkul;
-                document.getElementById('detailKelas').innerText = item.kelas;
-                document.getElementById('detailPretest').innerText = item.pretest;
-                document.getElementById('detailLaporan').innerText = item.laporan;
-                document.getElementById('detailNilaiAkhir').innerText = hitungNilaiAkhir(item.pretest, item.laporan);
-                document.getElementById('detailStatus').innerHTML = item.validated ?
-                    '<span class="status-badge status-validated">Tervalidasi</span>' :
-                    '<span class="status-badge status-pending">Belum Tervalidasi</span>';
-
-                document.getElementById('detailModal').classList.add('active');
-            }
-
-            function closeModal() {
-                document.getElementById('editModal').classList.remove('active');
-                document.getElementById('detailModal').classList.remove('active');
-                currentEditId = null;
-            }
-
-            function exportData() {
-                let csvContent = "Nama,NIM,Mata Kuliah,Kelas,Pretest,Laporan,Nilai Akhir,Status\n";
-                filteredData.forEach(item => {
-                    const nilaiAkhir = hitungNilaiAkhir(item.pretest, item.laporan);
-                    const status = item.validated ? 'Tervalidasi' : 'Belum Validasi';
-                    csvContent +=
-                        `${item.nama},${item.nim},${item.matkul},${item.kelas},${item.pretest},${item.laporan},${nilaiAkhir},${status}\n`;
-                });
-
-                const blob = new Blob([csvContent], {
-                    type: 'text/csv'
-                });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'data_nilai_mahasiswa.csv';
-                a.click();
-                URL.revokeObjectURL(url);
-            }
-
-            document.getElementById('applyFilter').addEventListener('click', filterData);
-            document.getElementById('tableSearch').addEventListener('input', () => {
-                currentPage = 1;
-                renderTable();
-            });
-            document.getElementById('prevPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            });
-            document.getElementById('nextPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            });
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            document.getElementById('cancelModal').addEventListener('click', closeModal);
-            document.getElementById('saveModal').addEventListener('click', saveEdit);
-            document.getElementById('closeDetailModal').addEventListener('click', closeModal);
-            document.getElementById('closeDetailModalBtn').addEventListener('click', closeModal);
-            document.getElementById('editPretest').addEventListener('input', updateNilaiAkhirOtomatis);
-            document.getElementById('editLaporan').addEventListener('input', updateNilaiAkhirOtomatis);
-
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    closeModal();
-                }
-            });
-
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebarNav = document.getElementById('sidebarNav');
-            if (mobileToggle && sidebarNav) {
-                mobileToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('active');
-                    const icon = mobileToggle.querySelector('i');
-                    if (sidebarNav.classList.contains('active')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-            }
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    if (item.innerText.includes('Validasi Nilai')) return;
-                });
-            });
-
-            filterData();
-        })();
-    </script>
 </body>
-
 </html>

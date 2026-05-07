@@ -37,13 +37,13 @@ class DosenController extends Controller
             // Count registered students
             $registeredCount = PendaftaranPraktikum::whereHas('jadwal', function($q) use ($praktikum) {
                 $q->where('id_praktikum', $praktikum->id);
-            })->distinct('id_user')->count('id_user');
+            })->where('role', 'Praktikan')->distinct('id_user')->count('id_user');
             
             // Count validation status
             $validatedCount = Nilai::whereHas('pertemuan', function($q) use ($praktikum) {
                 $q->where('id_praktikum', $praktikum->id);
             })->where('status', 'Tervalidasi')->count();
-            
+
             $pendingCount = Nilai::whereHas('pertemuan', function($q) use ($praktikum) {
                 $q->where('id_praktikum', $praktikum->id);
             })->where(function($q) {
@@ -53,10 +53,9 @@ class DosenController extends Controller
             
             // Today's attendance stats
             $today = now()->toDateString();
-            $todayPresences = Presensi::whereHas('pertemuan.jadwal', function($q) use ($praktikum, $today) {
-                $q->where('id_praktikum', $praktikum->id)
-                  ->whereDate('tanggal', $today);
-            })->get();
+            $todayPresences = Presensi::whereHas('pertemuan', function($q) use ($praktikum, $today) {
+                $q->where('id_praktikum', $praktikum->id);
+            })->whereDate('created_at', $today)->get();
             
             $hadir = $todayPresences->where('kehadiran', 'Hadir')->count();
             $izin = $todayPresences->where('kehadiran', 'Izin')->count();

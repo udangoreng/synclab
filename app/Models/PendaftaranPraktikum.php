@@ -30,4 +30,16 @@ class PendaftaranPraktikum extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+
+    /**
+ * Cek apakah user sudah terdaftar di praktikum yang sama (jadwal manapun)
+ */
+public static function sudahTerdaftarDiPraktikum(int $idUser, int $idPraktikum): bool
+{
+    return self::whereHas('jadwal', function ($q) use ($idPraktikum) {
+            $q->where('id_praktikum', $idPraktikum);
+        })
+        ->where('id_user', $idUser)
+        ->exists();
+}
 }

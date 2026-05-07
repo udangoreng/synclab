@@ -18,10 +18,10 @@ use App\Http\Controllers\PraktikumController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'welcome']);
+
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'store'])->name('register.store');
 });
@@ -29,57 +29,63 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Redirect berdasarkan role
     Route::get('/mahasiswa', [MahasiswaController::class, 'dashboard'])->middleware('checkRole:Praktikan')->name('mahasiswa');
     Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
     Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten')->name('asisten');
     Route::get('/admin', [AuthController::class, 'admin'])->middleware('checkRole:Admin')->name('admin');
 
-    Route::prefix('mahasiswa')->group(function () {
+    // ==========================================
+    // MAHASISWA ROUTES
+    // ==========================================
+    Route::prefix('mahasiswa')->middleware('checkRole:Praktikan')->group(function () {
         Route::get('/pendaftaran', [PraktikumController::class, 'pendaftaranShow'])->name('praktikum');
         Route::get('/praktikum', [PraktikumController::class, 'getMyPraktikum'])->name('pendaftaran');
         Route::post('/praktikum/daftar', [PraktikumController::class, 'daftarJadwal']);
         Route::get('/pretest', [MahasiswaController::class, 'getMyPretest'])->name('pretest');
-        Route::post('/pretest/absen/{modulId}',  [MahasiswaController::class, 'absenPretest'])->name('pretest.absen');
-        Route::post('/pretest/start/{modulId}',  [MahasiswaController::class, 'startPretest'])->name('pretest.start');
+        Route::post('/pretest/absen/{modulId}', [MahasiswaController::class, 'absenPretest'])->name('pretest.absen');
+        Route::post('/pretest/start/{modulId}', [MahasiswaController::class, 'startPretest'])->name('pretest.start');
         Route::post('/pretest/upload/{modulId}', [MahasiswaController::class, 'uploadLaporan'])->name('pretest.upload');
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai');
         Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
         Route::get('/riwayat', [MahasiswaController::class, 'getMyHistory'])->name('riwayat');
     });
 
+    // ==========================================
+    // DOSEN ROUTES
+    // ==========================================
     Route::prefix('dosen')->middleware('checkRole:Dosen')->group(function () {
-        Route::get('/monitoring', [PraktikumController::class, 'monitoringPraktikum'])->name('monitoring');
-        Route::get('/validasi', [NilaiController::class, 'index'])->name('validasiNilai');
-        Route::get('/presensi', [PresensiController::class, 'index'])->name('cekPresensi');
-        Route::get('/pendaftaran', [PraktikumController::class, 'cekStatusPendaftaran'])->name('cekPendaftaran');
-
-        // Manage Asisten routes
-        Route::get('/asisten', [DosenController::class, 'manageAsisten'])->name('manageAsisten');
-        Route::post('/asisten', [DosenController::class, 'storeAsisten'])->name('storeAsisten');
-        Route::put('/asisten/{id}', [DosenController::class, 'updateAsisten'])->name('updateAsisten');
-        Route::delete('/asisten/{id}', [DosenController::class, 'destroyAsisten'])->name('destroyAsisten');
-
-        // Manage Laboran routes
-        Route::get('/laboran', [DosenController::class, 'manageLaboran'])->name('manageLaboran');
-        Route::post('/laboran', [DosenController::class, 'storeLaboran'])->name('storeLaboran');
-        Route::put('/laboran/{id}', [DosenController::class, 'updateLaboran'])->name('updateLaboran');
-        Route::delete('/laboran/{id}', [DosenController::class, 'destroyLaboran'])->name('destroyLaboran');
+        Route::get('/dashboard', [DosenController::class, 'index'])->name('dashboard');
+        Route::get('/monitoring', [DosenController::class, 'monitoring'])->name('monitoring');
+        Route::get('/presensi', [DosenController::class, 'presensi'])->name('presensi');
+        Route::put('/presensi/{id}', [DosenController::class, 'updatePresensi']);
+        Route::get('/validasi-nilai', [DosenController::class, 'validasiNilai'])->name('validasinilai');
+        Route::post('/validasi-nilai/{id}', [DosenController::class, 'storeValidasiNilai']);
+        Route::get('/status-pendaftaran', [DosenController::class, 'statusPendaftaran'])->name('statuspendaftaran');
+        Route::get('/manage-asisten', [DosenController::class, 'manageAsisten'])->name('manageAsisten');
+        Route::post('/manage-asisten', [DosenController::class, 'storeAsisten']);
+        Route::put('/manage-asisten/{id}', [DosenController::class, 'updateAsisten']);
+        Route::delete('/manage-asisten/{id}', [DosenController::class, 'destroyAsisten']);
+        Route::get('/manage-laboran', [DosenController::class, 'manageLaboran'])->name('manageLaboran');
+        Route::post('/manage-laboran', [DosenController::class, 'storeLaboran']);
+        Route::put('/manage-laboran/{id}', [DosenController::class, 'updateLaboran']);
+        Route::delete('/manage-laboran/{id}', [DosenController::class, 'destroyLaboran']);
     });
 
-    Route::prefix('asisten')->group(function () {
+    // ==========================================
+    // ASISTEN ROUTES
+    // ==========================================
+    Route::prefix('asisten')->middleware('checkRole:Asisten')->group(function () {
         Route::get('/praktikum', [PraktikumController::class, 'asistensiPraktikum'])->name('asistensi');
-
         Route::get('/presensi', [PresensiController::class, 'index'])->name('konfirmasiPresensi');
         Route::get('/presensi/detail', [PresensiController::class, 'recordAttendance'])->name('detailPresensi');
         Route::get('/presensi/history', [PresensiController::class, 'getHistoryPresensi'])->name('riwayatPresensi');
         Route::get('/presensi/history/detail', [PresensiController::class, 'viewAttendanceDetail'])->name('detailRiwayatPresensi');
         Route::post('/presensi/save', [PresensiController::class, 'saveAttendance'])->name('savePresensi');
-
         Route::get('/modul', [ModulController::class, 'addModul'])->name('addModul');
         Route::post('/modul', [ModulController::class, 'store'])->name('storeModul');
         Route::put('/modul/{id}', [ModulController::class, 'update'])->name('updateModul');
         Route::delete('/modul/{id}', [ModulController::class, 'destroy'])->name('deleteModul');
-
         Route::get('/pretest', [PretestController::class, 'addPretest'])->name('addPretest');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');
         Route::get('/nilai', [NilaiController::class, 'index'])->name('addNilai');
@@ -87,67 +93,65 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('seeMahasiswa');
     });
 
+    // ==========================================
+    // ADMIN ROUTES
+    // ==========================================
     Route::prefix('admin')->middleware('checkRole:Admin')->group(function () {
         Route::get('/praktikum', [PraktikumController::class, 'index'])->name('masterPraktikum');
-        Route::post('/praktikum', [PraktikumController::class, 'store'])->name('addPraktikum')->middleware('checkRole:Admin');
-        Route::put('/praktikum/{id}', [PraktikumController::class, 'update'])->name('updatePraktikum')->middleware('checkRole:Admin');
-        Route::delete('/praktikum/{id}', [PraktikumController::class, 'destroy'])->name('deletePraktikum')->middleware('checkRole:Admin');
-
+        Route::post('/praktikum', [PraktikumController::class, 'store'])->name('addPraktikum');
+        Route::put('/praktikum/{id}', [PraktikumController::class, 'update'])->name('updatePraktikum');
+        Route::delete('/praktikum/{id}', [PraktikumController::class, 'destroy'])->name('deletePraktikum');
         Route::get('/user', [UserController::class, 'index'])->name('masterUser');
-        Route::post('/user', [UserController::class, 'store'])->name('addUser')->middleware('checkRole:Admin');
-        Route::put('/user/{id}', [UserController::class, 'update'])->name('updateUser')->middleware('checkRole:Admin');
-        Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser')->middleware('checkRole:Admin');
-
+        Route::post('/user', [UserController::class, 'store'])->name('addUser');
+        Route::put('/user/{id}', [UserController::class, 'update'])->name('updateUser');
+        Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
         Route::get('/laboratorium', [LaboratoriumController::class, 'index'])->name('masterLaboratorium');
-        Route::post('/laboratorium', [LaboratoriumController::class, 'store'])->name('addLaboratorium')->middleware('checkRole:Admin');
-        Route::put('/laboratorium/{id}', [LaboratoriumController::class, 'update'])->name('updateLaboratorium')->middleware('checkRole:Admin');
-        Route::delete('/laboratorium/{id}', [LaboratoriumController::class, 'destroy'])->name('deleteLaboratorium')->middleware('checkRole:Admin');
-
+        Route::post('/laboratorium', [LaboratoriumController::class, 'store'])->name('addLaboratorium');
+        Route::put('/laboratorium/{id}', [LaboratoriumController::class, 'update'])->name('updateLaboratorium');
+        Route::delete('/laboratorium/{id}', [LaboratoriumController::class, 'destroy'])->name('deleteLaboratorium');
         Route::get('/jadwal', [JadwalController::class, 'index'])->name('masterJadwal');
-        Route::post('/jadwal', [JadwalController::class, 'store'])->name('addJadwal')->middleware('checkRole:Admin');
-        Route::put('/jadwal/{id}', [JadwalController::class, 'update'])->name('updateJadwal')->middleware('checkRole:Admin');
-        Route::delete('/jadwal/{id}', [JadwalController::class, 'destroy'])->name('deleteJadwal')->middleware('checkRole:Admin');
-
+        Route::post('/jadwal', [JadwalController::class, 'store'])->name('addJadwal');
+        Route::put('/jadwal/{id}', [JadwalController::class, 'update'])->name('updateJadwal');
+        Route::delete('/jadwal/{id}', [JadwalController::class, 'destroy'])->name('deleteJadwal');
         Route::get('/pertemuan', [PertemuanController::class, 'index'])->name('masterPertemuan');
-        Route::post('/pertemuan', [PertemuanController::class, 'store'])->name('addPertemuan')->middleware('checkRole:Admin');
-        Route::put('/pertemuan/{id}', [PertemuanController::class, 'update'])->name('updatePertemuan')->middleware('checkRole:Admin');
-        Route::delete('/pertemuan/{id}', [PertemuanController::class, 'destroy'])->name('deletePertemuan')->middleware('checkRole:Admin');
-
+        Route::post('/pertemuan', [PertemuanController::class, 'store'])->name('addPertemuan');
+        Route::put('/pertemuan/{id}', [PertemuanController::class, 'update'])->name('updatePertemuan');
+        Route::delete('/pertemuan/{id}', [PertemuanController::class, 'destroy'])->name('deletePertemuan');
         Route::get('/asisten/{id}', [AsistenController::class, 'index'])->name('alokasiAsisten');
         Route::post('/asisten/{id}', [AsistenController::class, 'store'])->name('storeAlokasiAsisten');
         Route::delete('/asisten/{praktikumId}/{asistenId}', [AsistenController::class, 'destroy'])->name('deleteAlokasiAsisten');
-
         Route::get('/laporan', [LaporanController::class, 'masterLaporan'])->name('masterLaporan');
-
         Route::get('/pengumpulanLaporan', [LaporanController::class, 'adminShowLaporan'])->name('kelolaLaporan');
-
         Route::get('/nilai', [NilaiController::class, 'masterNilai'])->name('kelolaNilai');
-
         Route::get('/pendaftaran', [PendaftaranController::class, 'masterPendaftaran'])->name('kelolaPendaftaran');
     });
 
-    // Laboratorium routes 
-    Route::get('/api/laboratorium', [LaboratoriumController::class, 'index']);
-    Route::get('/api/laboratorium/{id}', [LaboratoriumController::class, 'show']);
-    Route::post('/api/laboratorium', [LaboratoriumController::class, 'store'])->middleware('checkRole:admin');
-    Route::put('/api/laboratorium/{id}', [LaboratoriumController::class, 'update'])->middleware('checkRole:admin');
-    Route::delete('/api/laboratorium/{id}', [LaboratoriumController::class, 'destroy'])->middleware('checkRole:admin');
+    // ==========================================
+    // API ROUTES
+    // ==========================================
+    Route::prefix('api')->group(function () {
+        // Laboratorium
+        Route::get('/laboratorium', [LaboratoriumController::class, 'index']);
+        Route::get('/laboratorium/{id}', [LaboratoriumController::class, 'show']);
+        Route::post('/laboratorium', [LaboratoriumController::class, 'store']);
+        Route::put('/laboratorium/{id}', [LaboratoriumController::class, 'update']);
+        Route::delete('/laboratorium/{id}', [LaboratoriumController::class, 'destroy']);
 
-    // Nilai routes 
-    // Route::get('/api/nilai', [NilaiController::class, 'index']);
-    Route::get('/api/nilai/{id}', [NilaiController::class, 'show']);
-    Route::post('/api/nilai', [NilaiController::class, 'store']);
-    Route::put('/api/nilai/{id}', [NilaiController::class, 'update']);
-    Route::delete('/api/nilai/{id}', [NilaiController::class, 'destroy']);
-    Route::get('/api/nilai/praktikum/{idPraktikum}', [NilaiController::class, 'getByPraktikum']);
-    Route::get('/api/nilai/user/{userId}', [NilaiController::class, 'getByUser']);
+        // Nilai
+        Route::get('/nilai/{id}', [NilaiController::class, 'show']);
+        Route::post('/nilai', [NilaiController::class, 'store']);
+        Route::put('/nilai/{id}', [NilaiController::class, 'update']);
+        Route::delete('/nilai/{id}', [NilaiController::class, 'destroy']);
+        Route::get('/nilai/praktikum/{idPraktikum}', [NilaiController::class, 'getByPraktikum']);
+        Route::get('/nilai/user/{userId}', [NilaiController::class, 'getByUser']);
 
-    // Presensi routes 
-    Route::get('/api/presensi', [PresensiController::class, 'index']);
-    Route::get('/api/presensi/{id}', [PresensiController::class, 'show']);
-    Route::post('/api/presensi', [PresensiController::class, 'store']);
-    Route::put('/api/presensi/{id}', [PresensiController::class, 'update']);
-    Route::delete('/api/presensi/{id}', [PresensiController::class, 'destroy']);
-    Route::get('/api/presensi/praktikum/{idPraktikum}', [PresensiController::class, 'getByPraktikum']);
-    Route::get('/api/presensi/user/{userId}', [PresensiController::class, 'getByUser']);
+        // Presensi
+        Route::get('/presensi', [PresensiController::class, 'index']);
+        Route::get('/presensi/{id}', [PresensiController::class, 'show']);
+        Route::post('/presensi', [PresensiController::class, 'store']);
+        Route::put('/presensi/{id}', [PresensiController::class, 'update']);
+        Route::delete('/presensi/{id}', [PresensiController::class, 'destroy']);
+        Route::get('/presensi/praktikum/{idPraktikum}', [PresensiController::class, 'getByPraktikum']);
+        Route::get('/presensi/user/{userId}', [PresensiController::class, 'getByUser']);
+    });
 });

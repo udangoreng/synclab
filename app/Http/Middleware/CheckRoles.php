@@ -15,11 +15,13 @@ class CheckRoles
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if(auth()->user()->role == $role){
+        $user = $request->user();
+
+        if ($user && $user->role === $role) {
             return $next($request);
-        } 
+        }
 
         return abort(401);
-        // dd(auth()->user());
+        // dd($user);
     }
 }
