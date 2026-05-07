@@ -63,9 +63,10 @@
                                 <td>{{ $pertemuan->modul->judul_modul }}</td>
                                 <td>{{ Str::limit($pertemuan->modul->deskripsi, 60) }}</td>
                                 <td>
-                                    <a href="{{ Storage::url($pertemuan->modul->filepath) }}" target="_blank" class="view">
+                                    <a href="{{ Storage::url($pertemuan->modul->filepath) }}" target="_blank" class="view" style="margin-bottom: 15px; padding: 2.5px;">
                                         <i class="fas fa-eye"></i> Lihat
                                     </a>
+                                    <br>
                                     <a href="{{ Storage::url($pertemuan->modul->filepath) }}" download class="download">
                                         <i class="fas fa-download"></i> Download
                                     </a>
@@ -84,7 +85,7 @@
                                     Belum ada modul
                                 </td>
                                 <td>
-                                    <button class="edit" onclick="openPopup('add', null, {{ $pertemuan->id }})">
+                                    <button class="btn add" onclick="openPopup('add', null, {{ $pertemuan->id }})" style="border: none; border-radius: 5px; padding: 5px;">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
                                 </td>

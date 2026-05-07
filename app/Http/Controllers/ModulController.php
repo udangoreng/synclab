@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Modul;
 use App\Models\Pertemuan;
-use App\Models\Praktikum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +30,9 @@ class ModulController extends Controller
     {
         $user = Auth::user();
         $praktikumIds = $this->getAsistenPraktikumIds($user->id);
-
-        // Ambil semua pertemuan dari praktikum yang dipegang asisten ini
-        // beserta modul yang sudah ada (jika ada)
         $moduls = Pertemuan::with(['jadwal.praktikum', 'modul'])
             ->whereHas('jadwal', function ($q) use ($praktikumIds) {
-                $q->whereIn('id_jadwal', $praktikumIds);  // ← jadwals.id_pertemuan
+                $q->whereIn('id_jadwal', $praktikumIds);
             })
             ->orderBy('pertemuan_ke')
             ->get();
