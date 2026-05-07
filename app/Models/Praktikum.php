@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 // Import all related models
 use App\Models\Jadwal;
@@ -14,14 +13,14 @@ use App\Models\Pertemuan;
 use App\Models\Nilai;
 use App\Models\User;
 use App\Models\Modul;
-use App\Models\PendaftaranPraktikum;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Praktikum extends Model
 {
     protected $fillable = [
         'kode_praktikum',
         'nama_praktikum',
-        'id_dosen',
+        'id_dosen', 
         'angkatan',
         'semester',
     ];

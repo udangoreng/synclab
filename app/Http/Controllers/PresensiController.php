@@ -45,7 +45,6 @@ class PresensiController extends Controller
                 $jadwalIds = DB::table('pendaftaran_praktikum')
                     ->where('id_user', $user->id)
                     ->where('role', 'Asisten')
-                    ->whereIn('status', ['Dikonfirmasi', 'Pending'])
                     ->pluck('id_jadwal');
 
                 $praktikumIds = DB::table('jadwals')

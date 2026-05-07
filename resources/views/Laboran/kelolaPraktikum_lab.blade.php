@@ -125,6 +125,16 @@
                             <input type="text" id="edit_semester" name="semester" required>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="id_id_dosen">Kepala Laboratorium</label>
+                        <select id="id_id_dosen" name="id_dosen">
+                            <option value="">Pilih Kepala Lab</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}">{{ $dosen->nama }}
+                                    ({{ $dosen->nomor_induk }})</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="modal-actions">
                         <button type="button" class="btn-secondary"
                             onclick="document.getElementById('editModal').style.display='none'">Batalkan</button>
@@ -254,6 +264,17 @@
                             <input type="text" id="semester" name="semester" placeholder="e.g., 1, 2, 3"
                                 required>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_id_dosen">Kepala Laboratorium</label>
+                        <select id="id_id_dosen" name="id_dosen">
+                            <option value="">Pilih Kepala Lab</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}">{{ $dosen->nama }}
+                                    ({{ $dosen->nomor_induk }})</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="modal-actions">

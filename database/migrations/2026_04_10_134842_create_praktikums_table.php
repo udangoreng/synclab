@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode_praktikum');
             $table->string('nama_praktikum');
             $table->unsignedBigInteger('id_dosen');
-            $table->foreign('id_dosen')->references('nomor_induk')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_dosen')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('angkatan');
             $table->integer('semester');
             $table->timestamps();

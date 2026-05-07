@@ -87,9 +87,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/modul/{id}', [ModulController::class, 'update'])->name('updateModul');
         Route::delete('/modul/{id}', [ModulController::class, 'destroy'])->name('deleteModul');
         Route::get('/pretest', [PretestController::class, 'addPretest'])->name('addPretest');
+
         Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('nilaiLaporan');
+        Route::post('/laporan/update/{id}', [LaporanController::class, 'updateLaporan'])->name('updateLaporan');
+        Route::get('/laporan/detail/{id}', [LaporanController::class, 'showLaporan'])->name('detailLaporan');
+
         Route::get('/nilai', [NilaiController::class, 'index'])->name('addNilai');
+        Route::post('/nilai/bulk-update', [NilaiController::class, 'bulkUpdate'])->name('bulkUpdateNilai');
+        Route::post('/nilai/update/{id}', [NilaiController::class, 'updateNilai'])->name('updateNilai');
         Route::get('/nilai/rekap', [NilaiController::class, 'rekapNilai'])->name('rekapNilai');
+
         Route::get('/mahasiswa', [MahasiswaController::class, 'getMahasiswa'])->name('seeMahasiswa');
     });
 
