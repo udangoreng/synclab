@@ -655,13 +655,13 @@
                                     </a>
                                 @endif
                                 @if($p->laporan)
-                                    <a href="{{ route('mahasiswa.laporan.submit', $p->id) }}" class="action-pill pill-laporan">
+                                    {{-- <a href="{{ route('mahasiswa.laporan.submit', $p->id) }}" class="action-pill pill-laporan">
                                         <i class="fas fa-upload"></i> Kumpul Laporan
-                                    </a>
+                                    </a> --}}
                                 @endif
-                                <a href="{{ route('mahasiswa.presensi.show', $p->id) }}" class="action-pill pill-presensi">
+                                {{-- <a href="{{ route('mahasiswa.presensi.show', $p->id) }}" class="action-pill pill-presensi">
                                     <i class="fas fa-qrcode"></i> Presensi
-                                </a>
+                                </a> --}}
                             </div>
                         </div>
                     </div>
@@ -786,9 +786,9 @@
                                     </a>
                                 @endif
                                 @if($nilaiUser)
-                                    <a href="{{ route('mahasiswa.nilai.show', $p->id) }}" class="action-pill pill-nilai">
+                                    {{-- <a href="{{ route('mahasiswa.nilai.show', $p->id) }}" class="action-pill pill-nilai">
                                         <i class="fas fa-chart-bar"></i> Nilai
-                                    </a>
+                                    </a> --}}
                                 @endif
                             </div>
                         </div>

@@ -231,8 +231,8 @@
                             <td>{{ $pengumpulan->pertemuan->nama ?? 'Pertemuan ' . ($pengumpulan->id_pertemuan ?? '-') }}</td>
                             <td>{{ $pengumpulan->user->nama ?? $pengumpulan->user->name ?? '-' }}</td>
                             <td>
-                                @if($pengumpulan->filepath)
-                                    <a href="{{ asset('storage/' . $pengumpulan->filepath) }}" target="_blank" class="file-link">
+                                @if($pengumpulan->file_path)
+                                    <a href="{{ asset('storage/' . $pengumpulan->file_path) }}" target="_blank" class="file-link">
                                         <i class="fas fa-file-pdf"></i> Lihat File
                                     </a>
                                 @else
@@ -256,15 +256,15 @@
                                     -
                                 @endif
                             </td>
-                            <td>{{ $pengumpulan->created_at ? $pengumpulan->created_at->format('d/m/Y H:i') : '-' }}</td>
+                            <td>{{ $pengumpulan->created_at ? \Carbon\Carbon::parse($pengumpulan->created_at)->format('d/m/Y H:i') : '-' }}</td>
                             <td>
-                                <button class="edit" onclick="openEditModal({{ $pengumpulan->id }})">Edit</button>
+                                {{-- <button class="edit" onclick="openEditModal({{ $pengumpulan->id }})">Edit</button>
                                 <form method="POST" action="{{ route('deletePengumpulanLaporan', $pengumpulan->id) }}"
                                     style="display:inline;" onsubmit="return confirm('Yakin mau hapus data ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="delete">Hapus</button>
-                                </form>
+                                </form> --}}
                                 <button class="detail" onclick="openDetailModal({{ $pengumpulan->id }})">Detail</button>
                                 @if($pengumpulan->status === 'Disubmit' || $pengumpulan->status === 'Terlambat')
                                     <button class="btn-primary-small" onclick="openReviewModal({{ $pengumpulan->id }})">Review</button>

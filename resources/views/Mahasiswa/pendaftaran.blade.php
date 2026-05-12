@@ -459,8 +459,8 @@
                         'status'        => $rowStatus,
                         'nilai_total'   => $nilaiUser?->nilai_total ?? $nilaiUser?->nilai_akhir ?? null,
                         'has_laporan'   => !is_null($p->laporan),
-                        'laporan_url'   => route('mahasiswa.laporan.submit', $p->id),
-                        'nilai_url'     => route('mahasiswa.nilai.show', $p->id),
+                        // 'laporan_url'   => route('mahasiswa.laporan.submit', $p->id),
+                        // 'nilai_url'     => route('mahasiswa.nilai.show', $p->id),
                     ]);
                 }
             }

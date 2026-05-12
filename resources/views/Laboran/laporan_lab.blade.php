@@ -65,58 +65,69 @@
             </div>
 
             <div class="chart-box">
+                <h3 class="chart-title">Statistik</h3>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                 <script>
-                    function renderStats(@json($nilai)) {
-                        let tinggi = 0,
-                            rendah = 0,
-                            totalNilai = 0;
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // 1. Ambil data dari Laravel ke JS
+                        const dataNilai = @json($nilai);
+                        let chartInstance = null;
 
-                        data.forEach(d => {
-                            const nilai = hitungNilai(d);
-                            totalNilai += nilai;
+                        function initStats(data) {
+                            let tinggi = 0;
+                            let rendah = 0;
+                            let totalNilai = 0;
 
-                            if (nilai >= 75) tinggi++;
-                            else rendah++;
-                        });
+                            if (data.length === 0) return;
 
-                        const rata = Math.round(totalNilai / data.length);
+                            data.forEach(d => {
+                                // Gunakan properti nilai_akhir sesuai database/table Anda
+                                const nilai = parseFloat(d.nilai_akhir) || 0;
+                                totalNilai += nilai;
 
-                        document.getElementById("valTinggi").innerText = tinggi;
-                        document.getElementById("valRendah").innerText = rendah;
-                        document.getElementById("valRata").innerText = rata;
+                                if (nilai >= 75) tinggi++;
+                                else rendah++;
+                            });
 
-                        const ctx = document.getElementById("chart");
-                        if (!ctx) return;
+                            const rata = Math.round(totalNilai / data.length);
 
-                        if (chartInstance) chartInstance.destroy();
+                            // Update Angka di UI
+                            document.getElementById("valTinggi").innerText = tinggi;
+                            document.getElementById("valRendah").innerText = rendah;
+                            document.getElementById("valRata").innerText = rata;
 
-                        chartInstance = new Chart(ctx, {
-                            type: "doughnut",
-                            data: {
-                                labels: ["Tinggi", "Rendah"],
-                                datasets: [{
-                                    data: [tinggi, rendah],
-                                    backgroundColor: [
-                                        "#86efac",
-                                        "#fca5a5"
-                                    ],
-                                    borderWidth: 0
-                                }]
-                            },
-                            options: {
-                                cutout: "65%",
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
+                            // Render Chart
+                            const ctx = document.getElementById("chart").getContext('2d');
+
+                            if (chartInstance) chartInstance.destroy();
+
+                            chartInstance = new Chart(ctx, {
+                                type: "doughnut",
+                                data: {
+                                    labels: ["Tinggi", "Rendah"],
+                                    datasets: [{
+                                        data: [tinggi, rendah],
+                                        backgroundColor: ["#86efac", "#fca5a5"],
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    cutout: "65%",
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
                                     }
                                 }
-                            }
-                        });
-                    }
+                            });
+                        }
+
+                        // 2. Panggil fungsi saat halaman siap
+                        initStats(dataNilai);
+                    });
                 </script>
-                <h3 class="chart-title">Statistik</h3>
 
                 <div class="chart-content">
                     <canvas id="chart">
@@ -159,12 +170,12 @@
                             <td>{{ $n->nilai_laporan }}</td>
                             <td>{{ $n->nilai_akhir }}</td>
                             <td>
-                                @if ($n->nilai_akhir >= 65)
-                                    C
+                                @if ($n->nilai_akhir >= 85)
+                                    A
                                 @elseif($n->nilai_akhir >= 75)
                                     B
-                                @elseif($n->nilai_akhir >= 85)
-                                    A
+                                @elseif($n->nilai_akhir >= 65)
+                                    C
                                 @else
                                     D
                                 @endif
@@ -187,7 +198,59 @@
 
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+        < /> <
+        script >
+            function renderStats(nilai) {
+                let tinggi = 0,
+                    rendah = 0,
+                    totalNilai = 0;
+
+                data.forEach(d => {
+                    const nilai = hitungNilai(d);
+                    totalNilai += nilai;
+
+                    if (nilai >= 75) tinggi++;
+                    else rendah++;
+                });
+
+                const rata = Math.round(totalNilai / data.length);
+
+                document.getElementById("valTinggi").innerText = tinggi;
+                document.getElementById("valRendah").innerText = rendah;
+                document.getElementById("valRata").innerText = rata;
+
+                const ctx = document.getElementById("chart");
+                if (!ctx) return;
+
+                if (chartInstance) chartInstance.destroy();
+
+                chartInstance = new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Tinggi", "Rendah"],
+                        datasets: [{
+                            data: [tinggi, rendah],
+                            backgroundColor: [
+                                "#86efac",
+                                "#fca5a5"
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        cutout: "65%",
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+    </script>
     <script src="{{ asset('lab_js/laporan_lab.js') }}"></script>
 </body>
 

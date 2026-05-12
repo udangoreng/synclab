@@ -127,7 +127,7 @@
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-info">
                         <h3>Total Mahasiswa</h3>
-                        <p class="stat-number">{{ $totalMahasiswa }}</p>
+                        <p class="stat-number">{{ $totalMahasiswa ?? '-' }}</p>
                         <span class="stat-trend">Praktikan terdaftar</span>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     <div class="stat-icon"><i class="fas fa-flask"></i></div>
                     <div class="stat-info">
                         <h3>Praktikum Aktif</h3>
-                        <p class="stat-number">{{ count($aktivePraktikums) }}</p>
+                        <p class="stat-number">{{ count($aktivePraktikums) ?? 0}}</p>
                         <span class="stat-trend">Total praktikum</span>
                     </div>
                 </div>

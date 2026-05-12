@@ -183,8 +183,8 @@
                     <i class="fas fa-check-double"></i> Validasi Nilai
                 </a>
             </li>
-            <li class="nav-item {{ request()->routeIs('presensi') ? 'active' : '' }}">
-                <a href="{{ route('presensi') }}">
+            <li class="nav-item {{ request()->routeIs('dosenPresensi') ? 'active' : '' }}">
+                <a href="{{ route('dosenPresensi') }}">
                     <i class="fas fa-fingerprint"></i> Presensi
                 </a>
             </li>

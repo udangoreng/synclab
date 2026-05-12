@@ -334,7 +334,7 @@ class MahasiswaController extends Controller
             ->get();
 
         // Get user's registered praktikums
-        $praktikumCount = Praktikum::whereHas('jadwals.pertemuans.nilais', function ($query) use ($user) {
+        $praktikumCount = Praktikum::whereHas('jadwals.pertemuan.nilais', function ($query) use ($user) {
             $query->where('id_user', $user->id);
         })->count();
 

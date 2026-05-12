@@ -247,17 +247,17 @@ class LaporanController extends Controller
             ->leftJoin('users', 'pengumpulan_laporan.id_user', '=', 'users.id')
             ->select(
                 'pengumpulan_laporan.*',
-                'pertemuans.nama as pertemuan_nama',
-                'users.name as user_name',
+                'pertemuans.nama_pertemuan as pertemuan_nama',
+                'users.nama as user_name',
                 'users.nomor_induk as user_nomor_induk'
             );
 
         // Apply search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('users.name', 'like', "%{$search}%")
+                $q->where('users.nama', 'like', "%{$search}%")
                     ->orWhere('users.nomor_induk', 'like', "%{$search}%")
-                    ->orWhere('pertemuans.nama', 'like', "%{$search}%");
+                    ->orWhere('pertemuans.nama_pertemuan', 'like', "%{$search}%");
             });
         }
 

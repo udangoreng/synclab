@@ -35,7 +35,7 @@ class JadwalSeeder extends Seeder
             for ($i = 0; $i < 5; $i++) {
                 Jadwal::create([
                     'id_praktikum' => $praktikum->id,
-                    'id_dosen' => $dosens[$i % $dosens->count()]->nomor_induk,
+                    'id_dosen' => $dosens[$i % $dosens->count()]->id,
                     'id_laboratorium' => $laboratoriums[$i % $laboratoriums->count()]->id,
                     'hari' => $days[$i % count($days)],
                     'jam_mulai' => $timeSlots[$i % count($timeSlots)][0],

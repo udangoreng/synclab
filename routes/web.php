@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Redirect berdasarkan role
     Route::get('/mahasiswa', [MahasiswaController::class, 'dashboard'])->middleware('checkRole:Praktikan')->name('mahasiswa');
-    Route::get('/dosen', [AuthController::class, 'dosen'])->middleware('checkRole:Dosen')->name('dosen');
+    Route::get('/dosen', [DosenController::class, 'index'])->middleware('checkRole:Dosen')->name('dosen');
     Route::get('/asisten', [AuthController::class, 'asisten'])->middleware('checkRole:Asisten')->name('asisten');
     Route::get('/admin', [AuthController::class, 'admin'])->middleware('checkRole:Admin')->name('admin');
 
@@ -55,9 +55,9 @@ Route::middleware(['auth'])->group(function () {
     // DOSEN ROUTES
     // ==========================================
     Route::prefix('dosen')->middleware('checkRole:Dosen')->group(function () {
-        Route::get('/dashboard', [DosenController::class, 'index'])->name('dashboard');
+        Route::get('/dosen', [DosenController::class, 'index'])->name('dashboard');
         Route::get('/monitoring', [DosenController::class, 'monitoring'])->name('monitoring');
-        Route::get('/presensi', [DosenController::class, 'presensi'])->name('presensi');
+        Route::get('/presensi', [DosenController::class, 'presensi'])->name('dosenPresensi');
         Route::put('/presensi/{id}', [DosenController::class, 'updatePresensi']);
         Route::get('/validasi-nilai', [DosenController::class, 'validasiNilai'])->name('validasinilai');
         Route::post('/validasi-nilai/{id}', [DosenController::class, 'storeValidasiNilai']);

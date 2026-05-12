@@ -194,7 +194,7 @@
                             <td>{{ $jadwal->jam_mulai ?? '-' }}</td>
                             <td>{{ $jadwal->jam_selesai ?? '-' }}</td>
                             <td>{{ $jadwal->laboratorium->nama_laboratorium ?? '-' }}</td>
-                            <td>{{ Str::limit($jadwal->dosen->nama, 20, "...") ?? '-' }}</td>
+                            <td>{{ $jadwal->dosen ? Str::limit($jadwal->dosen->nama, 20, '...') : '-' }}</td>
                             <td>
                                 <span class="badge badge-{{ $jadwal->status ?? 'active' }}">
                                     {{ ucfirst($jadwal->status ?? 'Active') }}
@@ -234,7 +234,8 @@
                 data-praktikum_nama="{{ $jadwal->praktikum->nama_praktikum ?? '' }}"
                 data-hari="{{ $jadwal->hari }}" data-jam_mulai="{{ $jadwal->jam_mulai }}"
                 data-jam_selesai="{{ $jadwal->jam_selesai }}" data-id_laboratorium="{{ $jadwal->id_laboratorium }}"
-                data-laboratorium_nama="{{ $jadwal->laboratorium->nama_laboratorium ?? '' }}" data-id_dosen="{{$jadwal->dosen->id}}" data-dosen_nama="{{$jadwal->dosen->nama}}"
+                data-laboratorium_nama="{{ $jadwal->laboratorium->nama_laboratorium ?? '' }}" data-id_dosen="{{ $jadwal->dosen?->id ?? '' }}"
+data-dosen_nama="{{ $jadwal->dosen?->nama ?? '-' }}"
                 data-status="{{ $jadwal->status ?? 'active' }}" data-created_at="{{ $jadwal->created_at }}"
                 data-updated_at="{{ $jadwal->updated_at }}" data-praktikum='@json($jadwal->praktikum)'
                 data-laboratorium='@json($jadwal->laboratorium)' data-asisten='@json($jadwal->asisten)'
