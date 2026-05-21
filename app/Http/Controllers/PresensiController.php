@@ -234,6 +234,62 @@ class PresensiController extends Controller
         }
     }
 
+    public function viewAttendanceDetail(Request $request)
+    {
+        $pertemuanId = $request->get('pertemuan_id');
+        $praktikumId = $request->get('praktikum_id');
+        $user = Auth::user();
+        
+        // Verify access using ID
+        $hasAccess = DB::table('pendaftaran_praktikum')
+            ->where('id_user', $user->id)
+            ->where('id_jadwal', $praktikumId)
+            ->where('role', 'Asisten')
+            ->exists();
+        
+        // if (!$hasAccess) {
+        //     return redirect()->back()
+        //         ->with('error', 'Akses ditolak');
+        // }
+        
+        // Get pertemuan details
+        $pertemuan = Pertemuan::with(['jadwal.praktikum', 'jadwal.laboratorium'])
+            ->where('id', $pertemuanId)
+            ->firstOrFail();
+        
+        // Get all praktikan using ID
+        $praktikanIds = DB::table('pendaftaran_praktikum')
+            ->where('id_jadwal', $praktikumId)
+            ->where('role', 'Praktikan')
+            ->where('status', 'Dikonfirmasi')
+            ->pluck('id_user')
+            ->toArray();
+        
+        $mahasiswas = User::whereIn('id', $praktikanIds)
+            ->select('id', 'nomor_induk', 'nama')
+            ->orderBy('nama')
+            ->get();
+        
+        // Get existing presensi
+        $existingPresensi = Presensi::where('id_pertemuan', $pertemuanId)
+            ->get()
+            ->keyBy('id_user');
+        
+        $attendanceData = [];
+        foreach ($mahasiswas as $mahasiswa) {
+            $presensi = $existingPresensi->get($mahasiswa->id);
+            $attendanceData[] = [
+                'user_id' => $mahasiswa->id,
+                'nim' => $mahasiswa->nomor_induk,
+                'nama' => $mahasiswa->nama,
+                'status' => $presensi ? $presensi->kehadiran : 'Alpha',
+                'status_konfirmasi' => $presensi ? $presensi->status : 'Pending',
+            ];
+        }
+        
+        return view('asisten.detailPresensi', compact('pertemuan', 'attendanceData', 'praktikumId'));
+    }
+
     /**
      * API: Delete Presensi
      */
